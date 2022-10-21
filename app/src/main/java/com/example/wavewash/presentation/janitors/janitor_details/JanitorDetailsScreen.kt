@@ -19,6 +19,7 @@ import com.example.wavewash.presentation.helpers.common.Calendar
 import com.example.wavewash.presentation.helpers.common.ScreenHeaders
 import com.example.wavewash.presentation.janitors.janitor_details.components.CardsJanitorAnalytics
 import com.example.wavewash.presentation.janitors.janitor_details.components.CardsJanitorInfo
+import com.example.wavewash.presentation.orders.orders_screen.OrdersEvent
 import com.example.wavewash.presentation.orders.orders_screen.components.HeadersOfList
 import com.example.wavewash.presentation.orders.orders_screen.components.OrderItem
 import com.example.wavewash.presentation.orders.orders_screen.components.OrdersTab
@@ -28,11 +29,8 @@ import com.example.wavewash.utils.headerOrderButtons
 
 @Composable
 fun JanitorDetailsScreen(
-    navController: NavController,
-    configuration: Configuration
+    navController: NavController
 ) {
-    var scaleSize = 1.0
-    var scaleRegulator = 4.0
     val washer = Washer(
         1,
         "Нарбеков",
@@ -71,16 +69,7 @@ fun JanitorDetailsScreen(
         )
     )
 
-    when (configuration.orientation) {
-        Configuration.ORIENTATION_PORTRAIT -> {
-            scaleSize = 0.66
-            scaleRegulator = 0.0
-        }
-    }
-
-    Column(
-        modifier = Modifier.padding(vertical = 28.dp)
-    ) {
+    Column{
         DetailAppBar(navController)
         Row(
             modifier = Modifier
@@ -93,16 +82,12 @@ fun JanitorDetailsScreen(
                     .weight(0.66f)
                     .fillMaxHeight(1f),
                 washer = washer,
-                scaleSize = scaleSize,
-                scaleRegulator = scaleRegulator
             )
             CardsJanitorAnalytics(
                 modifier = Modifier
                     .weight(0.34f)
                     .fillMaxHeight(1f),
-                washer = washer,
-                scaleSize = scaleSize,
-                scaleRegulator = scaleRegulator
+                washer = washer
             )
         }
 
@@ -123,16 +108,22 @@ fun JanitorDetailsScreen(
                     }
                 }
             )
-            OrdersTab()
+            OrdersTab(
+                onClick = {
+
+                }
+            )
             HeadersOfList()
-            LazyColumn {
+            LazyColumn(
+                modifier = Modifier.fillMaxSize()
+            ) {
                 items(list.size) { index ->
-                    OrderItem(
-                        list[index],
-                        onClick = {
-                            navController.navigate(Screen.OrderDetailsScreenRoute.route)
-                        }
-                    )
+//                    OrderItem(
+//                        list[index],
+//                        onClick = {
+//                            navController.navigate(Screen.OrderDetailsScreenRoute.route)
+//                        }
+//                    )
                     Divider(modifier = Modifier.fillMaxWidth())
                 }
             }
@@ -152,11 +143,19 @@ fun DetailAppBar(navController: NavController) {
             }
         )
         Calendar(
-            Modifier
+            modifier = Modifier
                 .fillMaxWidth()
                 .clip(Shapes.small)
                 .background(Color.White),
+            beginDate = "",
+            endDate = "",
             onCalendarPopup = {
+
+            },
+            onNextClick = {
+
+            },
+            onPreviousClick = {
 
             }
         )

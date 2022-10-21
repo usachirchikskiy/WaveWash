@@ -31,16 +31,16 @@ fun AnalyticsScreen(
             .verticalScroll(rememberScrollState())
             .fillMaxWidth()
     ) {
-        Calendar(
-            modifier = Modifier
-                .padding(vertical = 16.dp)
-                .fillMaxWidth()
-                .clip(Shapes.small)
-                .background(Color.White),
-            onCalendarPopup = {
-
-            }
-        )
+//        Calendar(
+//            modifier = Modifier
+//                .padding(vertical = 16.dp)
+//                .fillMaxWidth()
+//                .clip(Shapes.small)
+//                .background(Color.White),
+//            onCalendarPopup = {
+//
+//            }
+//        )
         OrdersJanitors()
         Divider(
             thickness = 1.dp,

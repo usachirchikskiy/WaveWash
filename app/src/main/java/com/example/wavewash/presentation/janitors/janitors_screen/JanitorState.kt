@@ -1,6 +1,6 @@
 package com.example.wavewash.presentation.janitors.janitors_screen
 
-import com.example.wavewash.data.remote.dto.WasherAnswerDto
+import com.example.wavewash.data.remote.dto.washer.WasherAnswerDto
 
 data class JanitorState(
     val washers:List<WasherAnswerDto> = listOf(),

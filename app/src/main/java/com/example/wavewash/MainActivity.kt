@@ -1,5 +1,7 @@
 package com.example.wavewash
 
+import android.content.Context
+import android.content.res.Configuration
 import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -25,6 +27,14 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
+    override fun attachBaseContext(newBase: Context?) {
+
+        val newOverride = Configuration(newBase?.resources?.configuration)
+        newOverride.fontScale = 1.0f
+        applyOverrideConfiguration(newOverride)
+
+        super.attachBaseContext(newBase)
+    }
 
     @RequiresApi(Build.VERSION_CODES.O)
     @OptIn(ExperimentalPagerApi::class)
@@ -32,20 +42,10 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         setContent {
-//            val openDialogCustom =  remember { mutableStateOf(false) }
-//            Button(onClick = {
-//                    openDialogCustom.value = true
-//                }) {
-//
-//                }
-//                if(openDialogCustom.value){
-//                    CalendarPopup(openDialogCustom = openDialogCustom)
-//                }
 
             WaveWashTheme {
                 val pagerState = rememberPagerState()
                 val navController = rememberNavController()
-                val configuration = LocalConfiguration.current
 
                 Scaffold() {
                     Column(
@@ -54,61 +54,13 @@ class MainActivity : ComponentActivity() {
                             .background(AppBackground)
                             .padding(horizontal = 24.dp, vertical = 32.dp)
                     ) {
-                        NavGraph(pagerState = pagerState, navController = navController, configuration = configuration)
+                        NavGraph(
+                            pagerState = pagerState,
+                            navController = navController
+                        )
                     }
                 }
             }
         }
     }
 }
-//
-//@OptIn(ExperimentalPagerApi::class)
-//@Composable
-//fun MainScreen() {
-//    val pagerState = rememberPagerState()
-//    WaveWashTheme {
-//        val configuration = LocalConfiguration.current
-//        val openDialogCustom =  remember { mutableStateOf(false) }
-//
-//        Scaffold() {
-//            Column(
-//                modifier = Modifier
-//                    .fillMaxSize()
-//                    .background(AppBackground)
-//                    .padding(horizontal = 24.dp, vertical = 32.dp)
-//            ) {
-//        NavGraph(navController = )
-//                ##Popup
-//                Button(onClick = {
-//                    openDialogCustom.value = true
-//                }) {
-//
-//                }
-//                if(openDialogCustom.value){
-//                    ChooseServiceDialog(openDialogCustom = openDialogCustom)
-//                }
-
-
-//                LogoNameCompany()
-//                LogoCalendar()
-//                Tabs(pagerState = pagerState)
-//                TabsContent(pagerState = pagerState)
-
-//                JanitorStakeScreen()
-//                OverallPriceScreen()
-//                NewServiceScreen()
-//                NewJanitorScreen()
-//                NewOrderScreen()
-//                OrderDetails()
-//                LoginScreen()
-//                ServicesScreen()
-//                AccountScreen()
-//                JournalActionsScreen()
-//                NewPassword()
-
-//                ChatSupport()
-//            }
-//            /* Add code later */
-//        }
-//    }
-//}

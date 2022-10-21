@@ -25,7 +25,7 @@ import com.example.wavewash.presentation.helpers.common.BackButton
 import com.example.wavewash.presentation.helpers.common.Logo
 import com.example.wavewash.ui.theme.*
 import com.example.wavewash.utils.ComposeString
-import com.example.wavewash.utils.REFRESH
+import com.example.wavewash.utils.REFRESH_WASHERS
 import com.skydoves.landscapist.ShimmerParams
 import com.skydoves.landscapist.coil.CoilImage
 
@@ -82,7 +82,7 @@ fun NewJanitorScreen(
 
                         },
                     imageModel = "https://www.dmarge.com/wp-content/uploads/2021/01/dwayne-the-rock-.jpg",
-                    contentScale = ContentScale.Crop,            // crop the image if it's not a square
+                    contentScale = ContentScale.Crop,
 
                     shimmerParams = ShimmerParams(
                         baseColor = Color.White,
@@ -145,19 +145,34 @@ fun NewJanitorScreen(
                             unfocusedBorderColor = Color(0xFFD3DDEC),
                         ),
                         singleLine = true,
-                        value = "998" + state.telephoneNumber,
+                        value = state.telephoneNumber,
                         onValueChange = { telephoneNumber ->
-                            if(state.telephoneNumber.length<7) {
+                            if(telephoneNumber.length<9) {
                                 viewModel.onTriggerEvent(
                                     NewJanitorEvents.ChangePhoneNumberValue(
-                                        telephoneNumber.replace("998","").toInt()
+                                        telephoneNumber
                                     )
                                 )
                             }
                         },
                         keyboardOptions = KeyboardOptions(
                             keyboardType = KeyboardType.Number
-                        )
+                        ),
+                        textStyle = TextStyle(
+                            fontFamily = nunitoSans,
+                            fontSize = 14.sp,
+                            color = TextColor,
+                            fontWeight = FontWeight.ExtraBold
+                        ),
+                        leadingIcon = {
+                            Text(
+                                text = "+998",
+                                fontFamily = nunitoSans,
+                                fontSize = 14.sp,
+                                color = TextColor,
+                                fontWeight = FontWeight.ExtraBold
+                            )
+                        }
                     )
 
                     Text(
@@ -179,7 +194,7 @@ fun NewJanitorScreen(
                         singleLine = true,
                         value = state.stake,
                         onValueChange = { stake ->
-                            viewModel.onTriggerEvent(NewJanitorEvents.ChangeStakeValue(stake.toInt()))
+                            viewModel.onTriggerEvent(NewJanitorEvents.ChangeStakeValue(stake))
                         },
                         keyboardOptions = KeyboardOptions(
                             keyboardType = KeyboardType.Number
@@ -201,7 +216,7 @@ fun NewJanitorScreen(
                     viewModel.onTriggerEvent(NewJanitorEvents.AddWasher)
                     navController.previousBackStackEntry
                         ?.savedStateHandle
-                        ?.set(REFRESH, REFRESH)
+                        ?.set(REFRESH_WASHERS, REFRESH_WASHERS)
                     Log.d(TAG, "NewJanitorScreen: Save")
                     navController.popBackStack()
                 }

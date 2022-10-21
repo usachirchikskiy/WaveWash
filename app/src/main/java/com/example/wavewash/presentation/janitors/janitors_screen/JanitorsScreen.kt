@@ -16,7 +16,6 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.wavewash.R
-import com.example.wavewash.domain.model.Washer
 import com.example.wavewash.presentation.helpers.common.ScreenHeaders
 import com.example.wavewash.presentation.janitors.janitors_screen.components.JanitorItem
 import com.example.wavewash.presentation.helpers.common.SearchBar
@@ -30,17 +29,16 @@ private const val TAG = "JanitorsScreen"
 @Composable
 fun JanitorsScreen(navController: NavController, viewModel: JanitorViewModel = hiltViewModel()) {
     val state = viewModel.state
-//    val listState = rememberLazyListState()
+
     val screenResultState = navController.currentBackStackEntry
         ?.savedStateHandle
-        ?.get<String>(REFRESH)
+        ?.get<String>(REFRESH_WASHERS)
 
     screenResultState?.let { value ->
         navController.currentBackStackEntry
             ?.savedStateHandle
-            ?.remove<String>(REFRESH)
-        Log.d(TAG, "JanitorsScreen: Value $value")
-        if (value == REFRESH) {
+            ?.remove<String>(REFRESH_WASHERS)
+        if (value == REFRESH_WASHERS) {
             viewModel.onTriggerEvent(JanitorEvents.ReloadWashers)
         }
 
@@ -113,36 +111,5 @@ fun JanitorsScreen(navController: NavController, viewModel: JanitorViewModel = h
                 }
             }
         }
-    }
-
-//    listState.OnBottomReached {
-//        // do on load more
-//        Log.d(TAG, "JanitorsScreen: ")
-//        viewModel.onTriggerEvent(JanitorEvents.GetWashers)
-//    }
-}
-
-
-@Composable
-fun LazyListState.OnBottomReached(
-    loadMore: () -> Unit
-) {
-    val shouldLoadMore = remember {
-        derivedStateOf {
-            val lastVisibleItem = layoutInfo.visibleItemsInfo.lastOrNull()
-                ?: return@derivedStateOf true
-
-            lastVisibleItem.index == layoutInfo.totalItemsCount - 1
-        }
-    }
-
-    // Convert the state into a cold flow and collect
-    LaunchedEffect(shouldLoadMore) {
-        snapshotFlow { shouldLoadMore.value }
-            .collect {
-                Log.d(TAG, "OnBottomReached: $it")
-                // if should load more, then invoke loadMore
-                if (it) loadMore()
-            }
     }
 }

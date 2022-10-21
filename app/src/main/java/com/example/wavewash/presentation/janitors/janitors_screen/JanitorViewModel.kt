@@ -1,18 +1,11 @@
 package com.example.wavewash.presentation.janitors.janitors_screen
 
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.wavewash.data.remote.dto.LoginDto
-import com.example.wavewash.data.remote.dto.WasherAnswerDto
-import com.example.wavewash.data.remote.dto.WasherDto
-import com.example.wavewash.domain.use_cases.Login
 import com.example.wavewash.domain.use_cases.Washer
-import com.example.wavewash.presentation.login.LoginEvents
-import com.example.wavewash.presentation.login.LoginState
 import com.example.wavewash.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
@@ -45,6 +38,7 @@ constructor(
                 changeSearchQueryValue(event.text)
             }
             is JanitorEvents.ReloadWashers -> {
+                state = state.copy(page = 0, endReached = false, washers = listOf())
                 getWashers()
             }
         }

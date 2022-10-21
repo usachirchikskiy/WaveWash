@@ -66,6 +66,7 @@
     <string name="choose_janitor">Выберите мойщика</string>
     <string name="choose_service">Выберите услугу</string>
     <string name="journal_actions">Журнал действий</string>
+    <string name="cancel_dialog">Опишите причину отмены</string>
     <string name="password">Пароль</string>
     <string name="language">Язык</string>
     <string name="logout">Выйти из аккаунта</string>
@@ -82,5 +83,6 @@
     <string name="thanks">Спасибо! Мы свяжемся с вами в ближайшее время.</string>
     <string name="send">Отправить</string>
     <string name="ready">Готово</string>
+    <string name="sum">сум</string>
 
 </resources>

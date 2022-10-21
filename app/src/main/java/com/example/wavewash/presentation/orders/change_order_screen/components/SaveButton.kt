@@ -33,7 +33,7 @@ fun SaveButton(
             .clip(Shapes.medium)
             .background(ActiveButtonBackground)
             .clickable {
-                //TODO back button
+                onClick.invoke()
             }
             .padding(horizontal = 42.dp, vertical = 10.dp),
         verticalAlignment = Alignment.CenterVertically

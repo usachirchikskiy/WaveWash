@@ -9,16 +9,23 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.wavewash.R
 import com.example.wavewash.domain.model.Washer
 import com.example.wavewash.ui.theme.GreyTextColor
 import com.example.wavewash.ui.theme.Shapes
+import com.example.wavewash.ui.theme.TextColor
+import com.example.wavewash.ui.theme.nunitoSans
 import com.example.wavewash.utils.ComposeString
 
 @Composable
-fun CardsJanitorAnalytics(modifier: Modifier,washer: Washer,scaleSize:Double,scaleRegulator:Double) {
+fun CardsJanitorAnalytics(
+    modifier: Modifier,
+    washer: Washer
+) {
     Column(
         modifier = modifier
             .padding(top = 28.dp)
@@ -29,29 +36,32 @@ fun CardsJanitorAnalytics(modifier: Modifier,washer: Washer,scaleSize:Double,sca
     ) {
         Text(
             text = ComposeString.resource(R.string.earned).value(),
-            style = MaterialTheme.typography.body1,
-            fontSize = (20*scaleSize).sp
+            fontFamily = nunitoSans,
+            fontWeight = FontWeight.Bold,
+            fontSize = 16.sp,
+            color = TextColor
         )
         Text(
-//            modifier = Modifier.padding(top = 16.dp),
-            text = washer.status.toString(),
-            style = MaterialTheme.typography.body1,
-            fontSize = ((28-scaleRegulator)*scaleSize).sp,
-            color = GreyTextColor
+            text = washer.stake.toString(),
+            color = GreyTextColor,
+            fontFamily = nunitoSans,
+            fontSize = 24.sp,
+            fontWeight = FontWeight.Bold
         )
         Divider()
         Text(
             text = ComposeString.resource(R.string.janitor_stake).value(),
-            style = MaterialTheme.typography.body1,
-            fontSize = ((20-scaleRegulator)*scaleSize).sp
+            fontFamily = nunitoSans,
+            fontWeight = FontWeight.Bold,
+            fontSize = 16.sp,
+            color = TextColor
         )
         Text(
-//            modifier = Modifier.padding(top = 16.dp),
-            text = "100000 sum",//washer.stake.toString(),
-            style = MaterialTheme.typography.body1,
-            fontSize = ((28-scaleRegulator)*scaleSize).sp,
+            text = washer.stake.toString(),
             color = GreyTextColor,
-            maxLines = 1
+            fontFamily = nunitoSans,
+            fontSize = 24.sp,
+            fontWeight = FontWeight.Bold
         )
 
     }

@@ -6,6 +6,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.wavewash.R
@@ -13,12 +14,17 @@ import com.example.wavewash.ui.theme.nunitoSans
 import com.example.wavewash.utils.ComposeString
 
 @Composable
-fun ServicePriceDuration () {
+fun ServicePriceDuration(
+    serviceName: String,
+    price: String,
+    duration: String
+) {
     Row(
-        modifier = Modifier.padding(top = 24.dp),
-        horizontalArrangement = Arrangement.spacedBy(87.dp)
+        modifier = Modifier
+            .padding(top = 24.dp)
+            .fillMaxWidth()
     ) {
-        Column() {
+        Column(modifier = Modifier.weight(1/3f)) {
             Text(
                 text = ComposeString.resource(R.string.service).value(),
                 fontFamily = nunitoSans,
@@ -28,15 +34,17 @@ fun ServicePriceDuration () {
             )
             Text(
                 modifier = Modifier.padding(top = 5.dp),
-                text = "Some Text",
+                text = serviceName,
                 fontFamily = nunitoSans,
                 fontWeight = FontWeight.Bold,
                 fontSize = 20.sp,
-                color = Color(0XFF383C40)
+                color = Color(0XFF383C40),
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis
             )
         }
 
-        Column() {
+        Column(modifier = Modifier.weight(1/3f)) {
             Text(
                 text = ComposeString.resource(R.string.price).value(),
                 fontFamily = nunitoSans,
@@ -46,7 +54,7 @@ fun ServicePriceDuration () {
             )
             Text(
                 modifier = Modifier.padding(top = 5.dp),
-                text = "Some Text",
+                text = price +" cум",
                 fontFamily = nunitoSans,
                 fontWeight = FontWeight.Bold,
                 fontSize = 20.sp,
@@ -54,7 +62,7 @@ fun ServicePriceDuration () {
             )
         }
 
-        Column() {
+        Column(modifier = Modifier.weight(1/3f)) {
             Text(
                 text = ComposeString.resource(R.string.time).value(),
                 fontFamily = nunitoSans,
@@ -65,7 +73,7 @@ fun ServicePriceDuration () {
 
             Text(
                 modifier = Modifier.padding(top = 5.dp),
-                text = "10 мин",
+                text = "$duration мин",
                 fontFamily = nunitoSans,
                 fontWeight = FontWeight.Bold,
                 fontSize = 20.sp,

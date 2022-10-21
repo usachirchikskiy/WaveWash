@@ -2,13 +2,17 @@ package com.example.wavewash.utils
 
 import com.example.wavewash.R
 
-val BASE_URL = "http://192.168.1.19:8090/"
+val ONE_MINUTE_IN_MILLIS = 60000
+val BASE_URL = "http://192.168.0.107:8090/"
 val ERROR_LOGIN = "error in login"
 val SUCCESS_LOGIN = "success in login"
 val EMAIL_KEY = "email_key"
 val PASSWORD_KEY = "password_key"
 val TOKEN_KEY = "token"
-val REFRESH = "refresh"
+val REFRESH_ORDER = "refresh_order"
+
+val REFRESH_SERVICES = "refresh_services"
+val REFRESH_WASHERS = "refresh_washers"
 
 val tabs = listOf(
     TabItem.Orders,

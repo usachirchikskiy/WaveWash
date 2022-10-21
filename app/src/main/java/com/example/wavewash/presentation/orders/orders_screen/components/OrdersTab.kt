@@ -1,6 +1,7 @@
 package com.example.wavewash.presentation.orders.orders_screen.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.runtime.*
@@ -13,24 +14,29 @@ import com.example.wavewash.utils.ComposeString
 import com.example.wavewash.utils.ordersTab
 
 @Composable
-fun OrdersTab() {
-    var selectedOption by remember {
-        mutableStateOf("Активные")
-    }
-    var selectedIndex by remember {
-        mutableStateOf(0)
-    }
+fun OrdersTab(
+    onClick:(Int)->Unit
+) {
+    val text =  ComposeString.resource(ordersTab[0].title).value()
+    val selectedOption = remember { mutableStateOf(text) }
+
     Row(
         modifier = Modifier
             .background(Color.White)
             .padding(bottom = 24.dp)
     ) {
-        ordersTab.forEachIndexed { _, ordersScreenTab ->
+        ordersTab.forEachIndexed { index, ordersScreenTab ->
+            val btnText = ComposeString.resource(ordersScreenTab.title).value()
             val selected =
-                selectedOption == ComposeString.resource(ordersScreenTab.title).value()
+                selectedOption.value == btnText
 
             Column(
-                modifier = Modifier.width(IntrinsicSize.Min)
+                modifier = Modifier
+                    .width(IntrinsicSize.Min)
+                    .clickable {
+                        selectedOption.value = btnText
+                        onClick.invoke(index)
+                    }
             ) {
                 Text(
                     modifier = Modifier.padding(start = 36.dp, end = 36.dp),

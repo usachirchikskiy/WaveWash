@@ -28,16 +28,13 @@ fun CancelButton(onClick:()->Unit) {
     Row(
         modifier = Modifier
             .clip(Shapes.medium)
-            .clickable {
-                //TODO back button
-            }
+            .clickable { onClick.invoke() }
             .border(
                 width = 1.dp,
                 color = Color.Red,
                 shape = Shapes.medium
             )
-            .padding(horizontal = 21.dp, vertical = 10.dp)
-            .clickable { onClick.invoke() },
+            .padding(horizontal = 21.dp, vertical = 10.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Image(

@@ -9,11 +9,11 @@ import com.google.accompanist.pager.PagerState
 
 @ExperimentalPagerApi
 @Composable
-fun NavGraph(configuration: Configuration,pagerState: PagerState, navController: NavHostController) {
+fun NavGraph(pagerState: PagerState, navController: NavHostController) {
     NavHost(
         navController = navController,
         startDestination = "Main_Graph_Route"
     ) {
-        mainGraph(configuration = configuration,pagerState = pagerState, navController = navController)
+        mainGraph(pagerState = pagerState, navController = navController)
     }
 }

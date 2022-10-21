@@ -22,10 +22,15 @@ import com.example.wavewash.ui.theme.*
 import com.example.wavewash.utils.ComposeString
 
 @Composable
-fun CarModelNumber() {
+fun CarModelNumber(
+    carModel:String,
+    carNumber:String,
+    onChangeCarModelValue: (String) -> Unit,
+    onChangeCarNumber: (String) -> Unit
+) {
 
-    var value by remember { mutableStateOf("Hello World") }
-    var carColor by remember { mutableStateOf(Color.Black) }
+//    val carModel = remember { mutableStateOf("") }
+//    val carNumber = remember { mutableStateOf("") }
     Row(
         modifier = Modifier
             .height(IntrinsicSize.Min)
@@ -45,9 +50,11 @@ fun CarModelNumber() {
                 singleLine = true,
                 modifier = Modifier
                     .padding(top = 5.dp)
-                    .width(width = 310.dp),
-                value = value,
-                onValueChange = { value = it },
+                    .fillMaxWidth(),
+                value = carModel,
+                onValueChange = { it ->
+                    onChangeCarModelValue.invoke(it)
+                },
                 textStyle = TextStyle(
                     fontFamily = nunitoSans,
                     fontSize = 14.sp,
@@ -57,29 +64,7 @@ fun CarModelNumber() {
                 colors = TextFieldDefaults.outlinedTextFieldColors(
                     focusedBorderColor = Color(0XFFD3DDEC), // цвет при получении фокуса
                     unfocusedBorderColor = Color(0XFFD3DDEC)  // цвет при отсутствии фокуса
-                ),
-                trailingIcon = {
-                    Box(
-                        modifier = Modifier
-                            .size(30.dp)
-                            .clip(RoundedCornerShape(9.dp))
-                            .border(
-                                1.dp,
-                                Color(0xFFD3DDEC),
-                                RoundedCornerShape(8.dp)
-                            )
-                            .background(
-                                carColor
-                            ),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Image(
-                            painter = painterResource(R.drawable.car_color),
-                            contentDescription = "",
-                            contentScale = ContentScale.Crop
-                        )
-                    }
-                }
+                )
             )
         }
 
@@ -99,9 +84,11 @@ fun CarModelNumber() {
             OutlinedTextField(
                 modifier = Modifier
                     .padding(top = 5.dp)
-                    .width(width = 310.dp),
-                value = value,
-                onValueChange = { value = it },
+                    .fillMaxWidth(),
+                value = carNumber,
+                onValueChange = {
+                    onChangeCarNumber.invoke(it)
+                },
                 textStyle = TextStyle(
                     fontFamily = nunitoSans,
                     fontSize = 14.sp,

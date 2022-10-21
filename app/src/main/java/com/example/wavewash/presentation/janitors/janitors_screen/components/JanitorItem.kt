@@ -17,8 +17,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.wavewash.R
-import com.example.wavewash.data.remote.dto.WasherAnswerDto
-import com.example.wavewash.domain.model.Washer
+import com.example.wavewash.data.remote.dto.washer.WasherAnswerDto
 import com.example.wavewash.ui.theme.*
 import com.example.wavewash.utils.ComposeString
 import com.skydoves.landscapist.ShimmerParams
@@ -31,8 +30,8 @@ fun JanitorItem(
 ) {
     Card(
         modifier = Modifier
+            .fillMaxWidth()
             .background(Color.White)
-            .height(330.dp)
             .clickable {
                 onJanitorClicked.invoke()
             },
@@ -46,7 +45,7 @@ fun JanitorItem(
                 CoilImage(
                     modifier = Modifier
                         .height(216.dp),
-                    imageModel = "",//TODO CHANGE IMAGE
+                    imageModel = "https://media-exp2.licdn.com/dms/image/C4D03AQFB8ojf_-tmiw/profile-displayphoto-shrink_200_200/0/1601490730164?e=2147483647&v=beta&t=lJVY_VeGE6Vp_VPV4yCrgxQgv-1qsDac6Ut9A2Ey4xw",
                     contentScale = ContentScale.Crop,
 
                     shimmerParams = ShimmerParams(
@@ -94,9 +93,8 @@ fun JanitorItem(
                     .padding(horizontal = 20.dp, vertical = 16.dp)
             ) {
                 Text(
-                    modifier = Modifier.height(52.dp),
                     text = washer.name,
-                    maxLines = 2,
+                    maxLines = 1,
                     style = MaterialTheme.typography.body1,
                     fontSize = 16.sp,
                     overflow = TextOverflow.Ellipsis
@@ -105,7 +103,7 @@ fun JanitorItem(
                 Text(
                     maxLines = 1,
                     modifier = Modifier.padding(top = 8.dp),
-                    text = washer.telephoneNumber.toString(),
+                    text = "+998 ${washer.telephoneNumber}",
                     fontFamily = nunitoSans,
                     fontWeight = FontWeight.SemiBold,
                     fontSize = 12.sp,
@@ -114,6 +112,5 @@ fun JanitorItem(
 
             }
         }
-
     }
 }

@@ -1,10 +1,8 @@
 package com.example.wavewash.nav_graphs
 
 import android.content.res.Configuration
-import androidx.navigation.NavController
-import androidx.navigation.NavGraphBuilder
+import androidx.navigation.*
 import androidx.navigation.compose.composable
-import androidx.navigation.navigation
 import com.example.wavewash.presentation.orders.change_order_screen.ChangeOrderScreen
 import com.example.wavewash.presentation.account.AccountScreen
 import com.example.wavewash.presentation.account.chat_support.ChatSupportScreen
@@ -19,22 +17,22 @@ import com.example.wavewash.presentation.analytics.overall_price.OverallPriceScr
 import com.example.wavewash.presentation.account.password.NewPasswordScreen
 import com.example.wavewash.presentation.helpers.tabs.TabsScreen
 import com.example.wavewash.presentation.login.LoginScreen
+import com.example.wavewash.presentation.services.update_service.UpdateServiceScreen
 import com.example.wavewash.utils.Screen
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.PagerState
 
 @ExperimentalPagerApi
 fun NavGraphBuilder.mainGraph(
-    configuration: Configuration,
     pagerState: PagerState,
     navController: NavController
 ) {
     navigation(
-        startDestination = Screen.MainScreenRoute.route,
+        startDestination = Screen.MainScreenRoute.route,//Screen.LoginScreenRoute.route
         route = "Main_Graph_Route"
     ) {
         //Login
-        composable(route = Screen.LoginScreenRoute.route){
+        composable(route = Screen.LoginScreenRoute.route) {
             LoginScreen(navController)
         }
 
@@ -48,54 +46,72 @@ fun NavGraphBuilder.mainGraph(
             NewOrderScreen(navController)
         }
 
-        composable(Screen.OrderDetailsScreenRoute.route) {
+        composable(
+            Screen.OrderDetailsScreenRoute.route + "/{orderId}",
+            arguments = listOf(navArgument("orderId") {
+                type = NavType.LongType
+            })
+        ) {
             OrderDetailsScreen(navController)
         }
 
-        composable(Screen.ChangeOrderScreenRoute.route) {
+        composable(
+            Screen.ChangeOrderScreenRoute.route + "/{orderId}",
+            arguments = listOf(navArgument("orderId") {
+                type = NavType.LongType
+            })
+        ) {
             ChangeOrderScreen(navController)
         }
 
         //JanitorsNavigation
         composable(Screen.JanitorDetailsScreenRoute.route) {
             JanitorDetailsScreen(
-                navController,
-                configuration
+                navController
             )
         }
 
-        composable(Screen.NewJanitorScreenRoute.route){
+        composable(Screen.NewJanitorScreenRoute.route) {
             NewJanitorScreen(navController)
         }
 
         //ServicesNavigation
-        composable(Screen.NewServiceScreenRoute.route){
+        composable(Screen.NewServiceScreenRoute.route) {
             NewServiceScreen(navController)
         }
 
+        composable(
+            Screen.UpdateServiceScreen.route + "/{serviceId}",
+            arguments = listOf(navArgument("serviceId") {
+                type = NavType.LongType
+            })
+        ) {
+            UpdateServiceScreen(navController)
+        }
+
         //AnalyticsNavigation
-        composable(Screen.OverallPriceScreenRoute.route){
+        composable(Screen.OverallPriceScreenRoute.route) {
             OverallPriceScreen(navController)
         }
 
-        composable(Screen.JanitorStakeScreenRoute.route){
+        composable(Screen.JanitorStakeScreenRoute.route) {
             JanitorStakeScreen(navController)
         }
 
         //AccountNavigation
-        composable(Screen.AccountScreenRoute.route){
+        composable(Screen.AccountScreenRoute.route) {
             AccountScreen(navController)
         }
 
-        composable(Screen.JournalActionsScreenRoute.route){
+        composable(Screen.JournalActionsScreenRoute.route) {
             JournalActionsScreen(navController)
         }
 
-        composable(Screen.NewPasswordScreenRoute.route){
+        composable(Screen.NewPasswordScreenRoute.route) {
             NewPasswordScreen(navController)
         }
 
-        composable(Screen.ChatSupportScreenRoute.route){
+        composable(Screen.ChatSupportScreenRoute.route) {
             ChatSupportScreen(navController)
         }
 

@@ -1,4 +1,4 @@
-package com.example.wavewash.data.remote.dto
+package com.example.wavewash.data.remote.dto.washer
 
 data class WasherDto(
     val name: String,

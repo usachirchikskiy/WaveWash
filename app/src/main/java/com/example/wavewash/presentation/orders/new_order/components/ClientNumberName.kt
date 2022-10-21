@@ -5,6 +5,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
 import androidx.compose.material.TextFieldDefaults
@@ -16,6 +17,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.wavewash.R
@@ -24,8 +26,12 @@ import com.example.wavewash.ui.theme.nunitoSans
 import com.example.wavewash.utils.ComposeString
 
 @Composable
-fun ClientNumberName() {
-    var value by remember { mutableStateOf("Hello World") }
+fun ClientNumberName(
+    clientNumber:String,
+    clientName:String,
+    onChangeClientNumber: (String) -> Unit,
+    onChangeClientName: (String) -> Unit
+) {
     Row(
         modifier = Modifier
             .height(IntrinsicSize.Min)
@@ -45,9 +51,11 @@ fun ClientNumberName() {
                 singleLine = true,
                 modifier = Modifier
                     .padding(top = 5.dp)
-                    .width(width = 310.dp),
-                value = value,
-                onValueChange = { value = it },
+                    .fillMaxWidth(),
+                value = clientName,
+                onValueChange = {
+                    onChangeClientName.invoke(it)
+                },
                 textStyle = TextStyle(
                     fontFamily = nunitoSans,
                     fontSize = 14.sp,
@@ -75,11 +83,19 @@ fun ClientNumberName() {
             )
 
             OutlinedTextField(
+                singleLine = true,
                 modifier = Modifier
                     .padding(top = 5.dp)
-                    .width(width = 310.dp),
-                value = value,
-                onValueChange = { value = it },
+                    .fillMaxWidth(),
+                value = clientNumber,
+                onValueChange = {
+                    if(it.length<=9) {
+                        onChangeClientNumber.invoke(it)
+                    }
+                },
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Number
+                ),
                 textStyle = TextStyle(
                     fontFamily = nunitoSans,
                     fontSize = 14.sp,
@@ -89,7 +105,17 @@ fun ClientNumberName() {
                 colors = TextFieldDefaults.outlinedTextFieldColors(
                     focusedBorderColor = Color(0XFFD3DDEC), // цвет при получении фокуса
                     unfocusedBorderColor = Color(0XFFD3DDEC)  // цвет при отсутствии фокуса
-                )
+                ),
+                leadingIcon = {
+                    Text(
+                        modifier = Modifier.padding(start = 14.dp),
+                        text = "+998",
+                        fontFamily = nunitoSans,
+                        fontSize = 14.sp,
+                        color = TextColor,
+                        fontWeight = FontWeight.ExtraBold
+                    )
+                }
             )
         }
     }

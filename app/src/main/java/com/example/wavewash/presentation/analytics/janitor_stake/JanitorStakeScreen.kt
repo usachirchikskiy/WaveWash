@@ -91,12 +91,12 @@ fun JanitorStakeScreen(
             StakeHeadersOfList()
             LazyColumn {
                 items(list.size) { index ->
-                    OrderItem(
-                        list[index],
-                        onClick = {
-
-                        }
-                    )
+//                    OrderItem(
+//                        list[index],
+//                        onClick = {
+//
+//                        }
+//                    )
                     Divider(
                         modifier = Modifier.fillMaxWidth(),
                         color = HeaderButtonStroke

@@ -17,16 +17,19 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.wavewash.R
-import com.example.wavewash.domain.model.Service
+import com.example.wavewash.data.remote.dto.service.ServiceAnswerDto
 import com.example.wavewash.ui.theme.*
 import com.example.wavewash.utils.ComposeString
 
 @Composable
 fun ServiceItem(
-    service: Service
+    service: ServiceAnswerDto,
+    change: (Long) -> Unit
 ) {
     Card(
-        modifier = Modifier.background(Color.White),
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(Color.White),
         shape = Shapes.medium,
         elevation = 0.dp,
         border = BorderStroke(1.dp, HeaderButtonStroke),
@@ -40,31 +43,29 @@ fun ServiceItem(
         ) {
 
             Text(
-                modifier = Modifier.height(75.dp),
+                modifier = Modifier.height(66.dp),
                 text = service.name,
                 maxLines = 2,
                 fontFamily = nunitoSans,
                 fontWeight = FontWeight.SemiBold,
-                fontSize = 20.sp,
+                fontSize = 24.sp,
             )
 
             Text(
                 modifier = Modifier.padding(top = 10.dp),
-                text = service.duration.toString()
-                        + " "// + ComposeString.resource(R.string.minutes).value(),
-                ,
+                text = service.duration.toString() + " " + ComposeString.resource(R.string.minutes).value(),
                 style = MaterialTheme.typography.h2,
                 fontSize = 14.sp
             )
 
             Text(
                 modifier = Modifier.padding(top = 10.dp),
-                text = service.duration.toString(),
+                text = service.price.toString() + " " + ComposeString.resource(R.string.sum).value(),
                 style = TextStyle(
                     color = GreyTextColor,
                     fontFamily = nunitoSans,
                     fontWeight = FontWeight.ExtraBold,
-                    fontSize = 18.sp
+                    fontSize = 24.sp
                 )
             )
 
@@ -80,7 +81,7 @@ fun ServiceItem(
                         shape = Shapes.medium
                     )
                     .clickable {
-
+                        change.invoke(service.id)
                     }
                     .background(
                         color = Color.White

@@ -1,7 +1,5 @@
 package com.example.wavewash.presentation.login
 
-import com.example.wavewash.data.remote.dto.LoginDto
-
 sealed class LoginEvents{
 
     data class Login(

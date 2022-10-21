@@ -17,7 +17,7 @@ import com.example.wavewash.ui.theme.nunitoSans
 import com.example.wavewash.utils.ComposeString
 
 @Composable
-fun TextMinutes (){
+fun TextMinutes (duration:String){
     Row(
         modifier = Modifier
             .fillMaxWidth(),
@@ -27,26 +27,26 @@ fun TextMinutes (){
             text = ComposeString.resource(R.string.order_detail).value(),
             fontFamily = nunitoSans,
             fontWeight = FontWeight.Bold,
-            fontSize = 20.sp,
+            fontSize = 24.sp,
             color = TextColor
         )
         Spacer(modifier = Modifier.weight(1f))
         Box(
             modifier = Modifier
-                .size(132.dp, 39.dp)
                 .border(
                     width = 1.dp,
                     color = Color(0XFFD3DDEC),
                     shape = Shapes.small
-                ),
+                )
+                .padding(horizontal = 34.dp, vertical = 10.dp),
             contentAlignment = Alignment.Center
         ){
             Text(
-                modifier = Modifier.padding(horizontal = 34.dp),
+//                modifier = Modifier.padding(horizontal = 34.dp),
                 fontFamily = nunitoSans,
                 fontWeight = FontWeight.Bold,
                 fontSize = 14.sp,
-                text = "минут"
+                text = "$duration минут"
             )
         }
     }

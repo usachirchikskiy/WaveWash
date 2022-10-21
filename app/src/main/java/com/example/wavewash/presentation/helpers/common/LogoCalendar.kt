@@ -35,15 +35,15 @@ fun LogoCalendar() {
             text = ComposeString.resource(R.string.app_name).value()
         )
         Spacer(modifier = Modifier.weight(1f))
-        Calendar(
-            modifier = Modifier
-                .size(280.dp, 40.dp)
-                .clip(Shapes.small)
-                .background(Color.White),
-            onCalendarPopup = {
-
-            }
-        )
+//        Calendar(
+//            modifier = Modifier
+//                .size(280.dp, 40.dp)
+//                .clip(Shapes.small)
+//                .background(Color.White),
+//            onCalendarPopup = {
+//
+//            }
+//        )
     }
 
 

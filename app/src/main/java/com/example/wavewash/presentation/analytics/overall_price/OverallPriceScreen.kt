@@ -91,12 +91,12 @@ fun OverallPriceScreen(
             OverallHeadersOfList()
             LazyColumn {
                 items(list.size) { index ->
-                    OrderItem(
-                        list[index],
-                        onClick = {
-                            //TODO
-                        }
-                    )
+//                    OrderItem(
+//                        list[index],
+//                        onClick = {
+//                            //TODO
+//                        }
+//                    )
                     Divider(
                         modifier = Modifier.fillMaxWidth(),
                         color = HeaderButtonStroke

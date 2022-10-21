@@ -17,7 +17,11 @@ import com.example.wavewash.ui.theme.nunitoSans
 
 @Composable
 fun Calendar(
+    onNextClick:()->Unit,
+    onPreviousClick:()->Unit,
     modifier: Modifier,
+    beginDate: String,
+    endDate: String,
     onCalendarPopup: () -> Unit
 ) {
     Row(
@@ -30,7 +34,7 @@ fun Calendar(
     ) {
         IconButton(
             onClick = {
-
+                onPreviousClick.invoke()
             },
         ) {
             Icon(
@@ -42,14 +46,44 @@ fun Calendar(
 
         Row {
             Text(
-                text = "7 марта, ",
+                text = if (beginDate != "") {
+                    beginDate.split(" ")[0] + " " + beginDate.split(" ")[1] + ", "
+                } else {
+                    ""
+                },
                 fontFamily = nunitoSans,
                 fontWeight = FontWeight.Bold,
                 fontSize = 12.sp,
                 color = Color(0xFF242533)
             )
             Text(
-                text = "2022",
+                text = if (beginDate != "") {
+                    beginDate.split(" ")[2]
+                } else {
+                    ""
+                },
+                fontFamily = nunitoSans,
+                fontWeight = FontWeight.Bold,
+                fontSize = 12.sp,
+                color = Color(0xFF86898C)
+            )
+            Text(
+                text = if (endDate != "") {
+                    "-"+endDate.split(" ")[0] + " " + endDate.split(" ")[1] + ", "
+                } else {
+                    ""
+                },
+                fontFamily = nunitoSans,
+                fontWeight = FontWeight.Bold,
+                fontSize = 12.sp,
+                color = Color(0xFF242533)
+            )
+            Text(
+                text = if (endDate != "") {
+                    endDate.split(" ")[2]
+                } else {
+                    ""
+                },
                 fontFamily = nunitoSans,
                 fontWeight = FontWeight.Bold,
                 fontSize = 12.sp,
@@ -59,7 +93,7 @@ fun Calendar(
 
         IconButton(
             onClick = {
-
+                onNextClick.invoke()
             },
         ) {
             Icon(

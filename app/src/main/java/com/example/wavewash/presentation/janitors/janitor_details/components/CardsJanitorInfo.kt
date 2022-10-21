@@ -17,6 +17,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.wavewash.R
@@ -29,22 +30,20 @@ import com.skydoves.landscapist.coil.CoilImage
 @Composable
 fun CardsJanitorInfo(
     modifier: Modifier,
-    washer: Washer,
-    scaleSize: Double,
-    scaleRegulator: Double
+    washer: Washer
 ) {
     Row(
         modifier = modifier
-            .padding(top = 28.dp)
+            .padding(top = 32.dp)
             .clip(Shapes.large)
             .background(Color.White)
-            .padding(20.dp)
+            .padding(24.dp)
     ) {
         Box() {
             CoilImage(
                 modifier = Modifier
                     .clip(RoundedCornerShape(8.dp))
-                    .size(186.dp),
+                    .size(180.dp),
                 imageModel = washer.imageUrl,
                 contentScale = ContentScale.Crop,            // crop the image if it's not a square
 
@@ -64,27 +63,22 @@ fun CardsJanitorInfo(
             )
             Box(
                 modifier = Modifier
-                    .padding(
-                        start = 16.dp,
-                        top = 16.dp
-                    )
+                    .padding(start = 16.dp, top = 16.dp)
+                    .clip(Shapes.medium)
+                    .background(BackOfOrdersList)
+                    .padding(horizontal = 9.dp, vertical = 5.dp)
             ) {
                 Text(
-                    modifier = Modifier
-                        .clip(Shapes.medium)
-                        .background(BackOfOrdersList)
-                        .padding(
-                            horizontal = 9.dp, vertical = 5.dp
-                        ),
                     text = if (washer.status) ComposeString.resource(R.string.free).value()
                     else {
                         ComposeString.resource(R.string.busy).value()
                     },
-                    fontSize = ((12 - scaleRegulator) * scaleSize).sp,
+                    fontSize = 12.sp,
                     color = if (washer.status) StatusFree
                     else {
                         StatusBusy
-                    }
+                    },
+                    fontWeight = FontWeight.Bold
                 )
             }
         }
@@ -92,65 +86,65 @@ fun CardsJanitorInfo(
 
         Column(
             modifier = Modifier
-                .padding(start = 24.dp),
+                .padding(start = 24.dp)
+                .fillMaxHeight(),
             verticalArrangement = Arrangement.SpaceBetween
         ) {
             Text(
-                text = washer.fullName + " Artur",
+                text = washer.fullName,
                 style = MaterialTheme.typography.h1,
-                fontSize = ((28 - scaleRegulator) * scaleSize).sp,
+                fontSize = 24.sp,
                 color = GreyTextColor,
-                maxLines = 2
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis
             )
             Text(
-                modifier = Modifier.padding(top = 13.dp),
                 text = washer.phoneNumber,
-                style = MaterialTheme.typography.h1,
-                fontSize = ((20 - scaleRegulator) * scaleSize).sp
+                fontFamily = nunitoSans,
+                fontWeight = FontWeight.Bold,
+                fontSize = 16.sp,
+                color = TextColor
             )
-            Row(modifier = Modifier.padding(top = 11.dp)) {
+
+            Row {
                 Text(
                     text = ComposeString.resource(R.string.stake_from_service).value(),
-                    fontFamily = FontFamily(Font(R.font.nunitosans_regular)),
-                    fontSize = ((16 - scaleRegulator) * scaleSize).sp
+                    fontFamily = nunitoSans,
+                    fontWeight = FontWeight.Normal,
+                    fontSize = 14.sp
                 )
                 Text(
-                    text = " " + washer.stake.toString() +"%",
-                    fontFamily = FontFamily(Font(R.font.nunitosans_bold)),
-                    fontSize = ((16 - scaleRegulator) * scaleSize).sp
+                    text = " " + washer.stake.toString() + "%",
+                    fontFamily = nunitoSans,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 16.sp
                 )
             }
 
-            Spacer(modifier = Modifier.weight(1f))
-            Row {
-                Spacer(modifier = Modifier.weight(1f))
-                Column(
-                    modifier = Modifier
-                        .clip(
-                            shape = Shapes.medium
-                        )
-                        .clickable {
-
-                        }
-                        .border(
-                            width = 1.dp,
-                            color = HeaderButtonStroke,
-                            shape = Shapes.medium
-                        ),
-                    horizontalAlignment = Alignment.End
-                ) {
-                    Text(
-                        modifier = Modifier
-                            .padding(horizontal = 34.dp, vertical = 10.dp),
-                        text = ComposeString.resource(R.string.change).value(),
-                        style = TextStyle(
-                            color = HeaderButtonColor,
-                            fontFamily = nunitoSans,
-                            fontWeight = FontWeight.SemiBold,
-                            fontSize = ((18 - scaleRegulator) * scaleSize).sp
-                        )
+            Column(
+                modifier = Modifier
+                    .clip(
+                        shape = Shapes.medium
                     )
-                }
+                    .clickable {
+
+                    }
+                    .border(
+                        width = 1.dp,
+                        color = HeaderButtonStroke,
+                        shape = Shapes.medium
+                    )
+                    .padding(horizontal = 34.dp, vertical = 10.dp)
+            ) {
+                Text(
+                    text = ComposeString.resource(R.string.change).value(),
+                    style = TextStyle(
+                        color = HeaderButtonColor,
+                        fontFamily = nunitoSans,
+                        fontWeight = FontWeight.SemiBold,
+                        fontSize = 14.sp
+                    )
+                )
             }
         }
     }

@@ -1,9 +1,6 @@
 package com.example.wavewash.presentation.helpers.popups.components
 
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -28,21 +25,25 @@ import com.skydoves.landscapist.coil.CoilImage
 
 @Composable
 fun NewAddPopup(
-    isJanitor: Boolean = false
+    isJanitor: Boolean = false,
+    onClick: () -> Unit
 ) {
     Column(
         modifier = Modifier
             .height(
-                if (!isJanitor) 255.dp
+                if (!isJanitor) 216.dp
                 else {
-                    330.dp
+                    340.dp
                 }
             )
             .clip(Shapes.medium)
             .border(
                 BorderStroke(1.dp, HeaderButtonStroke),
                 shape = Shapes.medium
-            ),
+            )
+            .clickable {
+                onClick.invoke()
+            },
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {

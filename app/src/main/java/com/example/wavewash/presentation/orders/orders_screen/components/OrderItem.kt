@@ -14,26 +14,29 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.wavewash.R
+import com.example.wavewash.data.remote.dto.order.OrderAnswerDto
 import com.example.wavewash.domain.model.Order
 import com.example.wavewash.ui.theme.QuantityOfServices
 import com.example.wavewash.ui.theme.Shapes
 import com.example.wavewash.ui.theme.TextColor
 import com.example.wavewash.ui.theme.nunitoSans
 import com.example.wavewash.utils.ComposeString
+import com.example.wavewash.utils.convert
+import com.example.wavewash.utils.durationOfServices
 
 @Composable
 fun OrderItem(
-    order: Order,
+    order: OrderAnswerDto,
     onClick: () -> Unit
 ) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(start = 16.dp, end = 16.dp)
-            .defaultMinSize(minHeight = 56.dp)
             .clickable {
                 onClick.invoke()
-            },
+            }
+            .padding(start = 16.dp, end = 16.dp)
+            .defaultMinSize(minHeight = 56.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
 
@@ -60,17 +63,36 @@ fun OrderItem(
 //                failure = {
 //                    Text(text = "image request failed.")
 //                })
-
             Text(
-               // modifier = Modifier.padding(start = 8.dp),
-                text = order.workerName,
+                modifier = if (order.washers.size > 1) {
+                    Modifier
+                        .clip(Shapes.medium)
+                        .background(QuantityOfServices)
+                        .padding(10.dp, 5.dp)
+                } else {
+                    Modifier
+                },
+                text = if (order.washers.size > 1) {
+                    order.washers.size.toString() + " " + ComposeString.resource(R.string.quantity)
+                        .value()
+                } else {
+                    order.washers[0].name
+                },
                 fontFamily = nunitoSans,
                 fontWeight = FontWeight.Normal,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
                 fontSize = 12.sp,
-                color = TextColor
+                color = TextColor,
+                overflow = TextOverflow.Ellipsis
             )
+//            Text(
+//                text = order.washers[0].name,
+//                fontFamily = nunitoSans,
+//                fontWeight = FontWeight.Normal,
+//                maxLines = 1,
+//                overflow = TextOverflow.Ellipsis,
+//                fontSize = 12.sp,
+//                color = TextColor
+//            )
         }
 
         Row(
@@ -99,7 +121,7 @@ fun OrderItem(
 
             Text(
                 //modifier = Modifier.padding(start = 8.dp),
-                text = order.carName,
+                text = order.carModel,
                 fontFamily = nunitoSans,
                 fontWeight = FontWeight.Normal,
                 fontSize = 12.sp,
@@ -128,7 +150,7 @@ fun OrderItem(
                     .clip(Shapes.medium)
                     .background(QuantityOfServices)
                     .padding(10.dp, 5.dp),
-                text = order.quantityOfServices.toString() + " " + ComposeString.resource(R.string.quantity)
+                text = order.services.size.toString() + " " + ComposeString.resource(R.string.quantity)
                     .value(),
                 fontFamily = nunitoSans,
                 fontWeight = FontWeight.Normal,
@@ -140,7 +162,7 @@ fun OrderItem(
         Text(
             modifier = Modifier
                 .weight(0.20f),
-            text = order.time,
+            text = convert(order.date, durationOfServices(order.services)),
             fontFamily = nunitoSans,
             fontWeight = FontWeight.Normal,
             fontSize = 12.sp,

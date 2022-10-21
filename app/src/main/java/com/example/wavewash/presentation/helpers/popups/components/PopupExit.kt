@@ -28,3 +28,21 @@ fun PopupExit(
     )
 
 }
+
+@Composable
+fun PopupExitMiniRed(
+    onClose: () -> Unit
+) {
+    Image(
+
+        modifier = Modifier
+            .clip(CircleShape)
+            .clickable {
+                onClose.invoke()
+            },
+        painter = painterResource(R.drawable.exit_red_mini),
+        contentDescription = "",
+        contentScale = ContentScale.Crop
+    )
+
+}

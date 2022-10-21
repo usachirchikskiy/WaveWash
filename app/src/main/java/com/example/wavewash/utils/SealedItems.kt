@@ -8,7 +8,7 @@ import com.example.wavewash.R
 import com.example.wavewash.presentation.analytics.AnalyticsScreen
 import com.example.wavewash.presentation.janitors.janitors_screen.JanitorsScreen
 import com.example.wavewash.presentation.orders.OrdersScreen
-import com.example.wavewash.presentation.services.ServicesScreen
+import com.example.wavewash.presentation.services.services_screen.ServicesScreen
 
 typealias ComposableFun = @Composable (navController: NavController) -> Unit
 typealias ComposableString = @Composable () -> String
@@ -50,6 +50,7 @@ sealed class Screen(val route:String){
 
     //ServicesGraph
     object NewServiceScreenRoute:Screen("NewServiceScreenRoute")
+    object UpdateServiceScreen:Screen("UpdateServiceScreen")
 
     //AnalyticsGraph
     object JanitorStakeScreenRoute:Screen("JanitorStakeScreenRoute")
