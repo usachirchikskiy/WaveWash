@@ -29,6 +29,7 @@ import com.example.wavewash.ui.theme.Shapes
 import com.example.wavewash.utils.*
 
 private const val TAG = "OrdersScreen"
+
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -36,34 +37,34 @@ fun OrdersScreen(
     navController: NavController,
     viewModel: OrdersViewModel = hiltViewModel()
 ) {
-    val openDialogCustom =  remember { mutableStateOf(false) }
+    val openDialogCustom = remember { mutableStateOf(false) }
     val state = viewModel.state
 
-    val screenResultState = navController.currentBackStackEntry
-        ?.savedStateHandle
-        ?.get<String>(REFRESH_ORDER)
+//    val screenResultState = navController.currentBackStackEntry
+//        ?.savedStateHandle
+//        ?.get<String>(REFRESH_ORDER)
+//
+//    screenResultState?.let { value ->
+//        navController.currentBackStackEntry
+//            ?.savedStateHandle
+//            ?.remove<String>(REFRESH_ORDER)
+//
+//        if (value == REFRESH_ORDER) {
+//            viewModel.onTriggerEvent(OrdersEvent.ReloadOrders)
+//        }
+//
+//    }
 
-    screenResultState?.let { value ->
-        navController.currentBackStackEntry
-            ?.savedStateHandle
-            ?.remove<String>(REFRESH_ORDER)
-
-        if (value == REFRESH_ORDER) {
-            viewModel.onTriggerEvent(OrdersEvent.ReloadOrders)
-        }
-
-    }
-
-    if(openDialogCustom.value){
+    if (openDialogCustom.value) {
         CalendarDialog(
             openDialogCustom = openDialogCustom,
-            dateRangeSelected = { dateFrom,dateTo->
-                viewModel.onTriggerEvent(OrdersEvent.ChangeDates(dateFrom,dateTo))
+            dateRangeSelected = { dateFrom, dateTo ->
+                viewModel.onTriggerEvent(OrdersEvent.ChangeDates(dateFrom, dateTo))
             }
         )
     }
 
-    Column{
+    Column {
         Calendar(
             modifier = Modifier
                 .padding(vertical = 16.dp)
@@ -93,24 +94,26 @@ fun OrdersScreen(
             item {
                 Column {
                     ScreenHeaders(
+                        isVisible = state.isVisibleTabs,
                         headerOrderButtons,
                         ComposeString.resource(R.string.add_order).value(),
-                        onClick = { index->
-                            when (index){
+                        onClick = { index ->
+                            when (index) {
                                 0 -> navController.navigate(Screen.NewOrderScreenRoute.route)
                             }
                         }
                     )
-                    OrdersTab(
-                        onClick = { index->
-                            if(index==0){
-                                viewModel.onTriggerEvent(OrdersEvent.ActiveOrders)
+                    if(state.isVisibleTabs) {
+                        OrdersTab(
+                            onClick = { index ->
+                                if (index == 0) {
+                                    viewModel.onTriggerEvent(OrdersEvent.ActiveOrders)
+                                } else {
+                                    viewModel.onTriggerEvent(OrdersEvent.FinishedOrders)
+                                }
                             }
-                            else{
-                                viewModel.onTriggerEvent(OrdersEvent.FinishedOrders)
-                            }
-                        }
-                    )
+                        )
+                    }
                 }
             }
 
@@ -126,7 +129,7 @@ fun OrdersScreen(
                 OrderItem(
                     order = state.orders[index],
                     onClick = {
-                        navController.navigate(Screen.OrderDetailsScreenRoute.route+"/${state.orders[index].id}")
+                        navController.navigate(Screen.OrderDetailsScreenRoute.route + "/${state.orders[index].id}")
                     }
                 )
                 Divider(

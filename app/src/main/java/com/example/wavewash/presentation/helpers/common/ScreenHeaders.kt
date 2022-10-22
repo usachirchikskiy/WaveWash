@@ -18,16 +18,21 @@ import com.example.wavewash.utils.ScreenHeader
 
 @Composable
 fun ScreenHeaders(
+    isVisible: Boolean,
     headers: List<ScreenHeader>,
     selectedOption: String,
-    onClick:(Int)->Unit
+    onClick: (Int) -> Unit
 ) {
     Row(
         modifier = Modifier
             .background(Color.White)
             .padding(bottom = 24.dp)
     ) {
-        headers.forEachIndexed { index, btn ->
+        for(index in headers.indices){
+            val btn = headers[index]
+            if(!isVisible && index==0){
+                continue
+            }
             val selected = selectedOption == btn.buttonText.invoke()
             Box(
                 modifier = Modifier
@@ -97,5 +102,7 @@ fun ScreenHeaders(
             }
             Spacer(Modifier.width(16.dp))
         }
+//        headers.forEachIndexed { index, btn ->
+//        }
     }
 }

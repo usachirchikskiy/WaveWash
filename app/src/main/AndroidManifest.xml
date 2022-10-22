@@ -4,6 +4,7 @@
     package="com.example.wavewash">
     <uses-permission android:name="android.permission.INTERNET"/>
     <application
+        android:screenOrientation="portrait"
         android:name=".BaseApplication"
         android:usesCleartextTraffic="true"
         android:allowBackup="true"

@@ -63,15 +63,15 @@ fun JanitorsScreen(navController: NavController, viewModel: JanitorViewModel = h
             .padding(top = 24.dp)
     ) {
         item {
-            ScreenHeaders(
-                headerJanitorButtons,
-                ComposeString.resource(R.string.new_janitor).value(),
-                onClick = { index ->
-                    when (index) {
-                        0 -> navController.navigate(Screen.NewJanitorScreenRoute.route)
-                    }
-                }
-            )
+//            ScreenHeaders(
+//                headerJanitorButtons,
+//                ComposeString.resource(R.string.new_janitor).value(),
+//                onClick = { index ->
+//                    when (index) {
+//                        0 -> navController.navigate(Screen.NewJanitorScreenRoute.route)
+//                    }
+//                }
+//            )
         }
 
         stickyHeader {
@@ -104,7 +104,7 @@ fun JanitorsScreen(navController: NavController, viewModel: JanitorViewModel = h
                         JanitorItem(
                             washer = item,
                             onJanitorClicked = {
-                                navController.navigate(Screen.JanitorDetailsScreenRoute.route)
+                                navController.navigate(Screen.JanitorDetailsScreenRoute.route + "/${item.id}")
                             }
                         )
                     }

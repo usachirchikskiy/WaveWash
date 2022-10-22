@@ -16,10 +16,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.wavewash.R
-import com.example.wavewash.presentation.janitors.janitor_details.DetailAppBar
 import com.example.wavewash.presentation.account.journal_actions.components.Action
 import com.example.wavewash.presentation.account.journal_actions.components.ItemCancelled
-import com.example.wavewash.presentation.account.journal_actions.components.ItemChanged
 import com.example.wavewash.ui.theme.HeaderButtonStroke
 import com.example.wavewash.ui.theme.Shapes
 import com.example.wavewash.ui.theme.TextColor
@@ -36,7 +34,7 @@ fun JournalActionsScreen(navController: NavController) {
     )
     val checked = remember { mutableStateOf(false) }
     Column {
-        DetailAppBar(navController)
+//        DetailAppBar(navController)
         Column(
             modifier = Modifier
                 .padding(vertical = 24.dp)

@@ -15,6 +15,7 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
 
 private const val TAG = "Order"
+
 class Order(
     val api: SillyApi,
     val appDataStoreManager: AppDataStore
@@ -32,6 +33,7 @@ class Order(
                 throw ex
             }
             emit(Resource.Success("Order added"))
+
         }.catch { e ->
             Log.d(TAG, "Exception: $e")
             emit(Resource.Error(e.message!!))
@@ -53,33 +55,41 @@ class Order(
             emit(Resource.Error(e.message!!))
         }
 
-    fun get_orders(isActive:Boolean,dateFrom: String, dateTo:String, page: Int): Flow<Resource<List<OrderAnswerDto>>> =
+    fun get_orders(
+        isActive: Boolean,
+        dateFrom: String,
+        dateTo: String,
+        page: Int
+    ): Flow<Resource<List<OrderAnswerDto>>> =
         flow<Resource<List<OrderAnswerDto>>> {
             emit(Resource.Loading())
             try {
                 val token = "Bearer " + appDataStoreManager.readValue(TOKEN_KEY)
                 val companyId = api.get_washCompany_id(token)[0]
-                val result = api.get_orders(token,companyId.toLong(),isActive, dateFrom, dateTo, page)
-                Log.d(TAG, "Result: getOrders  $result")
+                val result =
+                    api.get_orders(token, companyId.toLong(), isActive, dateFrom, dateTo, page)
+
                 emit(Resource.Success(result))
-            }catch(ex:Exception){
+
+
+            } catch (ex: Exception) {
                 throw ex
             }
 
-        }.catch { e->
+        }.catch { e ->
             Log.d(TAG, "Exception: $e")
             emit(Resource.Error(e.message!!))
         }
 
-    fun get_order(orderId:Long): Flow<Resource<OrderAnswerDto>> =
-        flow{
+    fun get_order(orderId: Long): Flow<Resource<OrderAnswerDto>> =
+        flow {
             emit(Resource.Loading())
             try {
                 val token = "Bearer " + appDataStoreManager.readValue(TOKEN_KEY)
-                val result = api.get_order(token,orderId)
+                val result = api.get_order(token, orderId)
                 emit(Resource.Success(result))
                 Log.d(TAG, "Result: getOrder  $result")
-            }catch(ex:Exception){
+            } catch (ex: Exception) {
                 throw ex
             }
 

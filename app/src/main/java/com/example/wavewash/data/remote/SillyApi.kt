@@ -47,6 +47,40 @@ interface SillyApi {
         @Path("washerId") washerId: Long,
     ): WasherAnswerDto
 
+    @GET("api/washer/{washerId}/getOrders")
+    suspend fun get_washer_orders(
+        @Header("Authorization") authorization: String,
+        @Path("washerId") washerId: Long,
+        @Query("isActive") isActive:Boolean,
+        @Query("dateFrom") dateFrom:String,
+        @Query("dateTo") dateTo:String,
+        @Query("page") page:Int,
+    ):List<OrderAnswerDto>
+
+    @GET("api/washer/{washerId}/earnedStake")
+    suspend fun get_washer_earnedStake(
+        @Header("Authorization") authorization: String,
+        @Path("washerId") washerId: Long,
+        @Query("dateFrom") dateFrom:String,
+        @Query("dateTo") dateTo:String,
+    ):Long
+
+    @GET("api/washer/{washerId}/earnedMoney")
+    suspend fun get_washer_earnedMoney(
+        @Header("Authorization") authorization: String,
+        @Path("washerId") washerId: Long,
+        @Query("dateFrom") dateFrom:String,
+        @Query("dateTo") dateTo:String,
+    ):Long
+
+    @GET("api/washer/{companyId}/getFreeWashers")
+    suspend fun get_free_washers(
+        @Header("Authorization") authorization: String,
+        @Path("companyId") companyId: Long,
+        @Query("name") name:String,
+        @Query("page") page:Int,
+    ):List<OrderAnswerDto>
+
     //services
     @POST("api/service/{companyId}/add")
     suspend fun add_service(

@@ -63,7 +63,8 @@ fun JanitorStake(
                         shape = Shapes.small
                     )
                     .padding(horizontal = 14.dp, vertical = 9.dp),
-                verticalAlignment = Alignment.CenterVertically
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 if (washers.size == 1) {
 
@@ -90,7 +91,6 @@ fun JanitorStake(
                     Text(
                         modifier = Modifier
                             .weight(1f)
-                            .padding(start = 8.dp)
                             .clickable {
                                 onDeleteWasherClick.invoke()
                             },
@@ -122,7 +122,7 @@ fun JanitorStake(
 
                 }
 
-                Spacer(Modifier.weight(1f))
+//                Spacer(Modifier.weight(1f))
 
                 Box(
                     modifier = Modifier

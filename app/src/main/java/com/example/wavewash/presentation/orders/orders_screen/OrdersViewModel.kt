@@ -33,10 +33,12 @@ constructor(
         val pair = getFromAndTo()
         val calendarDateFrom = getDate()
         state = state.copy(
+            todayDate = pair.first,
             calendarDateFrom = calendarDateFrom,
             dateFrom = pair.first,
             dateTo = pair.second
         )
+        visibleTabs()
         getOrders()
     }
 
@@ -107,7 +109,7 @@ constructor(
                 endReached = false
             )
         }
-
+        visibleTabs()
     }
 
     private fun onNextDate() {
@@ -148,6 +150,7 @@ constructor(
                 endReached = false
             )
         }
+        visibleTabs()
     }
 
     private fun changeDates(dateTo: String, dateFrom: String) {
@@ -188,6 +191,7 @@ constructor(
                 endReached = false
             )
         }
+        visibleTabs()
     }
 
     private fun getOrders() {
@@ -210,5 +214,14 @@ constructor(
                     }
                 }
             }.launchIn(viewModelScope)
+    }
+
+    private fun visibleTabs(){
+        if(state.todayDate<=state.dateFrom){
+            state = state.copy(isVisibleTabs = true)
+        }
+        else{
+            state = state.copy(isVisibleTabs = false)
+        }
     }
 }

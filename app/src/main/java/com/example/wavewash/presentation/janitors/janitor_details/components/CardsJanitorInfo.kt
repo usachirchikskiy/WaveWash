@@ -21,6 +21,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.wavewash.R
+import com.example.wavewash.data.remote.dto.washer.WasherAnswerDto
 import com.example.wavewash.domain.model.Washer
 import com.example.wavewash.ui.theme.*
 import com.example.wavewash.utils.ComposeString
@@ -30,7 +31,7 @@ import com.skydoves.landscapist.coil.CoilImage
 @Composable
 fun CardsJanitorInfo(
     modifier: Modifier,
-    washer: Washer
+    washer: WasherAnswerDto
 ) {
     Row(
         modifier = modifier
@@ -44,7 +45,7 @@ fun CardsJanitorInfo(
                 modifier = Modifier
                     .clip(RoundedCornerShape(8.dp))
                     .size(180.dp),
-                imageModel = washer.imageUrl,
+                imageModel = "https://mir-s3-cdn-cf.behance.net/user/276/bcb5e41136095279.62c2d74bc3cad.jpg",
                 contentScale = ContentScale.Crop,            // crop the image if it's not a square
 
                 shimmerParams = ShimmerParams(
@@ -69,12 +70,12 @@ fun CardsJanitorInfo(
                     .padding(horizontal = 9.dp, vertical = 5.dp)
             ) {
                 Text(
-                    text = if (washer.status) ComposeString.resource(R.string.free).value()
+                    text = if (!washer.active) ComposeString.resource(R.string.free).value()
                     else {
                         ComposeString.resource(R.string.busy).value()
                     },
                     fontSize = 12.sp,
-                    color = if (washer.status) StatusFree
+                    color = if (!washer.active) StatusFree
                     else {
                         StatusBusy
                     },
@@ -91,7 +92,7 @@ fun CardsJanitorInfo(
             verticalArrangement = Arrangement.SpaceBetween
         ) {
             Text(
-                text = washer.fullName,
+                text = washer.name,
                 style = MaterialTheme.typography.h1,
                 fontSize = 24.sp,
                 color = GreyTextColor,
@@ -99,14 +100,14 @@ fun CardsJanitorInfo(
                 overflow = TextOverflow.Ellipsis
             )
             Text(
-                text = washer.phoneNumber,
+                text = "+998 "+ washer.telephoneNumber.toString(),
                 fontFamily = nunitoSans,
                 fontWeight = FontWeight.Bold,
                 fontSize = 16.sp,
                 color = TextColor
             )
 
-            Row {
+            Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(
                     text = ComposeString.resource(R.string.stake_from_service).value(),
                     fontFamily = nunitoSans,

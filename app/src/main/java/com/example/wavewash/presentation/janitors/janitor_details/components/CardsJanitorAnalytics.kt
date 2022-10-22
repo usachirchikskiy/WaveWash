@@ -24,7 +24,8 @@ import com.example.wavewash.utils.ComposeString
 @Composable
 fun CardsJanitorAnalytics(
     modifier: Modifier,
-    washer: Washer
+    earnedMoney:String,
+    earnedStake:String
 ) {
     Column(
         modifier = modifier
@@ -42,7 +43,7 @@ fun CardsJanitorAnalytics(
             color = TextColor
         )
         Text(
-            text = washer.stake.toString(),
+            text = earnedMoney,
             color = GreyTextColor,
             fontFamily = nunitoSans,
             fontSize = 24.sp,
@@ -57,7 +58,7 @@ fun CardsJanitorAnalytics(
             color = TextColor
         )
         Text(
-            text = washer.stake.toString(),
+            text = earnedStake,
             color = GreyTextColor,
             fontFamily = nunitoSans,
             fontSize = 24.sp,

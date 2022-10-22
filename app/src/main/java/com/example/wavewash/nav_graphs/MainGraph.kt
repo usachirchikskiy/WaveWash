@@ -1,6 +1,8 @@
 package com.example.wavewash.nav_graphs
 
 import android.content.res.Configuration
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.navigation.*
 import androidx.navigation.compose.composable
 import com.example.wavewash.presentation.orders.change_order_screen.ChangeOrderScreen
@@ -22,13 +24,14 @@ import com.example.wavewash.utils.Screen
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.PagerState
 
+@RequiresApi(Build.VERSION_CODES.O)
 @ExperimentalPagerApi
 fun NavGraphBuilder.mainGraph(
     pagerState: PagerState,
     navController: NavController
 ) {
     navigation(
-        startDestination = Screen.MainScreenRoute.route,//Screen.LoginScreenRoute.route
+        startDestination = Screen.LoginScreenRoute.route,//Screen.LoginScreenRoute.route
         route = "Main_Graph_Route"
     ) {
         //Login
@@ -65,7 +68,12 @@ fun NavGraphBuilder.mainGraph(
         }
 
         //JanitorsNavigation
-        composable(Screen.JanitorDetailsScreenRoute.route) {
+        composable(
+            Screen.JanitorDetailsScreenRoute.route + "/{washerId}",
+            arguments = listOf(navArgument("washerId") {
+                type = NavType.LongType
+            })
+        ) {
             JanitorDetailsScreen(
                 navController
             )

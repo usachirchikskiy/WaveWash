@@ -81,13 +81,13 @@ fun JanitorStakeScreen(
                 fontSize = 35.sp,
             )
 
-            ScreenHeaders(
-                headers = headerOverallButtons,
-                selectedOption = "",
-                onClick = {
-                    //Todo export
-                }
-            )
+//            ScreenHeaders(
+//                headers = headerOverallButtons,
+//                selectedOption = "",
+//                onClick = {
+//                    //Todo export
+//                }
+//            )
             StakeHeadersOfList()
             LazyColumn {
                 items(list.size) { index ->

@@ -81,13 +81,13 @@ fun OverallPriceScreen(
                 fontSize = 35.sp,
             )
 
-            ScreenHeaders(
-                headers = headerOverallButtons,
-                selectedOption = "",
-                onClick = {
-                    //Todo export
-                }
-            )
+//            ScreenHeaders(
+//                headers = headerOverallButtons,
+//                selectedOption = "",
+//                onClick = {
+//                    //Todo export
+//                }
+//            )
             OverallHeadersOfList()
             LazyColumn {
                 items(list.size) { index ->

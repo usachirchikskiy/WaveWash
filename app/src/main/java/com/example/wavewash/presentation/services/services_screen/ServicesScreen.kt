@@ -69,15 +69,15 @@ fun ServicesScreen(
     ) {
 
         item {
-            ScreenHeaders(
-                headerServiceButtons,
-                ComposeString.resource(R.string.new_service).value(),
-                onClick = { index ->
-                    when (index) {
-                        0 -> navController.navigate(Screen.NewServiceScreenRoute.route)
-                    }
-                }
-            )
+//            ScreenHeaders(
+//                headerServiceButtons,
+//                ComposeString.resource(R.string.new_service).value(),
+//                onClick = { index ->
+//                    when (index) {
+//                        0 -> navController.navigate(Screen.NewServiceScreenRoute.route)
+//                    }
+//                }
+//            )
         }
 
         stickyHeader {

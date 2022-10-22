@@ -4,6 +4,8 @@ import com.example.wavewash.data.remote.dto.order.OrderAnswerDto
 import com.example.wavewash.data.remote.dto.washer.WasherAnswerDto
 
 data class OrderState(
+    val isVisibleTabs:Boolean = false,
+    val todayDate:String = "",
     val orders:List<OrderAnswerDto> = listOf(),
     val page:Int = 0,
     val isActive:Boolean = true,
