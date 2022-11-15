@@ -1,8 +1,14 @@
 package com.example.wavewash.utils
 
-import android.util.Log
-import com.example.wavewash.data.remote.dto.service.ServiceAnswerDto
-import com.example.wavewash.data.remote.dto.washer.WasherAnswerDto
+import android.content.Context
+import android.database.Cursor
+import android.net.Uri
+import android.provider.DocumentsContract
+import android.provider.MediaStore
+import com.example.wavewash.data.remote.dto.service.ServiceDto
+import com.example.wavewash.domain.model.Service
+import com.example.wavewash.domain.model.Washer
+import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -15,19 +21,19 @@ fun convert(time: Long, duration: Int): String {
     return "$begin-$end"
 }
 
-fun durationOfServices(services: List<ServiceAnswerDto>): Int {
+fun durationOfServices(services: List<Service>): Int {
     return services.sumOf {
         it.duration
     }
 }
 
-fun priceOfServices(services: List<ServiceAnswerDto>): Int {
+fun priceOfServices(services: List<Service>): Int {
     return services.sumOf {
         it.price
     }
 }
 
-fun priceOfJanitorsStake(washers: List<WasherAnswerDto>, price: Int): Int {
+fun priceOfJanitorsStake(washers: List<Washer>, price: Int): Int {
     val size = washers.size
     if (size > 0) {
         val maxstake = washers.maxOf {
@@ -79,26 +85,51 @@ fun getDifferenceBetweenDates(dateFrom: String, dateTo: String): Long {
     return TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS)
 }
 
-//object Devices {
-//    const val DEFAULT = ""
-//    const val NEXUS_7 = "id:Nexus 7"
-//    const val NEXUS_7_2013 = "id:Nexus 7 2013"
-//    const val NEXUS_5 = "id:Nexus 5"
-//    const val NEXUS_6 = "id:Nexus 6"
-//    const val NEXUS_9 = "id:Nexus 9"
-//    const val NEXUS_10 = "name:Nexus 10"
-//    const val NEXUS_5X = "id:Nexus 5X"
-//    const val NEXUS_6P = "id:Nexus 6P"
-//    const val PIXEL_C = "id:pixel_c"
-//    const val PIXEL = "id:pixel"
-//    const val PIXEL_XL = "id:pixel_xl"
-//    const val PIXEL_2 = "id:pixel_2"
-//    const val PIXEL_2_XL = "id:pixel_2_xl"
-//    const val PIXEL_3 = "id:pixel_3"
-//    const val PIXEL_3_XL = "id:pixel_3_xl"
-//    const val PIXEL_3A = "id:pixel_3a"
-//    const val PIXEL_3A_XL = "id:pixel_3a_xl"
-//    const val PIXEL_4 = "id:pixel_4"
-//    const val PIXEL_4_XL = "id:pixel_4_xl"
-//    const val AUTOMOTIVE_1024p = "id:automotive_1024p_landscape"
-//}
+fun getDateLong(date:String):Long{
+    val sdf = SimpleDateFormat("yyyy-MM-dd")
+    val dateLong = sdf.parse(date)
+    return dateLong.time
+}
+
+fun Uri.asFile(context: Context): File? {
+    context.contentResolver
+        .query(this, arrayOf(MediaStore.Images.Media.DATA), null, null, null)
+        ?.use { cursor ->
+            cursor.moveToFirst()
+            val cursorData =
+                cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA))
+
+            return if (cursorData == null) {
+                returnCursorData(this,context)?.let { File(it) }
+            } else {
+                File(cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)))
+            }
+        }
+    return null
+}
+
+
+private fun returnCursorData(uri: Uri?,context: Context): String? {
+    if (DocumentsContract.isDocumentUri(context, uri)) {
+        val wholeID = DocumentsContract.getDocumentId(uri)
+        val splits = wholeID.split(":".toRegex()).toTypedArray()
+        if (splits.size == 2) {
+            val id = splits[1]
+            val column = arrayOf(MediaStore.Images.Media.DATA)
+            val sel = MediaStore.Images.Media._ID + "=?"
+            val cursor: Cursor? = context.contentResolver.query(
+                MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                column, sel, arrayOf(id), null
+            )
+
+            val columnIndex: Int? = cursor?.getColumnIndex(column[0])
+            if (cursor?.moveToFirst() == true) {
+                return columnIndex?.let { cursor.getString(it) }
+            }
+            cursor?.close()
+        }
+    } else {
+        return uri?.path
+    }
+    return null
+}

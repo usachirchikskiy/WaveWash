@@ -15,9 +15,14 @@ import com.example.wavewash.utils.ordersTab
 
 @Composable
 fun OrdersTab(
+    isActive:Boolean,
     onClick:(Int)->Unit
 ) {
-    val text =  ComposeString.resource(ordersTab[0].title).value()
+    var index = 0
+    if(!isActive){
+        index = 1
+    }
+    val text =  ComposeString.resource(ordersTab[index].title).value()
     val selectedOption = remember { mutableStateOf(text) }
 
     Row(

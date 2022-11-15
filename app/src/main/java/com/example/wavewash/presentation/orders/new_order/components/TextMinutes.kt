@@ -11,8 +11,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.wavewash.R
-import com.example.wavewash.data.remote.dto.service.ServiceAnswerDto
-import com.example.wavewash.ui.theme.HeaderButtonStroke
 import com.example.wavewash.ui.theme.Shapes
 import com.example.wavewash.ui.theme.TextColor
 import com.example.wavewash.ui.theme.nunitoSans

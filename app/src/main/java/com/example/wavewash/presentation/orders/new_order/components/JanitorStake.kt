@@ -5,11 +5,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
-import androidx.compose.material.TextFieldDefaults
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -17,24 +14,20 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.wavewash.R
-import com.example.wavewash.data.remote.dto.service.ServiceAnswerDto
-import com.example.wavewash.data.remote.dto.washer.WasherAnswerDto
+import com.example.wavewash.domain.model.Washer
 import com.example.wavewash.ui.theme.*
 import com.example.wavewash.utils.ComposeString
-import com.example.wavewash.utils.priceOfServices
-import com.skydoves.landscapist.ShimmerParams
-import com.skydoves.landscapist.coil.CoilImage
 
 @Composable
 fun JanitorStake(
+    washerOrderOrNot:Boolean,
     onClick: () -> Unit,
-    washers: List<WasherAnswerDto>,
+    washers: List<Washer>,
     priceOfJanitorsStake: String,
     onDeleteWasherClick: () -> Unit
 ) {
@@ -92,9 +85,11 @@ fun JanitorStake(
                         modifier = Modifier
                             .weight(1f)
                             .clickable {
-                                onDeleteWasherClick.invoke()
+                                if (!washerOrderOrNot) {
+                                    onDeleteWasherClick.invoke()
+                                }
                             },
-                        text = washers[0].name, //TODO service name
+                        text = washers[0].name,
                         fontFamily = nunitoSans,
                         fontWeight = FontWeight.Normal,
                         fontSize = 14.sp,
@@ -123,25 +118,26 @@ fun JanitorStake(
                 }
 
 //                Spacer(Modifier.weight(1f))
-
-                Box(
-                    modifier = Modifier
-                        .clip(RoundedCornerShape(8.dp))
-                        .size(30.dp)
-                        .background(ActiveButtonBackground)
-                        .clickable {
-                            onClick.invoke()
-                        },
-                    contentAlignment = Alignment.Center
-                ) {
-                    Image(
-                        painter = painterResource(R.drawable.add_order),
-                        contentDescription = "",
-                        contentScale = ContentScale.Crop
-                    )
+                if (!washerOrderOrNot) {
+                    Box(
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(8.dp))
+                            .size(30.dp)
+                            .background(ActiveButtonBackground)
+                            .clickable {
+                                onClick.invoke()
+                            },
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Image(
+                            painter = painterResource(R.drawable.add_order),
+                            contentDescription = "",
+                            contentScale = ContentScale.Crop
+                        )
+                    }
                 }
             }
-        } // service block
+        }
 
         Spacer(Modifier.weight(0.1f))
 

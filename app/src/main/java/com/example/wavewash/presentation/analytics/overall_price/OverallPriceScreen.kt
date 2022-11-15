@@ -29,35 +29,35 @@ import com.example.wavewash.utils.headerOverallButtons
 fun OverallPriceScreen(
     navController: NavController
 ) {
-    val list = listOf<Order>(
-        Order(
-            "https://www.dmarge.com/wp-content/uploads/2021/01/dwayne-the-rock-.jpg",
-            "Narbekov Artur",
-            "https://www.dmarge.com/wp-content/uploads/2021/01/dwayne-the-rock-.jpg",
-            "Chevrolet Spark",
-            "10E123TA",
-            3,
-            "18:30 - 19:30"
-        ),
-        Order(
-            "https://www.dmarge.com/wp-content/uploads/2021/01/dwayne-the-rock-.jpg",
-            "Narbekov Artur",
-            "https://www.dmarge.com/wp-content/uploads/2021/01/dwayne-the-rock-.jpg",
-            "Chevrolet Spark",
-            "10E123TA",
-            3,
-            "18:30 - 19:30"
-        ),
-        Order(
-            "https://www.dmarge.com/wp-content/uploads/2021/01/dwayne-the-rock-.jpg",
-            "Narbekov Artur",
-            "https://www.dmarge.com/wp-content/uploads/2021/01/dwayne-the-rock-.jpg",
-            "Chevrolet Spark",
-            "10E123TA",
-            3,
-            "18:30 - 19:30"
-        )
-    )
+//    val list = listOf<Order>(
+//        Order(
+//            "https://www.dmarge.com/wp-content/uploads/2021/01/dwayne-the-rock-.jpg",
+//            "Narbekov Artur",
+//            "https://www.dmarge.com/wp-content/uploads/2021/01/dwayne-the-rock-.jpg",
+//            "Chevrolet Spark",
+//            "10E123TA",
+//            3,
+//            "18:30 - 19:30"
+//        ),
+//        Order(
+//            "https://www.dmarge.com/wp-content/uploads/2021/01/dwayne-the-rock-.jpg",
+//            "Narbekov Artur",
+//            "https://www.dmarge.com/wp-content/uploads/2021/01/dwayne-the-rock-.jpg",
+//            "Chevrolet Spark",
+//            "10E123TA",
+//            3,
+//            "18:30 - 19:30"
+//        ),
+//        Order(
+//            "https://www.dmarge.com/wp-content/uploads/2021/01/dwayne-the-rock-.jpg",
+//            "Narbekov Artur",
+//            "https://www.dmarge.com/wp-content/uploads/2021/01/dwayne-the-rock-.jpg",
+//            "Chevrolet Spark",
+//            "10E123TA",
+//            3,
+//            "18:30 - 19:30"
+//        )
+//    )
     Column {
         LogoCalendar()
         Column(
@@ -75,7 +75,7 @@ fun OverallPriceScreen(
             )
 
             Text(
-                modifier = Modifier.padding(top = 24.dp,bottom = 24.dp),
+                modifier = Modifier.padding(top = 24.dp, bottom = 24.dp),
                 text = ComposeString.resource(R.string.overall_price).value(),
                 style = MaterialTheme.typography.body1,
                 fontSize = 35.sp,
@@ -90,25 +90,24 @@ fun OverallPriceScreen(
 //            )
             OverallHeadersOfList()
             LazyColumn {
-                items(list.size) { index ->
+//                items(list.size) { index ->
 //                    OrderItem(
 //                        list[index],
 //                        onClick = {
 //                            //TODO
 //                        }
 //                    )
-                    Divider(
-                        modifier = Modifier.fillMaxWidth(),
-                        color = HeaderButtonStroke
-                    )
-                }
+//                    Divider(
+//                        modifier = Modifier.fillMaxWidth(),
+//                        color = HeaderButtonStroke
+//                    )
             }
-        }//Column
+        }
+    }//Column
 
-        BackButton(
-            onBackClicked = {
-                navController.popBackStack()
-            }
-        )
-    }
+    BackButton(
+        onBackClicked = {
+            navController.popBackStack()
+        }
+    )
 }

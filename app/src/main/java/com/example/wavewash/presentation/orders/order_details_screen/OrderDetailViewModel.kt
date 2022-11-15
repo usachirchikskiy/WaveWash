@@ -7,15 +7,8 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.wavewash.data.remote.dto.order.OrderUpdateDto
-import com.example.wavewash.data.remote.dto.service.ServiceAnswerDto
-import com.example.wavewash.data.remote.dto.service.ServiceDto
-import com.example.wavewash.data.remote.dto.washer.WasherAnswerDto
-import com.example.wavewash.domain.use_cases.Order
-import com.example.wavewash.domain.use_cases.Service
-import com.example.wavewash.presentation.services.new_service.NewServiceEvent
-import com.example.wavewash.presentation.services.new_service.NewServiceState
-import com.example.wavewash.presentation.services.update_service.UpdateServiceEvent
+import com.example.wavewash.data.remote.dto.order.UpdateOrderDto
+import com.example.wavewash.domain.use_cases.OrderUseCase
 import com.example.wavewash.utils.Resource
 import com.example.wavewash.utils.durationOfServices
 import com.example.wavewash.utils.priceOfJanitorsStake
@@ -29,7 +22,7 @@ private const val TAG = "OrderDetailViewModel"
 @HiltViewModel
 class OrderDetailViewModel @Inject
 constructor(
-    private val order: Order,
+    private val orderUseCase: OrderUseCase,
     private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
@@ -56,7 +49,7 @@ constructor(
     }
 
     private fun completeOrder() {
-        val orderUpdate = OrderUpdateDto(
+        val orderUpdate = UpdateOrderDto(
             active = false,
             cancelled = false,
             cancelledReason = "",
@@ -68,7 +61,7 @@ constructor(
             washerIds = state.washers.map { it.id }
         )
         job?.cancel()
-        job = order.update(orderUpdate, state.id).onEach { result ->
+        job = orderUseCase.update(orderUpdate, state.id).onEach { result ->
             state = when (result) {
                 is Resource.Success -> {
                     state.copy(completed = true,isLoading = false)
@@ -85,7 +78,7 @@ constructor(
 
     private fun getOrder(orderId: Long) {
         job?.cancel()
-        job = order.get_order(orderId).onEach { result ->
+        job = orderUseCase.get_order(orderId).onEach { result ->
             when (result) {
                 is Resource.Success -> {
                     val order = result.data

@@ -1,18 +1,19 @@
 package com.example.wavewash.presentation.services.update_service
 
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.wavewash.data.remote.dto.service.ServiceDto
-import com.example.wavewash.domain.use_cases.Service
-import com.example.wavewash.presentation.services.new_service.NewServiceEvent
+import com.example.wavewash.data.remote.dto.service.AddServiceDto
+import com.example.wavewash.domain.use_cases.ServiceUseCase
+import com.example.wavewash.presentation.orders.orders_screen.NavigationEvent
 import com.example.wavewash.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import javax.inject.Inject
@@ -22,11 +23,13 @@ private const val TAG = "UpdateServiceViewModel"
 @HiltViewModel
 class UpdateServiceViewModel @Inject
 constructor(
-    private val service: Service,
+    private val serviceUseCase: ServiceUseCase,
     private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
     var state by mutableStateOf(UpdateServiceState())
+    private val _eventFlow = MutableSharedFlow<NavigationEvent>()
+    val eventFlow = _eventFlow.asSharedFlow()
 
     private var job: Job? = null
 
@@ -38,10 +41,6 @@ constructor(
 
     fun onTriggerEvent(event: UpdateServiceEvent) {
         when (event) {
-            is UpdateServiceEvent.Back -> {
-                changeCompletedValue()
-            }
-
             is UpdateServiceEvent.UpdateService -> {
                 val fieldsIsEmtpy = checkFields()
                 if (fieldsIsEmtpy) {
@@ -74,19 +73,13 @@ constructor(
         return false
     }
 
-    private fun changeCompletedValue() {
-        state = state.copy(
-            changeCompleted = false
-        )
-    }
-
     private fun updateService() {
-        val body = ServiceDto(state.duration.toInt(), state.name, state.price.toInt())
+        val body = AddServiceDto(state.duration.toInt(), state.name, state.price.toInt())
         job?.cancel()
-        job = service.update(body, state.id).onEach { result ->
+        job = serviceUseCase.update(body, state.id).onEach { result ->
             when (result) {
                 is Resource.Success -> {
-                    state = state.copy(isLoading = false, changeCompleted = true)
+                    _eventFlow.emit(NavigationEvent.GoBack)
                 }
                 is Resource.Error -> {
                     state = state.copy(error = result.message!!, isLoading = false)
@@ -100,7 +93,7 @@ constructor(
 
     private fun getService(id: Long) {
         job?.cancel()
-        job = service.get_service(id).onEach { result ->
+        job = serviceUseCase.get_service(id).onEach { result ->
             when (result) {
                 is Resource.Success -> {
                     state = state.copy(
@@ -111,7 +104,7 @@ constructor(
                     )
                 }
                 is Resource.Error -> {
-                    state = state.copy(error = result.message!!, isLoading = false)
+                    state = state.copy(error = result.message!!)
                 }
                 is Resource.Loading -> {
                     state = state.copy(isLoading = result.isLoading)

@@ -1,5 +1,7 @@
 package com.example.wavewash.presentation.janitors.new_janitor
 
+import android.net.Uri
+
 sealed class NewJanitorEvents {
 
     object AddWasher : NewJanitorEvents()
@@ -10,4 +12,5 @@ sealed class NewJanitorEvents {
 
     data class ChangePhoneNumberValue(val phoneNumber: String):NewJanitorEvents()
 
+    data class GalleryImage(val uri: Uri):NewJanitorEvents()
 }

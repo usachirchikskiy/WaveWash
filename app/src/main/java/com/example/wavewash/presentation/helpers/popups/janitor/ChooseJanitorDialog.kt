@@ -1,6 +1,5 @@
 package com.example.wavewash.presentation.helpers.popups
 
-import android.util.Log
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.GridCells
@@ -25,22 +24,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
-import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
 import com.example.wavewash.R
-import com.example.wavewash.data.remote.dto.service.ServiceAnswerDto
-import com.example.wavewash.data.remote.dto.washer.WasherAnswerDto
 import com.example.wavewash.domain.model.Washer
 import com.example.wavewash.presentation.helpers.common.SearchBar
-import com.example.wavewash.presentation.janitors.janitors_screen.components.JanitorItem
 import com.example.wavewash.presentation.helpers.popups.components.NewAddPopup
 import com.example.wavewash.presentation.helpers.popups.components.PopupExit
-import com.example.wavewash.presentation.janitors.janitors_screen.JanitorEvents
-import com.example.wavewash.presentation.orders.change_order_screen.ChangeOrderEvent
-import com.example.wavewash.presentation.services.services_screen.ServiceEvent
 import com.example.wavewash.ui.theme.*
 import com.example.wavewash.utils.ComposeString
-import com.example.wavewash.utils.Screen
 import com.skydoves.landscapist.ShimmerParams
 import com.skydoves.landscapist.coil.CoilImage
 
@@ -49,8 +39,8 @@ import com.skydoves.landscapist.coil.CoilImage
 @Composable
 fun ChooseJanitorDialog(
     openDialogCustom: MutableState<Boolean>,
-    washers: List<WasherAnswerDto>,
-    addWasher: (washer: WasherAnswerDto) -> Unit,
+    washers: List<Washer>,
+    addWasher: (washer: Washer) -> Unit,
     isLoading: Boolean,
     endReached: Boolean,
     newJanitorClicked: () -> Unit,
@@ -90,8 +80,8 @@ fun ChooseJanitorDialog(
 @Composable
 fun CustomJanitorDialogUI(
     openDialogCustom: MutableState<Boolean>,
-    washers: List<WasherAnswerDto>,
-    addWasher: (washer: WasherAnswerDto) -> Unit,
+    washers: List<Washer>,
+    addWasher: (washer: Washer) -> Unit,
     isLoading: Boolean,
     endReached: Boolean,
     newJanitorClicked: () -> Unit,
@@ -127,6 +117,7 @@ fun CustomJanitorDialogUI(
             color = HeaderButtonStroke
         )
         SearchBar(
+            text = "",
             onSearch = { text ->
                 onSearchQueryValue.invoke(text)
             }
@@ -167,8 +158,8 @@ fun CustomJanitorDialogUI(
 
 @Composable
 fun JanitorItemPopup(
-    washer: WasherAnswerDto,
-    addWasher: (washer: WasherAnswerDto) -> Unit
+    washer: Washer,
+    addWasher: (washer: Washer) -> Unit
 ) {
     Card(
         modifier = Modifier

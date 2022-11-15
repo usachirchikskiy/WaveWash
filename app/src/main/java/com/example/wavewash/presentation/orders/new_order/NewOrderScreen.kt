@@ -5,6 +5,7 @@ import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Divider
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -22,9 +23,11 @@ import com.example.wavewash.presentation.helpers.popups.janitor.DeleteJanitorDia
 import com.example.wavewash.presentation.helpers.popups.service.ChooseServiceDialog
 import com.example.wavewash.presentation.helpers.popups.service.DeleteServiceDialog
 import com.example.wavewash.presentation.orders.change_order_screen.ChangeOrderEvent
+import com.example.wavewash.presentation.orders.orders_screen.NavigationEvent
 import com.example.wavewash.ui.theme.HeaderButtonStroke
 import com.example.wavewash.ui.theme.Shapes
 import com.example.wavewash.utils.*
+import kotlinx.coroutines.flow.collectLatest
 
 private const val TAG = "NewOrderScreen"
 @Composable
@@ -38,34 +41,14 @@ fun NewOrderScreen(
     val openDeleteDialogJanitor = remember { mutableStateOf(false) }
     val openDeleteDialogService = remember { mutableStateOf(false) }
 
-    val screenResultServiceState = navController.currentBackStackEntry
-        ?.savedStateHandle
-        ?.get<String>(REFRESH_SERVICES)
-
-    screenResultServiceState?.let { value ->
-        navController.currentBackStackEntry
-            ?.savedStateHandle
-            ?.remove<String>(REFRESH_SERVICES)
-
-        if (value == REFRESH_SERVICES) {
-            viewModel.onTriggerEvent(NewOrderEvent.ReloadServices)
+    LaunchedEffect(key1 = true) {
+        viewModel.eventFlow.collectLatest { event ->
+            when(event) {
+                is NavigationEvent.GoBack -> {
+                    navController.popBackStack()
+                }
+            }
         }
-
-    }
-
-    val screenResultWasherState = navController.currentBackStackEntry
-        ?.savedStateHandle
-        ?.get<String>(REFRESH_WASHERS)
-
-    screenResultWasherState?.let { value ->
-        navController.currentBackStackEntry
-            ?.savedStateHandle
-            ?.remove<String>(REFRESH_WASHERS)
-
-        if (value == REFRESH_WASHERS) {
-            viewModel.onTriggerEvent(NewOrderEvent.ReloadWashers)
-        }
-
     }
 
     Column(
@@ -135,6 +118,7 @@ fun NewOrderScreen(
             )
 
             JanitorStake(
+                washerOrderOrNot = state.washerId!=-1L,
                 onClick = {
                     openDialogCustomJanitor.value = true
                 },
@@ -175,14 +159,6 @@ fun NewOrderScreen(
                     },
                     janitors = state.washers
                 )
-            }
-
-            if (state.changeCompleted) {
-                viewModel.onTriggerEvent(NewOrderEvent.Back)
-                navController.previousBackStackEntry
-                    ?.savedStateHandle
-                    ?.set(REFRESH_ORDER, REFRESH_ORDER)
-                navController.popBackStack()
             }
 
             Divider(

@@ -4,8 +4,6 @@ import com.example.wavewash.presentation.janitors.new_janitor.NewJanitorEvents
 
 sealed class NewServiceEvent {
 
-    object Back : NewServiceEvent()
-
     object AddService : NewServiceEvent()
 
     data class ChangeDurationValue(val duration:String): NewServiceEvent()

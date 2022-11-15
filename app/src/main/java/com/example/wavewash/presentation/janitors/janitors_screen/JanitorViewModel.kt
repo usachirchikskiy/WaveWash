@@ -1,23 +1,28 @@
 package com.example.wavewash.presentation.janitors.janitors_screen
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.wavewash.domain.use_cases.Washer
+import com.example.wavewash.data.local.washer.toWasher
+import com.example.wavewash.domain.use_cases.WasherUseCase
 import com.example.wavewash.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 private const val TAG = "JanitorViewModel"
+
 @HiltViewModel
 class JanitorViewModel @Inject
 constructor(
-    private val washer: Washer
+    private val washerUseCase: WasherUseCase
 ) : ViewModel() {
 
     var state by mutableStateOf(JanitorState())
@@ -25,38 +30,45 @@ constructor(
     private var job: Job? = null
 
     init {
-        getWashers()
+        onTriggerEvent(JanitorEvents.GetWashersFirstPage)
     }
 
     fun onTriggerEvent(event: JanitorEvents) {
         when (event) {
+            is JanitorEvents.GetWashersFirstPage -> {
+                getWashers()
+            }
             is JanitorEvents.GetWashers -> {
                 state = state.copy(page = state.page + 1)
                 getWashers()
             }
             is JanitorEvents.ChangeSearchQueryValue -> {
                 changeSearchQueryValue(event.text)
-            }
-            is JanitorEvents.ReloadWashers -> {
-                state = state.copy(page = 0, endReached = false, washers = listOf())
                 getWashers()
             }
+//            is JanitorEvents.ReloadWashers -> {
+//                state = state.copy(page = 0, endReached = false, washers = listOf())
+//                getWashers()
+//            }
+//            is JanitorEvents.NewJanitorClicked -> {
+//                state = state.copy(searchQuery = "",page = 0, endReached = false)
+//            }
         }
     }
 
     private fun getWashers() {
         job?.cancel()
-        job = washer.get_washers(state.searchQuery, state.page).onEach { result ->
+        job = washerUseCase.get_washers(state.searchQuery, state.page).onEach { result ->
             when (result) {
                 is Resource.Success -> {
-                    if(result.data!!.isEmpty()){
+                    if (state.washers == result.data) {
                         state = state.copy(endReached = true)
+                    } else {
+                        state = state.copy(washers = result.data!!)
                     }
-                    val listAll = state.washers.plus(result.data)
-                    state = state.copy(washers = listAll, isLoading = false)
                 }
                 is Resource.Error -> {
-                    state = state.copy(error = result.message!!, isLoading = false)
+                    state = state.copy(error = result.message!!)
                 }
                 is Resource.Loading -> {
                     state = state.copy(isLoading = result.isLoading)
@@ -65,8 +77,7 @@ constructor(
         }.launchIn(viewModelScope)
     }
 
-    private fun changeSearchQueryValue(text:String){
+    private fun changeSearchQueryValue(text: String) {
         state = state.copy(searchQuery = text, page = 0, endReached = false, washers = listOf())
-        getWashers()
     }
 }

@@ -14,16 +14,17 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.wavewash.R
-import com.example.wavewash.data.remote.dto.service.ServiceAnswerDto
+import com.example.wavewash.domain.model.Service
 import com.example.wavewash.ui.theme.*
 import com.example.wavewash.utils.ComposeString
 
 @Composable
 fun ServiceItem(
-    service: ServiceAnswerDto,
+    service: Service,
     change: (Long) -> Unit
 ) {
     Card(
@@ -49,24 +50,31 @@ fun ServiceItem(
                 fontFamily = nunitoSans,
                 fontWeight = FontWeight.SemiBold,
                 fontSize = 24.sp,
+                overflow = TextOverflow.Ellipsis
             )
 
             Text(
                 modifier = Modifier.padding(top = 10.dp),
-                text = service.duration.toString() + " " + ComposeString.resource(R.string.minutes).value(),
+                text = service.duration.toString() + " " + ComposeString.resource(R.string.minutes)
+                    .value(),
                 style = MaterialTheme.typography.h2,
-                fontSize = 14.sp
+                fontSize = 14.sp,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
             )
 
             Text(
                 modifier = Modifier.padding(top = 10.dp),
-                text = service.price.toString() + " " + ComposeString.resource(R.string.sum).value(),
+                text = service.price.toString() + " " + ComposeString.resource(R.string.sum)
+                    .value(),
                 style = TextStyle(
                     color = GreyTextColor,
                     fontFamily = nunitoSans,
                     fontWeight = FontWeight.ExtraBold,
                     fontSize = 24.sp
-                )
+                ),
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
             )
 
             Row(

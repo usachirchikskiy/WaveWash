@@ -1,12 +1,13 @@
 package com.example.wavewash.presentation.janitors.janitor_details
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.wavewash.domain.use_cases.Washer
+import com.example.wavewash.domain.use_cases.WasherUseCase
 import com.example.wavewash.utils.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
@@ -17,21 +18,15 @@ import javax.inject.Inject
 @HiltViewModel
 class JanitorDetailViewModel @Inject
 constructor(
-    private val washer: Washer,
+    private val washerUseCase: WasherUseCase,
     private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
     var state by mutableStateOf(JanitorDetailState())
     private var job: Job? = null
+    private var jobOrders: Job? = null
 
     init {
-        val pair = getFromAndTo()
-        val calendarDateFrom = getDate()
-        state = state.copy(
-            calendarDateFrom = calendarDateFrom,
-            dateFrom = pair.first,
-            dateTo = pair.second
-        )
         savedStateHandle.get<Long>("washerId")?.let { washerId ->
             state = state.copy(id = washerId)
             onTriggerEvent(JanitorDetailEvent.GetJanitor)
@@ -41,7 +36,10 @@ constructor(
     fun onTriggerEvent(event: JanitorDetailEvent) {
         when (event) {
             is JanitorDetailEvent.GetJanitor -> {
+                todayDates()
+                visibleTabs()
                 getJanitor()
+                getJanitorOrders()
                 getEarnedMoney()
                 getEarnedStake()
             }
@@ -65,39 +63,57 @@ constructor(
             }
             is JanitorDetailEvent.ChangeDates -> {
                 changeDates(event.dateFrom, event.dateTo)
+                visibleTabs()
                 getJanitorOrders()
                 getEarnedMoney()
                 getEarnedStake()
             }
             is JanitorDetailEvent.OnNextDateClick -> {
                 onNextDate()
+                visibleTabs()
                 getJanitorOrders()
                 getEarnedMoney()
                 getEarnedStake()
             }
             is JanitorDetailEvent.OnPreviousDateClick -> {
                 onPreviousDate()
+                visibleTabs()
                 getJanitorOrders()
                 getEarnedMoney()
                 getEarnedStake()
             }
-            is JanitorDetailEvent.ReloadOrders->{
-                state = state.copy(page = 0, endReached = false, orders = listOf())
-                getJanitorOrders()
-            }
+//            is JanitorDetailEvent.ReloadWasher->{
+//                getJanitor()
+//                getEarnedMoney()
+//                getEarnedStake()
+//            }
+//            is JanitorDetailEvent.ReloadOrders->{
+//                state = state.copy(page = 0)
+//                getJanitorOrders()
+//            }
         }
+    }
+
+    private fun todayDates() {
+        val pair = getFromAndTo()
+        val calendarDateFrom = getDate()
+        state = state.copy(
+            todayDate = pair.first,
+            calendarDateFrom = calendarDateFrom,
+            dateFrom = pair.first,
+            dateTo = pair.second
+        )
     }
 
     private fun getJanitor() {
         job?.cancel()
-        job = washer.get_washer(state.id).onEach { result ->
+        job = washerUseCase.get_washer(state.id).onEach { result ->
             when (result) {
                 is Resource.Success -> {
-                    state = state.copy(washer = result.data, isLoading = false)
-                    getJanitorOrders()
+                    state = state.copy(washer = result.data)
                 }
                 is Resource.Error -> {
-                    state = state.copy(error = result.message!!, isLoading = false)
+                    state = state.copy(error = result.message!!)
                 }
                 is Resource.Loading -> {
                     state = state.copy(isLoading = result.isLoading)
@@ -107,14 +123,14 @@ constructor(
     }
 
     private fun getJanitorOrders() {
-        job?.cancel()
-        job = washer.get_washer_orders(state.id,state.isActive,state.dateFrom,state.dateTo,state.page).onEach { result ->
+        jobOrders?.cancel()
+        jobOrders = washerUseCase.get_washer_orders(state.id,state.isActive,state.dateFrom,state.dateTo,state.page).onEach { result ->
             when (result) {
                 is Resource.Success -> {
-                    state = state.copy(orders = result.data!!, isLoading = false)
+                    state = state.copy(orders = result.data!!)
                 }
                 is Resource.Error -> {
-                    state = state.copy(error = result.message!!, isLoading = false)
+                    state = state.copy(error = result.message!!)
                 }
                 is Resource.Loading -> {
                     state = state.copy(isLoading = result.isLoading)
@@ -230,13 +246,13 @@ constructor(
     }
 
     private fun getEarnedMoney(){
-        washer.get_washer_earnedMoney(state.id,state.dateFrom,state.dateTo).onEach { result ->
+        washerUseCase.get_washer_earnedMoney(state.id,state.dateFrom,state.dateTo).onEach { result ->
             when (result) {
                 is Resource.Success -> {
-                    state = state.copy(earnedMoney = result.data.toString(), isLoading = false)
+                    state = state.copy(earnedMoney = result.data.toString())
                 }
                 is Resource.Error -> {
-                    state = state.copy(error = result.message!!, isLoading = false)
+                    state = state.copy(error = result.message!!)
                 }
                 is Resource.Loading -> {
                     state = state.copy(isLoading = result.isLoading)
@@ -246,18 +262,26 @@ constructor(
     }
 
     private fun getEarnedStake(){
-        washer.get_washer_earnedStake(state.id,state.dateFrom,state.dateTo).onEach { result ->
+        washerUseCase.get_washer_earnedStake(state.id,state.dateFrom,state.dateTo).onEach { result ->
             when (result) {
                 is Resource.Success -> {
-                    state = state.copy(earnedStake = result.data.toString(), isLoading = false)
+                    state = state.copy(earnedStake = result.data.toString())
                 }
                 is Resource.Error -> {
-                    state = state.copy(error = result.message!!, isLoading = false)
+                    state = state.copy(error = result.message!!)
                 }
                 is Resource.Loading -> {
                     state = state.copy(isLoading = result.isLoading)
                 }
             }
         }.launchIn(viewModelScope)
+    }
+
+    private fun visibleTabs(){
+        state = if(state.todayDate==state.dateFrom && !state.calendarDateFrom.contains("-")){
+            state.copy(isVisibleTabs = true)
+        } else{
+            state.copy(isVisibleTabs = false, isActive = false)
+        }
     }
 }

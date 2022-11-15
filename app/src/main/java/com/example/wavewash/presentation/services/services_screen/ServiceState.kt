@@ -1,9 +1,9 @@
 package com.example.wavewash.presentation.services.services_screen
 
-import com.example.wavewash.data.remote.dto.service.ServiceAnswerDto
+import com.example.wavewash.domain.model.Service
 
 data class ServiceState(
-    val services:List<ServiceAnswerDto> = listOf(),
+    val services:List<Service> = listOf(),
     val searchQuery:String = "",
     val page:Int = 0,
     val isLoading:Boolean = false,

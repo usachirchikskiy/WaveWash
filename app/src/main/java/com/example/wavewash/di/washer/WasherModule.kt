@@ -1,13 +1,18 @@
 package com.example.wavewash.di.washer
 
 import com.example.wavewash.data.datastore.AppDataStore
-import com.example.wavewash.data.remote.SillyApi
-import com.example.wavewash.domain.use_cases.Login
-import com.example.wavewash.domain.use_cases.Washer
+import com.example.wavewash.data.local.SillyWashDatabase
+import com.example.wavewash.data.local.service.ServiceDao
+import com.example.wavewash.data.local.washer.WasherDao
+import com.example.wavewash.data.remote.dto.service.ServiceApi
+import com.example.wavewash.data.remote.dto.washer.WasherApi
+import com.example.wavewash.domain.use_cases.ServiceUseCase
+import com.example.wavewash.domain.use_cases.WasherUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import retrofit2.Retrofit
 import javax.inject.Singleton
 
 @Module
@@ -16,13 +21,29 @@ object WasherModule {
 
     @Singleton
     @Provides
-    fun provideWasher(
-        service: SillyApi,
+    fun provideWasherDao(db: SillyWashDatabase): WasherDao {
+        return db.washerDao
+    }
+
+    @Singleton
+    @Provides
+    fun provideWasherApi(retrofitBuilder: Retrofit.Builder): WasherApi {
+        return retrofitBuilder
+            .build()
+            .create(WasherApi::class.java)
+    }
+
+    @Singleton
+    @Provides
+    fun provideWasherUseCase(
+        washerApi: WasherApi,
         appDataStoreManager: AppDataStore,
-    ): Washer {
-        return Washer(
-            service,
-            appDataStoreManager
+        washerDao: WasherDao
+    ): WasherUseCase {
+        return WasherUseCase(
+            washerApi,
+            appDataStoreManager,
+            washerDao
         )
     }
 }

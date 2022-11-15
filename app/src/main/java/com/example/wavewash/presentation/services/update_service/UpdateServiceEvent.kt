@@ -6,8 +6,6 @@ import com.example.wavewash.presentation.services.new_service.NewServiceEvent
 sealed class UpdateServiceEvent {
     data class GetService(val id:Long): UpdateServiceEvent()
 
-    object Back : UpdateServiceEvent()
-
     object UpdateService : UpdateServiceEvent()
 
     data class ChangeDurationValue(val duration: String) : UpdateServiceEvent()

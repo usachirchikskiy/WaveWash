@@ -1,6 +1,7 @@
 package com.example.wavewash.presentation.janitors.janitors_screen.components
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -8,16 +9,18 @@ import androidx.compose.material.Card
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.wavewash.R
-import com.example.wavewash.data.remote.dto.washer.WasherAnswerDto
+import com.example.wavewash.domain.model.Washer
 import com.example.wavewash.ui.theme.*
 import com.example.wavewash.utils.ComposeString
 import com.skydoves.landscapist.ShimmerParams
@@ -25,7 +28,7 @@ import com.skydoves.landscapist.coil.CoilImage
 
 @Composable
 fun JanitorItem(
-    washer: WasherAnswerDto,
+    washer: Washer,
     onJanitorClicked: () -> Unit
 ) {
     Card(
@@ -45,7 +48,7 @@ fun JanitorItem(
                 CoilImage(
                     modifier = Modifier
                         .height(216.dp),
-                    imageModel = "https://media-exp2.licdn.com/dms/image/C4D03AQFB8ojf_-tmiw/profile-displayphoto-shrink_200_200/0/1601490730164?e=2147483647&v=beta&t=lJVY_VeGE6Vp_VPV4yCrgxQgv-1qsDac6Ut9A2Ey4xw",
+                    imageModel = washer.image,
                     contentScale = ContentScale.Crop,
 
                     shimmerParams = ShimmerParams(
@@ -57,14 +60,22 @@ fun JanitorItem(
                     ),
                     // shows an error text message when request failed.
                     failure = {
-                        Text(text = "image request failed.")
+                        Box(
+                            modifier = Modifier
+                                .background(Color(0XFFEFF1F8))
+                                .fillMaxSize(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Image(
+                                painter = painterResource(id = R.drawable.error_image),
+                                contentDescription = "error_loading"
+                            )
+                        }
                     }
                 )
                 Box(
                     modifier = Modifier
-                        .padding(
-                            16.dp
-                        )
+                        .padding(16.dp)
                 ) {
                     Text(
                         modifier = Modifier
@@ -73,7 +84,7 @@ fun JanitorItem(
                             .padding(
                                 horizontal = 9.dp, vertical = 5.dp
                             ),
-                        text = if (washer.active) ComposeString.resource(R.string.free).value()
+                        text = if (!washer.active) ComposeString.resource(R.string.free).value()
                         else {
                             ComposeString.resource(R.string.busy).value()
                         },

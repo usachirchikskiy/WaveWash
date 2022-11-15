@@ -47,7 +47,7 @@ sealed class Screen(val route:String){
     //JanitorGraph
     object JanitorDetailsScreenRoute:Screen("JanitorDetailsScreenRoute")
     object NewJanitorScreenRoute:Screen("NewJanitorScreenRoute")
-
+    object UpdateJanitorScreenRoute:Screen("UpdateJanitorScreenRoute")
     //ServicesGraph
     object NewServiceScreenRoute:Screen("NewServiceScreenRoute")
     object UpdateServiceScreen:Screen("UpdateServiceScreen")

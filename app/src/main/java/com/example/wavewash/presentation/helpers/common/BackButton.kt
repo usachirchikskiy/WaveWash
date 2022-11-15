@@ -25,7 +25,7 @@ import com.example.wavewash.utils.ComposeString
 
 @Composable
 fun BackButton(
-    onBackClicked:()->Unit
+    onBackClicked: () -> Unit
 ) {
     Row(
         modifier = Modifier
@@ -34,7 +34,7 @@ fun BackButton(
             .clickable {
                 onBackClicked.invoke()
             }
-            .padding(horizontal = 42.dp, vertical = 10.dp),
+            .padding(horizontal = 36.dp, vertical = 13.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Image(
@@ -42,21 +42,12 @@ fun BackButton(
             contentDescription = "",
             contentScale = ContentScale.Crop
         )
-
-        Box(
-            modifier = Modifier
-                .height(30.dp)
-                .padding(
-                    start = 8.dp
-                ),
-            contentAlignment = Alignment.Center
-        ) {
-            Text(
-                text = ComposeString.resource(R.string.back).value(),
-                style = MaterialTheme.typography.body1,
-                fontSize = 12.sp,
-                textAlign = TextAlign.Center
-            )
-        }
+        Text(
+            modifier = Modifier.padding(start = 8.dp),
+            text = ComposeString.resource(R.string.back).value(),
+            style = MaterialTheme.typography.body1,
+            fontSize = 12.sp,
+            textAlign = TextAlign.Center
+        )
     }
 }

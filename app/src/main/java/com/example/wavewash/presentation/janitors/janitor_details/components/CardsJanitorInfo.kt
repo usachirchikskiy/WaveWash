@@ -14,14 +14,11 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.Font
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.wavewash.R
-import com.example.wavewash.data.remote.dto.washer.WasherAnswerDto
 import com.example.wavewash.domain.model.Washer
 import com.example.wavewash.ui.theme.*
 import com.example.wavewash.utils.ComposeString
@@ -31,7 +28,8 @@ import com.skydoves.landscapist.coil.CoilImage
 @Composable
 fun CardsJanitorInfo(
     modifier: Modifier,
-    washer: WasherAnswerDto
+    washer: Washer,
+    changeClicked:(id:Long)->Unit
 ) {
     Row(
         modifier = modifier
@@ -128,7 +126,7 @@ fun CardsJanitorInfo(
                         shape = Shapes.medium
                     )
                     .clickable {
-
+                        changeClicked.invoke(washer.id)
                     }
                     .border(
                         width = 1.dp,

@@ -40,21 +40,6 @@ fun OrdersScreen(
     val openDialogCustom = remember { mutableStateOf(false) }
     val state = viewModel.state
 
-//    val screenResultState = navController.currentBackStackEntry
-//        ?.savedStateHandle
-//        ?.get<String>(REFRESH_ORDER)
-//
-//    screenResultState?.let { value ->
-//        navController.currentBackStackEntry
-//            ?.savedStateHandle
-//            ?.remove<String>(REFRESH_ORDER)
-//
-//        if (value == REFRESH_ORDER) {
-//            viewModel.onTriggerEvent(OrdersEvent.ReloadOrders)
-//        }
-//
-//    }
-
     if (openDialogCustom.value) {
         CalendarDialog(
             openDialogCustom = openDialogCustom,
@@ -65,24 +50,24 @@ fun OrdersScreen(
     }
 
     Column {
-        Calendar(
-            modifier = Modifier
-                .padding(vertical = 16.dp)
-                .fillMaxWidth()
-                .clip(Shapes.small)
-                .background(Color.White),
-            beginDate = state.calendarDateFrom,
-            endDate = state.calendarDateTo,
-            onCalendarPopup = {
-                openDialogCustom.value = true
-            },
-            onNextClick = {
-                viewModel.onTriggerEvent(OrdersEvent.OnNextDateClick)
-            },
-            onPreviousClick = {
-                viewModel.onTriggerEvent(OrdersEvent.OnPreviousDateClick)
-            }
-        )
+//        Calendar(
+//            modifier = Modifier
+//                .padding(vertical = 16.dp)
+//                .fillMaxWidth()
+//                .clip(Shapes.small)
+//                .background(Color.White),
+//            beginDate = state.calendarDateFrom,
+//            endDate = state.calendarDateTo,
+//            onCalendarPopup = {
+//                openDialogCustom.value = true
+//            },
+//            onNextClick = {
+//                viewModel.onTriggerEvent(OrdersEvent.OnNextDateClick)
+//            },
+//            onPreviousClick = {
+//                viewModel.onTriggerEvent(OrdersEvent.OnPreviousDateClick)
+//            }
+//        )
 
         LazyColumn(
             modifier = Modifier
@@ -91,6 +76,27 @@ fun OrdersScreen(
                 .background(Color.White)
                 .padding(16.dp, 24.dp)
         ) {
+            item{
+                Calendar(
+                    modifier = Modifier
+                        .padding(vertical = 16.dp)
+                        .fillMaxWidth()
+                        .clip(Shapes.small)
+                        .background(Color.White),
+                    beginDate = state.calendarDateFrom,
+                    endDate = state.calendarDateTo,
+                    onCalendarPopup = {
+                        openDialogCustom.value = true
+                    },
+                    onNextClick = {
+                        viewModel.onTriggerEvent(OrdersEvent.OnNextDateClick)
+                    },
+                    onPreviousClick = {
+                        viewModel.onTriggerEvent(OrdersEvent.OnPreviousDateClick)
+                    }
+                )
+            }
+
             item {
                 Column {
                     ScreenHeaders(
@@ -100,11 +106,13 @@ fun OrdersScreen(
                         onClick = { index ->
                             when (index) {
                                 0 -> navController.navigate(Screen.NewOrderScreenRoute.route)
+                                1-> Log.d(TAG, "OrdersScreen: Export")//TODO
                             }
                         }
                     )
                     if(state.isVisibleTabs) {
                         OrdersTab(
+                            isActive = state.isActive,
                             onClick = { index ->
                                 if (index == 0) {
                                     viewModel.onTriggerEvent(OrdersEvent.ActiveOrders)

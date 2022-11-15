@@ -13,11 +13,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.rememberNavController
 import com.example.wavewash.nav_graphs.NavGraph
-import com.example.wavewash.presentation.login.LoginScreen
 import com.example.wavewash.ui.theme.AppBackground
 import com.example.wavewash.ui.theme.WaveWashTheme
 import com.google.accompanist.pager.ExperimentalPagerApi
@@ -46,7 +44,6 @@ class MainActivity : ComponentActivity() {
             WaveWashTheme {
                 val pagerState = rememberPagerState()
                 val navController = rememberNavController()
-
                 Scaffold() {
                     Column(
                         modifier = Modifier

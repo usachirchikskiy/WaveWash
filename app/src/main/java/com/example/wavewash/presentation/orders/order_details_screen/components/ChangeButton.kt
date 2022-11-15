@@ -21,7 +21,7 @@ import com.example.wavewash.ui.theme.TextColor
 import com.example.wavewash.utils.ComposeString
 
 @Composable
-fun ChangeButton(onClick:()->Unit) {
+fun ChangeButton(onClick: () -> Unit) {
     Box(
         modifier = Modifier
             .clip(Shapes.medium)
@@ -33,20 +33,14 @@ fun ChangeButton(onClick:()->Unit) {
                 color = HeaderButtonStroke,
                 shape = Shapes.medium
             )
-            .padding(horizontal = 42.dp, vertical = 10.dp)
-        ) {
-        Box(
-            modifier = Modifier
-                .height(30.dp),
-            contentAlignment = Alignment.Center
-        ) {
-            Text(
-                text = ComposeString.resource(R.string.change).value(),
-                style = MaterialTheme.typography.body1,
-                fontSize = 12.sp,
-                textAlign = TextAlign.Center,
-                color = TextColor
-            )
-        }
+            .padding(horizontal = 36.dp, vertical = 13.dp)
+    ) {
+        Text(
+            text = ComposeString.resource(R.string.change).value(),
+            style = MaterialTheme.typography.body1,
+            fontSize = 12.sp,
+            textAlign = TextAlign.Center,
+            color = TextColor
+        )
     }
 }

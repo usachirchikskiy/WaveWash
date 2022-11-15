@@ -60,20 +60,20 @@ fun ChangeOrderScreen(
 
     }
 
-    val screenResultWasherState = navController.currentBackStackEntry
-        ?.savedStateHandle
-        ?.get<String>(REFRESH_WASHERS)
+//    val screenResultWasherState = navController.currentBackStackEntry
+//        ?.savedStateHandle
+//        ?.get<String>(REFRESH_WASHERS)
+//
+//    screenResultWasherState?.let { value ->
+//        navController.currentBackStackEntry
+//            ?.savedStateHandle
+//            ?.remove<String>(REFRESH_WASHERS)
+//
+//        if (value == REFRESH_WASHERS) {
+//            viewModel.onTriggerEvent(ChangeOrderEvent.ReloadWashers)
+//        }
 
-    screenResultWasherState?.let { value ->
-        navController.currentBackStackEntry
-            ?.savedStateHandle
-            ?.remove<String>(REFRESH_WASHERS)
-
-        if (value == REFRESH_WASHERS) {
-            viewModel.onTriggerEvent(ChangeOrderEvent.ReloadWashers)
-        }
-
-    }
+//    }
 
     Column(
         modifier = Modifier.verticalScroll(rememberScrollState())
@@ -110,6 +110,7 @@ fun ChangeOrderScreen(
             )
 
             JanitorStake(
+                washerOrderOrNot = false,
                 onClick = {
                     openDialogCustomJanitor.value = true
                 },

@@ -30,11 +30,11 @@ fun Tabs(pagerState: PagerState) {
     val scope = rememberCoroutineScope()
     Row(
         modifier = Modifier
-            .height(100.dp)
             .fillMaxWidth()
-            .padding(top = 25.dp)
+            .padding(top = 32.dp)
             .clip(Shapes.large)
-            .background(Color.White),
+            .background(Color.White)
+            .padding(vertical = 24.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         //tabs

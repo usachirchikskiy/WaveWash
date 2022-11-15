@@ -5,6 +5,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
@@ -16,6 +17,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -36,7 +38,7 @@ import com.example.wavewash.utils.ComposeString
 import com.example.wavewash.utils.Screen
 
 @Composable
-fun LoginScreen(navController: NavController,viewModel: LoginViewModel = hiltViewModel()) {
+fun LoginScreen(navController: NavController, viewModel: LoginViewModel = hiltViewModel()) {
     val state = viewModel.state
 //    var passwordVisible by remember { mutableStateOf(false) }
 
@@ -44,11 +46,11 @@ fun LoginScreen(navController: NavController,viewModel: LoginViewModel = hiltVie
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
-        if(state.isLoading) {
+        if (state.isLoading) {
             CircularProgressIndicator()
         }
 
-        if(state.changeScreen){
+        if (state.changeScreen) {
             viewModel.onTriggerEvent(LoginEvents.ChangeChangeScreenValue)
             navController.popBackStack()
             navController.navigate(Screen.MainScreenRoute.route)
@@ -73,6 +75,9 @@ fun LoginScreen(navController: NavController,viewModel: LoginViewModel = hiltVie
                 Spacer(modifier = Modifier.weight(1f))
                 Image(
                     painter = painterResource(id = R.drawable.support),
+                    modifier = Modifier.clip(CircleShape).clickable {
+                        //TODO ChatSupport
+                    },
                     contentDescription = ""
                 )
             }
@@ -90,7 +95,7 @@ fun LoginScreen(navController: NavController,viewModel: LoginViewModel = hiltVie
                 singleLine = true,
                 modifier = Modifier
                     .padding(top = 16.dp)
-                    .width(width = 400.dp),// height = 48.dp
+                    .fillMaxWidth(),// height = 48.dp
                 value = state.email,
                 onValueChange = { text ->
                     viewModel.onTriggerEvent(LoginEvents.ChangeEmailValue(text))
@@ -102,10 +107,13 @@ fun LoginScreen(navController: NavController,viewModel: LoginViewModel = hiltVie
                     fontWeight = FontWeight.Normal
                 ),
                 colors = TextFieldDefaults.outlinedTextFieldColors(
+
+                    cursorColor = ActiveButtonBackground,
                     focusedBorderColor = Color(0XFFD3DDEC), // цвет при получении фокуса
-                    unfocusedBorderColor = Color(0XFFD3DDEC)  // цвет при отсутствии фокуса
+                    unfocusedBorderColor = Color(0XFFD3DDEC),  // цвет при отсутствии фокуса
+                ),
+
                 )
-            )
 
             Text(
                 modifier = Modifier.padding(top = 24.dp),
@@ -120,9 +128,9 @@ fun LoginScreen(navController: NavController,viewModel: LoginViewModel = hiltVie
                 singleLine = true,
                 modifier = Modifier
                     .padding(top = 16.dp)
-                    .width(width = 400.dp),//height = 50.dp
+                    .fillMaxWidth(),//height = 50.dp
                 value = state.password,
-                onValueChange = { text->
+                onValueChange = { text ->
                     viewModel.onTriggerEvent(LoginEvents.ChangePasswordValue(text))
                 },
                 textStyle = TextStyle(
@@ -132,6 +140,7 @@ fun LoginScreen(navController: NavController,viewModel: LoginViewModel = hiltVie
                     fontWeight = FontWeight.Normal
                 ),
                 colors = TextFieldDefaults.outlinedTextFieldColors(
+                    cursorColor = ActiveButtonBackground,
                     focusedBorderColor = Color(0XFFD3DDEC), // цвет при получении фокуса
                     unfocusedBorderColor = Color(0XFFD3DDEC)  // цвет при отсутствии фокуса
                 ),
@@ -142,7 +151,8 @@ fun LoginScreen(navController: NavController,viewModel: LoginViewModel = hiltVie
                         Icons.Filled.Visibility
                     else Icons.Filled.VisibilityOff
 
-                    val description = if (state.isPasswordVisible) "Hide password" else "Show password"
+                    val description =
+                        if (state.isPasswordVisible) "Hide password" else "Show password"
 
                     IconButton(onClick = {
                         viewModel.onTriggerEvent(LoginEvents.ChangePasswordVisibility)
@@ -157,10 +167,10 @@ fun LoginScreen(navController: NavController,viewModel: LoginViewModel = hiltVie
                     .padding(top = 24.dp)
                     .fillMaxWidth()
                     .height(48.dp)
+                    .clip(Shapes.medium)
                     .clickable {
                         viewModel.onTriggerEvent(LoginEvents.Login(state.email, state.password))
                     }
-                    .clip(Shapes.medium)
                     .background(color = ActiveButtonBackground),
                 contentAlignment = Alignment.Center
             ) {

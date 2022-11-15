@@ -30,21 +30,15 @@ fun CompleteButton(onClick: () -> Unit) {
             .clickable {
                 onClick.invoke()
             }
-            .padding(horizontal = 42.dp, vertical = 10.dp),
+            .padding(horizontal = 24.dp, vertical = 13.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Box(
-            contentAlignment = Alignment.Center,
-            modifier = Modifier
-                .height(30.dp)
-        ) {
-            Text(
-                text = ComposeString.resource(R.string.complete).value(),
-                style = MaterialTheme.typography.body1,
-                fontSize = 12.sp,
-                textAlign = TextAlign.Center,
-                color = Color.White
-            )
-        }
+        Text(
+            text = ComposeString.resource(R.string.complete).value(),
+            style = MaterialTheme.typography.body1,
+            fontSize = 12.sp,
+            textAlign = TextAlign.Center,
+            color = Color.White
+        )
     }
 }

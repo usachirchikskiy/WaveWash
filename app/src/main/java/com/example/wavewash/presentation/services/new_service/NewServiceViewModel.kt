@@ -5,12 +5,14 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.wavewash.data.remote.dto.service.ServiceDto
-import com.example.wavewash.domain.use_cases.Service
-import com.example.wavewash.presentation.orders.new_order.NewOrderEvent
+import com.example.wavewash.data.remote.dto.service.AddServiceDto
+import com.example.wavewash.domain.use_cases.ServiceUseCase
+import com.example.wavewash.presentation.orders.orders_screen.NavigationEvent
 import com.example.wavewash.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import javax.inject.Inject
@@ -18,18 +20,17 @@ import javax.inject.Inject
 @HiltViewModel
 class NewServiceViewModel @Inject
 constructor(
-    private val service: Service
+    private val serviceUseCase: ServiceUseCase
 ) : ViewModel() {
 
     var state by mutableStateOf(NewServiceState())
+    private val _eventFlow = MutableSharedFlow<NavigationEvent>()
+    val eventFlow = _eventFlow.asSharedFlow()
+
     private var job: Job? = null
 
     fun onTriggerEvent(event: NewServiceEvent) {
         when (event) {
-            is NewServiceEvent.Back -> {
-                changeCompletedValue()
-            }
-
             is NewServiceEvent.AddService -> {
                 val fieldsIsEmtpy = checkFields()
                 if (fieldsIsEmtpy) {
@@ -50,19 +51,14 @@ constructor(
         }
     }
 
-    private fun changeCompletedValue() {
-        state = state.copy(
-            changeCompleted = false
-        )
-    }
 
     private fun addService() {
-        val body = ServiceDto(state.duration.toInt(), state.name, state.price.toInt())
+        val body = AddServiceDto(state.duration.toInt(), state.name, state.price.toInt())
         job?.cancel()
-        job = service.addService(body).onEach { result ->
+        job = serviceUseCase.addService(body).onEach { result ->
             when (result) {
                 is Resource.Success -> {
-                    state = state.copy(isLoading = false, changeCompleted = true)
+                    _eventFlow.emit(NavigationEvent.GoBack)
                 }
                 is Resource.Error -> {
                     state = state.copy(error = result.message!!)
@@ -87,11 +83,7 @@ constructor(
     }
 
     private fun checkFields(): Boolean {
-        if (state.price.isEmpty() || state.duration.isEmpty()
-            || state.name.isEmpty()
-        ) {
-            return true
-        }
+        if (state.price.isEmpty() || state.duration.isEmpty() || state.name.isEmpty()) return true
         return false
     }
 }

@@ -14,7 +14,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.wavewash.R
-import com.example.wavewash.data.remote.dto.order.OrderAnswerDto
+import com.example.wavewash.data.remote.dto.order.OrderDto
 import com.example.wavewash.domain.model.Order
 import com.example.wavewash.ui.theme.QuantityOfServices
 import com.example.wavewash.ui.theme.Shapes
@@ -26,7 +26,7 @@ import com.example.wavewash.utils.durationOfServices
 
 @Composable
 fun OrderItem(
-    order: OrderAnswerDto,
+    order: Order,
     onClick: () -> Unit
 ) {
     Row(

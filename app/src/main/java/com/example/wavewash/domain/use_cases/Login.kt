@@ -2,7 +2,7 @@ package com.example.wavewash.domain.use_cases
 
 import android.util.Log
 import com.example.wavewash.data.datastore.AppDataStore
-import com.example.wavewash.data.remote.SillyApi
+import com.example.wavewash.data.remote.SillyWashApi
 import com.example.wavewash.data.remote.dto.login.LoginDto
 import com.example.wavewash.utils.*
 import kotlinx.coroutines.flow.Flow
@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.flow
 private const val TAG = ""
 
 class Login(
-    val api:SillyApi,
+    val api:SillyWashApi,
     val appDataStoreManager: AppDataStore
 ) {
     fun execute(body: LoginDto) : Flow<Resource<String>> = flow<Resource<String>> {

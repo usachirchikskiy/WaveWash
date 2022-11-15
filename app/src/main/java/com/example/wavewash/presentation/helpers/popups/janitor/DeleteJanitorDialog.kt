@@ -22,7 +22,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.navigation.NavController
 import com.example.wavewash.R
-import com.example.wavewash.data.remote.dto.washer.WasherAnswerDto
+import com.example.wavewash.domain.model.Washer
 import com.example.wavewash.presentation.helpers.common.SearchBar
 import com.example.wavewash.presentation.helpers.popups.CustomJanitorDialogUI
 import com.example.wavewash.presentation.helpers.popups.components.PopupExit
@@ -37,8 +37,8 @@ import com.skydoves.landscapist.coil.CoilImage
 @Composable
 fun DeleteJanitorDialog(
     onClose: () -> Unit,
-    onDeleteClicked: (WasherAnswerDto) -> Unit,
-    janitors:List<WasherAnswerDto>
+    onDeleteClicked: (Washer) -> Unit,
+    janitors:List<Washer>
 ) {
     Dialog(
         onDismissRequest = {
@@ -55,8 +55,8 @@ fun DeleteJanitorDialog(
 @Composable
 fun DeleteJanitorDialogUI(
     onClose: () -> Unit,
-    janitors: List<WasherAnswerDto>,
-    onDeleteClicked: (WasherAnswerDto) -> Unit
+    janitors: List<Washer>,
+    onDeleteClicked: (Washer) -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -125,8 +125,8 @@ fun DeleteJanitorDialogUI(
 
 @Composable
 fun DeleteJanitorItem(
-    washer: WasherAnswerDto,
-    deleteJanitorClicked: (WasherAnswerDto) -> Unit
+    washer: Washer,
+    deleteJanitorClicked: (Washer) -> Unit
 ) {
     Row(
         modifier = Modifier

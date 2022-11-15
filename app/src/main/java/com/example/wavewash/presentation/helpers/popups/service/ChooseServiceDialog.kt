@@ -1,6 +1,5 @@
 package com.example.wavewash.presentation.helpers.popups.service
 
-import android.util.Log
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.GridCells
@@ -25,21 +24,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
-import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavController
 import com.example.wavewash.R
-import com.example.wavewash.data.remote.dto.service.ServiceAnswerDto
+import com.example.wavewash.data.remote.dto.service.ServiceDto
 import com.example.wavewash.domain.model.Service
 import com.example.wavewash.presentation.helpers.common.SearchBar
 import com.example.wavewash.presentation.helpers.popups.components.NewAddPopup
 import com.example.wavewash.presentation.helpers.popups.components.PopupExit
-import com.example.wavewash.presentation.orders.orders_screen.OrdersEvent
-import com.example.wavewash.presentation.services.services_screen.ServiceEvent
 import com.example.wavewash.ui.theme.*
 import com.example.wavewash.utils.ComposeString
-import com.example.wavewash.utils.Screen
-import com.himanshoe.kalendar.common.theme.TextUnit
 
 
 @OptIn(ExperimentalComposeUiApi::class)
@@ -48,8 +40,8 @@ fun ChooseServiceDialog(
     openDialogCustom: MutableState<Boolean>,
     isLoading: Boolean,
     endReached: Boolean,
-    services: List<ServiceAnswerDto>,
-    addService: (service: ServiceAnswerDto) -> Unit,
+    services: List<Service>,
+    addService: (service: Service) -> Unit,
     onSearchQueryValue: (String) -> Unit,
     loadMore: () -> Unit,
     newServiceClicked: () -> Unit
@@ -90,8 +82,8 @@ fun CustomServiceDialogUI(
     openDialogCustom: MutableState<Boolean>,
     isLoading: Boolean,
     endReached: Boolean,
-    services: List<ServiceAnswerDto>,
-    addService: (service: ServiceAnswerDto) -> Unit,
+    services: List<Service>,
+    addService: (service: Service) -> Unit,
     onSearchQueryValue: (String) -> Unit,
     loadMore: () -> Unit,
     newServiceClicked: () -> Unit
@@ -125,6 +117,7 @@ fun CustomServiceDialogUI(
             color = HeaderButtonStroke
         )
         SearchBar(
+            text = "",
             onSearch = { text ->
                 onSearchQueryValue.invoke(text)
             }
@@ -164,8 +157,8 @@ fun CustomServiceDialogUI(
 
 @Composable
 fun ServiceItemPopup(
-    service: ServiceAnswerDto,
-    addService: (service: ServiceAnswerDto) -> Unit
+    service: Service,
+    addService: (service: Service) -> Unit
 ) {
 
     Card(

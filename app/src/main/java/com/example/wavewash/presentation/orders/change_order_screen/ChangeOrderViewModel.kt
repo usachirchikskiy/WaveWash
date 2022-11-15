@@ -1,22 +1,17 @@
 package com.example.wavewash.presentation.orders.change_order_screen
 
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.wavewash.data.remote.dto.order.OrderAddDto
-import com.example.wavewash.data.remote.dto.order.OrderUpdateDto
-import com.example.wavewash.data.remote.dto.service.ServiceAnswerDto
-import com.example.wavewash.data.remote.dto.washer.WasherAnswerDto
-import com.example.wavewash.domain.use_cases.Order
-import com.example.wavewash.domain.use_cases.Service
-import com.example.wavewash.domain.use_cases.Washer
-import com.example.wavewash.presentation.orders.new_order.NewOrderEvent
-import com.example.wavewash.presentation.orders.new_order.NewOrderState
-import com.example.wavewash.presentation.orders.order_details_screen.OrderDetailEvent
+import com.example.wavewash.data.remote.dto.order.UpdateOrderDto
+import com.example.wavewash.data.remote.dto.service.ServiceDto
+import com.example.wavewash.domain.model.Service
+import com.example.wavewash.domain.model.Washer
+import com.example.wavewash.domain.use_cases.OrderUseCase
+import com.example.wavewash.domain.use_cases.WasherUseCase
 import com.example.wavewash.utils.Resource
 import com.example.wavewash.utils.durationOfServices
 import com.example.wavewash.utils.priceOfJanitorsStake
@@ -32,9 +27,9 @@ private const val TAG = "ChangeOrderViewModel"
 @HiltViewModel
 class ChangeOrderViewModel @Inject
 constructor(
-    private val order: Order,
-    private val service: Service,
-    private val washer: Washer,
+    private val orderUseCase: OrderUseCase,
+//    private val service: Service,
+    private val washerUseCase: WasherUseCase,
     private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
@@ -61,11 +56,11 @@ constructor(
 
 
             is ChangeOrderEvent.GetServices -> {
-                getServices()
+//                getServices()
             }
             is ChangeOrderEvent.ReloadServices -> {
                 state = state.copy(servicePage = 0, serviceEndIsReached = false, servicesOfDialog = listOf())
-                getServices()
+//                getServices()
             }
             is ChangeOrderEvent.ChangeService -> {
                 updateService(event.service)
@@ -75,11 +70,11 @@ constructor(
             }
             is ChangeOrderEvent.LoadMoreServices -> {
                 state = state.copy(servicePage = state.servicePage + 1)
-                getServices()
+//                getServices()
             }
             is ChangeOrderEvent.OnSearchQueryService -> {
                 state = state.copy(serviceSearchQuery = event.query, servicePage = 0, serviceEndIsReached = false, servicesOfDialog = listOf())
-                getServices()
+//                getServices()
             }
 
 
@@ -138,7 +133,7 @@ constructor(
 
     private fun getOrder(orderId: Long) {
         job?.cancel()
-        job = order.get_order(orderId).onEach { result ->
+        job = orderUseCase.get_order(orderId).onEach { result ->
             when (result) {
                 is Resource.Success -> {
                     val order = result.data
@@ -168,30 +163,30 @@ constructor(
         }.launchIn(viewModelScope)
     }
 
-    private fun getServices() {
-        jobService?.cancel()
-        jobService = service.get_services(state.serviceSearchQuery, state.servicePage).onEach { result ->
-            when (result) {
-                is Resource.Success -> {
-                    if (result.data!!.isEmpty()) {
-                        state = state.copy(serviceEndIsReached = true)
-                    }
-                    val listAll = state.servicesOfDialog.plus(result.data)
-                    state = state.copy(servicesOfDialog = listAll, serviceIsLoading = false)
-                }
-                is Resource.Error -> {
-                    state = state.copy(error = result.message!!, serviceIsLoading = false)
-                }
-                is Resource.Loading -> {
-                    state = state.copy(serviceIsLoading = result.isLoading)
-                }
-            }
-        }.launchIn(viewModelScope)
-    }
+//    private fun getServices() {
+//        jobService?.cancel()
+//        jobService = service.get_services(state.serviceSearchQuery, state.servicePage).onEach { result ->
+//            when (result) {
+//                is Resource.Success -> {
+//                    if (result.data!!.isEmpty()) {
+//                        state = state.copy(serviceEndIsReached = true)
+//                    }
+//                    val listAll = state.servicesOfDialog.plus(result.data)
+//                    state = state.copy(servicesOfDialog = listAll, serviceIsLoading = false)
+//                }
+//                is Resource.Error -> {
+//                    state = state.copy(error = result.message!!, serviceIsLoading = false)
+//                }
+//                is Resource.Loading -> {
+//                    state = state.copy(serviceIsLoading = result.isLoading)
+//                }
+//            }
+//        }.launchIn(viewModelScope)
+//    }
 
     private fun getWashers(){
         jobWashers?.cancel()
-        jobWashers = washer.get_washers(state.washerSearchQuery, state.washerPage).onEach { result ->
+        jobWashers = washerUseCase.get_washers(state.washerSearchQuery, state.washerPage).onEach { result ->
             when (result) {
                 is Resource.Success -> {
                     if(result.data!!.isEmpty()){
@@ -211,7 +206,7 @@ constructor(
     }
 
     private fun saveChanges() {
-        val orderUpdate = OrderUpdateDto(
+        val orderUpdate = UpdateOrderDto(
             cancelled = false,
             cancelledReason = "",
             active = true,
@@ -223,7 +218,7 @@ constructor(
             washerIds = state.washers.map { it.id }
         )
         job?.cancel()
-        job = order.update(orderUpdate, state.id).onEach { result ->
+        job = orderUseCase.update(orderUpdate, state.id).onEach { result ->
             state = when (result) {
                 is Resource.Success -> {
                     state.copy(changeCompleted = true, orderIsLoading = false)
@@ -239,7 +234,7 @@ constructor(
     }
 
     private fun cancelOrder(cancelledReason: String) {
-        val orderUpdate = OrderUpdateDto(
+        val orderUpdate = UpdateOrderDto(
             cancelled = true,
             cancelledReason = cancelledReason,
             active = false,
@@ -251,7 +246,7 @@ constructor(
             washerIds = state.washers.map { it.id }
         )
         job?.cancel()
-        job = order.update(orderUpdate, state.id).onEach { result ->
+        job = orderUseCase.update(orderUpdate, state.id).onEach { result ->
             state = when (result) {
                 is Resource.Success -> {
                     state.copy(changeCompleted = true, orderIsLoading = false)
@@ -266,7 +261,7 @@ constructor(
         }.launchIn(viewModelScope)
     }
 
-    private fun updateService(service: ServiceAnswerDto) {
+    private fun updateService(service: Service) {
         val ids = state.services.plus(service)
         val duration = durationOfServices(ids)
         val price = priceOfServices(ids)
@@ -288,7 +283,7 @@ constructor(
         }
     }
 
-    private fun updateWasher(washer: WasherAnswerDto) {
+    private fun updateWasher(washer: Washer) {
         val ids = state.washers.plus(washer)
         val priceOfJanitorsStake = priceOfJanitorsStake(ids, state.price)
         state = state.copy(
@@ -297,7 +292,7 @@ constructor(
         )
     }
 
-    private fun deleteService(service: ServiceAnswerDto) {
+    private fun deleteService(service: Service) {
         val ids = state.services.minus(service)
         val duration = durationOfServices(ids)
         val price = priceOfServices(ids)
@@ -318,7 +313,7 @@ constructor(
         }
     }
 
-    private fun deleteWasher(washer: WasherAnswerDto) {
+    private fun deleteWasher(washer: Washer) {
         val ids = state.washers.minus(washer)
         val priceOfJanitorsStake = priceOfJanitorsStake(ids, state.price)
         state = state.copy(

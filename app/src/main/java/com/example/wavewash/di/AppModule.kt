@@ -1,10 +1,12 @@
 package com.example.wavewash.di
 
 import android.app.Application
-import android.provider.SyncStateContract
+import androidx.room.Room
 import com.example.wavewash.data.datastore.AppDataStore
 import com.example.wavewash.data.datastore.AppDataStoreManager
-import com.example.wavewash.data.remote.SillyApi
+import com.example.wavewash.data.local.service.ServiceDao
+import com.example.wavewash.data.local.SillyWashDatabase
+import com.example.wavewash.data.remote.SillyWashApi
 import com.example.wavewash.utils.BASE_URL
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
@@ -29,6 +31,16 @@ object AppModule {
         return AppDataStoreManager(application)
     }
 
+    @Provides
+    @Singleton
+    fun provideWashDatabase(app: Application): SillyWashDatabase {
+        return Room.databaseBuilder(
+            app,
+            SillyWashDatabase::class.java,
+            "silly_wash.db"
+        ).build()
+    }
+
     @Singleton
     @Provides
     fun provideGsonBuilder(): Gson {
@@ -46,10 +58,10 @@ object AppModule {
 
     @Singleton
     @Provides
-    fun provideSillyApiService(retrofitBuilder: Retrofit.Builder): SillyApi {
+    fun provideSillyApiService(retrofitBuilder: Retrofit.Builder): SillyWashApi {
         return retrofitBuilder
             .build()
-            .create(SillyApi::class.java)
+            .create(SillyWashApi::class.java)
     }
 
 }

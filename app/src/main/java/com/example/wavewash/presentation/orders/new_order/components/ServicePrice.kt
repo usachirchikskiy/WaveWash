@@ -6,9 +6,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
-import androidx.compose.material.TextFieldDefaults
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -16,22 +14,20 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.wavewash.R
-import com.example.wavewash.data.remote.dto.service.ServiceAnswerDto
+import com.example.wavewash.data.remote.dto.service.ServiceDto
+import com.example.wavewash.domain.model.Service
 import com.example.wavewash.ui.theme.*
-import com.example.wavewash.utils.ComposableString
 import com.example.wavewash.utils.ComposeString
-import com.example.wavewash.utils.priceOfServices
 
 @Composable
 fun ServicePrice(
     onClick: () -> Unit,
-    services:List<ServiceAnswerDto>,
+    services:List<Service>,
     price:String,
     onDeleteServicesClick: () -> Unit
 ) {
@@ -94,8 +90,6 @@ fun ServicePrice(
                     }
                 }
 
-//                Spacer(Modifier.weight(1f))
-
                 Box(
                     modifier = Modifier
                         .clip(RoundedCornerShape(8.dp))
@@ -147,24 +141,6 @@ fun ServicePrice(
                     fontWeight = FontWeight.ExtraBold
                 )
             }
-
-//            OutlinedTextField(
-//                modifier = Modifier
-//                    .padding(top = 5.dp)
-//                    .fillMaxWidth(),
-//                value = value,
-//                onValueChange = { value = it },
-//                textStyle = TextStyle(
-//                    fontFamily = nunitoSans,
-//                    fontSize = 14.sp,
-//                    color = TextColor,
-//                    fontWeight = FontWeight.ExtraBold
-//                ),
-//                colors = TextFieldDefaults.outlinedTextFieldColors(
-//                    focusedBorderColor = Color(0XFFD3DDEC), // цвет при получении фокуса
-//                    unfocusedBorderColor = Color(0XFFD3DDEC)  // цвет при отсутствии фокуса
-//                )
-//            )
         }
     }
 }

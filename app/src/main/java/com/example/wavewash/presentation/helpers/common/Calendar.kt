@@ -11,6 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.wavewash.R
 import com.example.wavewash.ui.theme.nunitoSans
@@ -26,6 +27,7 @@ fun Calendar(
 ) {
     Row(
         modifier = modifier
+            .padding(horizontal = 16.dp, vertical = 9.dp)
             .clickable {
                 onCalendarPopup.invoke()
             },
@@ -33,6 +35,7 @@ fun Calendar(
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         IconButton(
+            modifier = Modifier.size(24.dp),
             onClick = {
                 onPreviousClick.invoke()
             },
@@ -92,6 +95,7 @@ fun Calendar(
         }
 
         IconButton(
+            modifier = Modifier.size(24.dp),
             onClick = {
                 onNextClick.invoke()
             },

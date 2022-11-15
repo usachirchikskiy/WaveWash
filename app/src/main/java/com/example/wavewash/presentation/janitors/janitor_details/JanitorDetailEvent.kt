@@ -15,6 +15,8 @@ sealed class JanitorDetailEvent {
 
     object OnPreviousDateClick:JanitorDetailEvent()
 
+    object ReloadWasher:JanitorDetailEvent()
+
     object ReloadOrders:JanitorDetailEvent()
 
 

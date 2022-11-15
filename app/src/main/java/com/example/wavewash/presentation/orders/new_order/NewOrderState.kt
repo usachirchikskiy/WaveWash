@@ -1,26 +1,28 @@
 package com.example.wavewash.presentation.orders.new_order
 
-import com.example.wavewash.data.remote.dto.service.ServiceAnswerDto
-import com.example.wavewash.data.remote.dto.washer.WasherAnswerDto
+import com.example.wavewash.data.remote.dto.service.ServiceDto
+import com.example.wavewash.domain.model.Service
+import com.example.wavewash.domain.model.Washer
 
 data class NewOrderState(
     val clientNumber: String = "",
     val clientName: String = "",
     val carModel: String = "",
     val carNumber: String = "",
-    val services: List<ServiceAnswerDto> = listOf(),
-    val washers: List<WasherAnswerDto> = listOf(),
+    val services: List<Service> = listOf(),
+    val washers: List<Washer> = listOf(),
     val duration:String = "0",
     val price:Int = 0,
     val priceOfJanitorsStake:Int = 0,
+    val washerId:Long = -1L,
 
-    val servicesOfDialog:List<ServiceAnswerDto> = listOf(),
+    val servicesOfDialog:List<Service> = listOf(),
     val serviceEndIsReached:Boolean = false,
     val serviceIsLoading: Boolean = false,
     val serviceSearchQuery:String = "",
     val servicePage:Int = 0,
 
-    val washersOfDialog:List<WasherAnswerDto> = listOf(),
+    val washersOfDialog:List<Washer> = listOf(),
     val washerEndIsReached: Boolean = false,
     val washerIsLoading: Boolean = false,
     val washerSearchQuery:String = "",
@@ -29,6 +31,5 @@ data class NewOrderState(
     val orderIsLoading:Boolean = false,
     val error:String = "",
 
-    val requiredFields:Boolean = false,
-    val changeCompleted: Boolean = false
+    val requiredFields:Boolean = false
 )

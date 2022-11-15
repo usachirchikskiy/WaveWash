@@ -1,15 +1,11 @@
 package com.example.wavewash.presentation.orders.orders_screen
 
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.wavewash.domain.use_cases.Order
-import com.example.wavewash.domain.use_cases.Washer
-import com.example.wavewash.presentation.janitors.janitors_screen.JanitorEvents
-import com.example.wavewash.presentation.janitors.janitors_screen.JanitorState
+import com.example.wavewash.domain.use_cases.OrderUseCase
 import com.example.wavewash.utils.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
@@ -22,7 +18,7 @@ private const val TAG = "OrdersViewModel"
 @HiltViewModel
 class OrdersViewModel @Inject
 constructor(
-    private val order: Order
+    private val orderUseCase: OrderUseCase
 ) : ViewModel() {
 
     var state by mutableStateOf(OrderState())
@@ -30,20 +26,16 @@ constructor(
     private var job: Job? = null
 
     init {
-        val pair = getFromAndTo()
-        val calendarDateFrom = getDate()
-        state = state.copy(
-            todayDate = pair.first,
-            calendarDateFrom = calendarDateFrom,
-            dateFrom = pair.first,
-            dateTo = pair.second
-        )
-        visibleTabs()
-        getOrders()
+        onTriggerEvent(OrdersEvent.GetFirstPage)
     }
-
+    
     fun onTriggerEvent(event: OrdersEvent) {
         when (event) {
+            is OrdersEvent.GetFirstPage -> {
+                todayDates()
+                visibleTabs()
+                getOrders()
+            }
             is OrdersEvent.GetOrders -> {
                 state = state.copy(page = state.page + 1)
                 getOrders()
@@ -68,14 +60,17 @@ constructor(
             }
             is OrdersEvent.ChangeDates -> {
                 changeDates(event.dateFrom, event.dateTo)
+                visibleTabs()
                 getOrders()
             }
             is OrdersEvent.OnNextDateClick -> {
                 onNextDate()
+                visibleTabs()
                 getOrders()
             }
             is OrdersEvent.OnPreviousDateClick -> {
                 onPreviousDate()
+                visibleTabs()
                 getOrders()
             }
             is OrdersEvent.ReloadOrders->{
@@ -83,6 +78,17 @@ constructor(
                 getOrders()
             }
         }
+    }
+
+    private fun todayDates(){
+        val pair = getFromAndTo()
+        val calendarDateFrom = getDate()
+        state = state.copy(
+            todayDate = pair.first,
+            calendarDateFrom = calendarDateFrom,
+            dateFrom = pair.first,
+            dateTo = pair.second
+        )
     }
 
     private fun onPreviousDate() {
@@ -109,7 +115,6 @@ constructor(
                 endReached = false
             )
         }
-        visibleTabs()
     }
 
     private fun onNextDate() {
@@ -150,7 +155,6 @@ constructor(
                 endReached = false
             )
         }
-        visibleTabs()
     }
 
     private fun changeDates(dateTo: String, dateFrom: String) {
@@ -191,23 +195,22 @@ constructor(
                 endReached = false
             )
         }
-        visibleTabs()
     }
 
     private fun getOrders() {
         job?.cancel()
-        job = order.get_orders(state.isActive, state.dateFrom, state.dateTo, state.page)
+        job = orderUseCase.get_orders(state.isActive, state.dateFrom, state.dateTo, state.page)
             .onEach { result ->
                 when (result) {
                     is Resource.Success -> {
-                        if (result.data!!.isEmpty()) {
+                        if (state.orders == result.data) {
                             state = state.copy(endReached = true)
+                        } else {
+                            state = state.copy(orders = result.data!!)
                         }
-                        val listAll = state.orders.plus(result.data)
-                        state = state.copy(orders = listAll, isLoading = false)
                     }
                     is Resource.Error -> {
-                        state = state.copy(error = result.message!!, isLoading = false)
+                        state = state.copy(error = result.message!!)
                     }
                     is Resource.Loading -> {
                         state = state.copy(isLoading = result.isLoading)
@@ -216,12 +219,13 @@ constructor(
             }.launchIn(viewModelScope)
     }
 
+
     private fun visibleTabs(){
-        if(state.todayDate<=state.dateFrom){
-            state = state.copy(isVisibleTabs = true)
-        }
-        else{
-            state = state.copy(isVisibleTabs = false)
+        state = if(state.todayDate==state.dateFrom && !state.calendarDateFrom.contains("-")){
+            state.copy(isVisibleTabs = true)
+        } else{
+            state.copy(isVisibleTabs = false, isActive = false)
         }
     }
+
 }

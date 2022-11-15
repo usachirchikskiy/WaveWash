@@ -24,7 +24,7 @@ import com.example.wavewash.ui.theme.Shapes
 import com.example.wavewash.utils.ComposeString
 
 @Composable
-fun CancelButton(onClick:()->Unit) {
+fun CancelButton(onClick: () -> Unit) {
     Row(
         modifier = Modifier
             .clip(Shapes.medium)
@@ -34,7 +34,7 @@ fun CancelButton(onClick:()->Unit) {
                 color = Color.Red,
                 shape = Shapes.medium
             )
-            .padding(horizontal = 21.dp, vertical = 10.dp),
+            .padding(horizontal = 24.dp, vertical = 13.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Image(
@@ -43,21 +43,13 @@ fun CancelButton(onClick:()->Unit) {
             contentScale = ContentScale.Crop
         )
 
-        Box(
-            modifier = Modifier
-                .height(30.dp)
-                .padding(
-                    start = 8.dp
-                ),
-            contentAlignment = Alignment.Center
-        ) {
-            Text(
-                text = ComposeString.resource(R.string.cancel_btn).value(),
-                style = MaterialTheme.typography.body1,
-                fontSize = 12.sp,
-                textAlign = TextAlign.Center,
-                color = Color.Red
-            )
-        }
+        Text(
+            modifier = Modifier.padding(start = 8.dp),
+            text = ComposeString.resource(R.string.cancel_btn).value(),
+            style = MaterialTheme.typography.body1,
+            fontSize = 12.sp,
+            textAlign = TextAlign.Center,
+            color = Color.Red
+        )
     }
 }

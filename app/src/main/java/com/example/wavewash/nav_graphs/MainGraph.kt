@@ -1,6 +1,5 @@
 package com.example.wavewash.nav_graphs
 
-import android.content.res.Configuration
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.navigation.*
@@ -18,6 +17,7 @@ import com.example.wavewash.presentation.orders.order_details_screen.OrderDetail
 import com.example.wavewash.presentation.analytics.overall_price.OverallPriceScreen
 import com.example.wavewash.presentation.account.password.NewPasswordScreen
 import com.example.wavewash.presentation.helpers.tabs.TabsScreen
+import com.example.wavewash.presentation.janitors.update_janitor.UpdateJanitorScreen
 import com.example.wavewash.presentation.login.LoginScreen
 import com.example.wavewash.presentation.services.update_service.UpdateServiceScreen
 import com.example.wavewash.utils.Screen
@@ -45,7 +45,15 @@ fun NavGraphBuilder.mainGraph(
         }
 
         //OrdersNavigation
-        composable(Screen.NewOrderScreenRoute.route) {
+        composable(
+            Screen.NewOrderScreenRoute.route + "/{washerId}",
+            arguments = listOf(
+                navArgument("washerId") {
+                    type = NavType.LongType
+//                    defaultValue = -1L
+                }
+            )
+        ) {
             NewOrderScreen(navController)
         }
 
@@ -81,6 +89,15 @@ fun NavGraphBuilder.mainGraph(
 
         composable(Screen.NewJanitorScreenRoute.route) {
             NewJanitorScreen(navController)
+        }
+
+        composable(
+            Screen.UpdateJanitorScreenRoute.route + "/{washerId}",
+            arguments = listOf(navArgument("washerId") {
+                type = NavType.LongType
+            })
+        ) {
+            UpdateJanitorScreen(navController)
         }
 
         //ServicesNavigation

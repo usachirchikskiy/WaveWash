@@ -1,5 +1,6 @@
 package com.example.wavewash.presentation.helpers.common
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -7,8 +8,7 @@ import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -31,28 +31,22 @@ import com.example.wavewash.utils.ComposeString
 
 @Composable
 fun SearchBar(
+    text:String,
     onSearch: (String) -> Unit
 ) {
-    var text by remember {
-        mutableStateOf("")
-    }
-
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .height(48.dp)
             .clip(Shapes.medium)
             .background(BackOfOrdersList)
-            .padding(horizontal = 24.dp),
+            .padding(end = 24.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
 
 
-        BasicTextField(
-
+        OutlinedTextField(
             value = text,
             onValueChange = {
-                text = it
                 onSearch(it)
             },
             maxLines = 1,
@@ -63,17 +57,31 @@ fun SearchBar(
                 fontWeight = FontWeight.Normal,
                 fontSize = 12.sp,
             ),
-            decorationBox = { innerTextField ->
-                if (text.isEmpty()) {
-                    Text(
-                        text = "Поиск...",
-                        color = HeaderButtonColor,
-                        fontFamily = nunitoSans,
-                        fontWeight = FontWeight.SemiBold
-                    )
-                }
-                innerTextField()
+            colors = TextFieldDefaults.outlinedTextFieldColors(
+                cursorColor = ActiveButtonBackground,
+                focusedBorderColor = Color.Transparent,
+                unfocusedBorderColor = Color.Transparent,
+                // цвет при отсутствии фокуса
+            ),
+            placeholder = {
+                Text(
+                    text = "Поиск...",
+                    color = HeaderButtonColor,
+                    fontFamily = nunitoSans,
+                    fontWeight = FontWeight.SemiBold
+                )
             },
+//            decorationBox = { innerTextField ->
+//                if (text.isEmpty()) {
+//                    Text(
+//                        text = "Поиск...",
+//                        color = HeaderButtonColor,
+//                        fontFamily = nunitoSans,
+//                        fontWeight = FontWeight.SemiBold
+//                    )
+//                }
+//                innerTextField()
+//            },
             modifier = Modifier.weight(1f)
         )
 

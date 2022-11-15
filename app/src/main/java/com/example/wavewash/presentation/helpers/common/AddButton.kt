@@ -26,7 +26,7 @@ import com.example.wavewash.utils.ComposeString
 
 @Composable
 fun AddButton(
-    onClick:() -> Unit
+    onClick: () -> Unit
 ) {
     Row(
         modifier = Modifier
@@ -35,25 +35,50 @@ fun AddButton(
             .clickable {
                 onClick.invoke()
             }
-            .padding(horizontal = 42.dp, vertical = 10.dp),
+            .padding(horizontal = 42.dp, vertical = 13.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Box(
-            contentAlignment = Alignment.Center,
-            modifier = Modifier
-                .padding(
-                    end = 8.dp
-                )
-                .height(30.dp)
-        ) {
-            Text(
-                text = ComposeString.resource(R.string.add).value(),
-                style = MaterialTheme.typography.body1,
-                fontSize = 12.sp,
-                textAlign = TextAlign.Center,
-                color = Color.White
-            )
-        }
+
+        Text(
+            modifier = Modifier.padding(end = 8.dp),
+            text = ComposeString.resource(R.string.add).value(),
+            style = MaterialTheme.typography.body1,
+            fontSize = 12.sp,
+            textAlign = TextAlign.Center,
+            color = Color.White
+        )
+        Image(
+            painter = painterResource(R.drawable.add),
+            contentDescription = "",
+            contentScale = ContentScale.Crop
+        )
+    }
+}
+
+
+@Composable
+fun SaveButton(
+    onClick: () -> Unit
+) {
+    Row(
+        modifier = Modifier
+            .clip(Shapes.medium)
+            .background(ActiveButtonBackground)
+            .clickable {
+                onClick.invoke()
+            }
+            .padding(horizontal = 42.dp, vertical = 13.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+
+        Text(
+            modifier = Modifier.padding(end = 8.dp),
+            text = ComposeString.resource(R.string.save).value(),
+            style = MaterialTheme.typography.body1,
+            fontSize = 12.sp,
+            textAlign = TextAlign.Center,
+            color = Color.White
+        )
         Image(
             painter = painterResource(R.drawable.add),
             contentDescription = "",

@@ -11,8 +11,10 @@ import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
 import androidx.compose.material.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
@@ -23,11 +25,15 @@ import com.example.wavewash.R
 import com.example.wavewash.presentation.helpers.common.AddButton
 import com.example.wavewash.presentation.helpers.common.BackButton
 import com.example.wavewash.presentation.helpers.common.Logo
+import com.example.wavewash.presentation.helpers.common.SaveButton
+import com.example.wavewash.presentation.orders.orders_screen.NavigationEvent
 import com.example.wavewash.presentation.services.new_service.NewServiceEvent
 import com.example.wavewash.presentation.services.new_service.NewServiceViewModel
+import com.example.wavewash.ui.theme.ActiveButtonBackground
 import com.example.wavewash.ui.theme.Shapes
 import com.example.wavewash.utils.ComposeString
 import com.example.wavewash.utils.REFRESH_SERVICES
+import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 fun UpdateServiceScreen(
@@ -36,12 +42,15 @@ fun UpdateServiceScreen(
 ) {
 
     val state = viewModel.state
-    if(state.changeCompleted){
-        viewModel.onTriggerEvent(UpdateServiceEvent.Back)
-        navController.previousBackStackEntry
-            ?.savedStateHandle
-            ?.set(REFRESH_SERVICES, REFRESH_SERVICES)
-        navController.popBackStack()
+
+    LaunchedEffect(key1 = true) {
+        viewModel.eventFlow.collectLatest { event ->
+            when(event) {
+                is NavigationEvent.GoBack -> {
+                    navController.popBackStack()
+                }
+            }
+        }
     }
 
     Column(
@@ -58,7 +67,7 @@ fun UpdateServiceScreen(
         ) {
             Text(
                 modifier = Modifier.padding(top = 24.dp),
-                text = ComposeString.resource(R.string.new_service).value(),
+                text = ComposeString.resource(R.string.update_service).value(),
                 style = MaterialTheme.typography.body1,
                 fontSize = 24.sp
             )
@@ -74,6 +83,7 @@ fun UpdateServiceScreen(
                     .padding(top = 5.dp)
                     .fillMaxWidth(),
                 colors = TextFieldDefaults.outlinedTextFieldColors(
+                    cursorColor = ActiveButtonBackground,
                     focusedBorderColor = Color(0xFFD3DDEC),
                     unfocusedBorderColor = Color(0xFFD3DDEC),
                 ),
@@ -97,6 +107,7 @@ fun UpdateServiceScreen(
                     .padding(top = 5.dp)
                     .fillMaxWidth(),
                 colors = TextFieldDefaults.outlinedTextFieldColors(
+                    cursorColor = ActiveButtonBackground,
                     focusedBorderColor = Color(0xFFD3DDEC),
                     unfocusedBorderColor = Color(0xFFD3DDEC),
                 ),
@@ -125,15 +136,17 @@ fun UpdateServiceScreen(
                     .padding(top = 5.dp)
                     .fillMaxWidth(),
                 colors = TextFieldDefaults.outlinedTextFieldColors(
+                    cursorColor = ActiveButtonBackground,
                     focusedBorderColor = Color(0xFFD3DDEC),
                     unfocusedBorderColor = Color(0xFFD3DDEC),
                 ),
                 singleLine = true,
                 value = state.price,
                 onValueChange = { price ->
-                    if (state.price.length < 7) {
+                    if (price.length < 7) {
                         viewModel.onTriggerEvent(UpdateServiceEvent.ChangePriceValue(price))
                     }
+
                 },
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Number
@@ -149,7 +162,7 @@ fun UpdateServiceScreen(
                 }
             )
             Spacer(modifier = Modifier.weight(1f))
-            AddButton(
+            SaveButton(
                 onClick = {
                     viewModel.onTriggerEvent(UpdateServiceEvent.UpdateService)
                 }

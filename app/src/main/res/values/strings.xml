@@ -84,5 +84,7 @@
     <string name="send">Отправить</string>
     <string name="ready">Готово</string>
     <string name="sum">сум</string>
+    <string name="update_service">Обновление услуги</string>
+    <string name="update_janitor">Обновление мойщика</string>
 
 </resources>

@@ -24,9 +24,12 @@ import com.example.wavewash.presentation.helpers.common.AddButton
 import com.example.wavewash.presentation.helpers.common.BackButton
 import com.example.wavewash.presentation.helpers.common.Logo
 import com.example.wavewash.presentation.orders.new_order.NewOrderEvent
+import com.example.wavewash.presentation.orders.orders_screen.NavigationEvent
+import com.example.wavewash.ui.theme.ActiveButtonBackground
 import com.example.wavewash.ui.theme.Shapes
 import com.example.wavewash.utils.ComposeString
 import com.example.wavewash.utils.REFRESH_SERVICES
+import kotlinx.coroutines.flow.collectLatest
 
 private const val TAG = "NewServiceScreen"
 @Composable
@@ -36,14 +39,15 @@ fun NewServiceScreen(
 ) {
     val state = viewModel.state
 
-    if(state.changeCompleted){
-        viewModel.onTriggerEvent(NewServiceEvent.Back)
-        navController.previousBackStackEntry
-            ?.savedStateHandle
-            ?.set(REFRESH_SERVICES, REFRESH_SERVICES)
-        navController.popBackStack()
+    LaunchedEffect(key1 = true) {
+        viewModel.eventFlow.collectLatest { event ->
+            when(event) {
+                is NavigationEvent.GoBack -> {
+                    navController.popBackStack()
+                }
+            }
+        }
     }
-
 
     Column(
         modifier = Modifier.verticalScroll(rememberScrollState())
@@ -75,6 +79,7 @@ fun NewServiceScreen(
                     .padding(top = 5.dp)
                     .fillMaxWidth(),
                 colors = TextFieldDefaults.outlinedTextFieldColors(
+                    cursorColor = ActiveButtonBackground,
                     focusedBorderColor = Color(0xFFD3DDEC),
                     unfocusedBorderColor = Color(0xFFD3DDEC),
                 ),
@@ -98,6 +103,7 @@ fun NewServiceScreen(
                     .padding(top = 5.dp)
                     .fillMaxWidth(),
                 colors = TextFieldDefaults.outlinedTextFieldColors(
+                    cursorColor = ActiveButtonBackground,
                     focusedBorderColor = Color(0xFFD3DDEC),
                     unfocusedBorderColor = Color(0xFFD3DDEC),
                 ),
@@ -126,6 +132,7 @@ fun NewServiceScreen(
                     .padding(top = 5.dp)
                     .fillMaxWidth(),
                 colors = TextFieldDefaults.outlinedTextFieldColors(
+                    cursorColor = ActiveButtonBackground,
                     focusedBorderColor = Color(0xFFD3DDEC),
                     unfocusedBorderColor = Color(0xFFD3DDEC),
                 ),

@@ -18,12 +18,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
-import androidx.compose.ui.window.DialogProperties
-import androidx.navigation.NavController
 import com.example.wavewash.R
-import com.example.wavewash.data.remote.dto.washer.WasherAnswerDto
 import com.example.wavewash.presentation.helpers.common.BackButton
-import com.example.wavewash.presentation.helpers.popups.CustomJanitorDialogUI
 import com.example.wavewash.presentation.orders.change_order_screen.components.CancelButton
 import com.example.wavewash.ui.theme.Shapes
 import com.example.wavewash.ui.theme.TextColor

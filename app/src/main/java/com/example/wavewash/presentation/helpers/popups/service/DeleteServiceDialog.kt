@@ -3,42 +3,35 @@ package com.example.wavewash.presentation.helpers.popups.service
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Divider
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
-import androidx.navigation.NavController
 import com.example.wavewash.R
-import com.example.wavewash.data.remote.dto.service.ServiceAnswerDto
-import com.example.wavewash.data.remote.dto.washer.WasherAnswerDto
+import com.example.wavewash.data.remote.dto.service.ServiceDto
+import com.example.wavewash.domain.model.Service
 import com.example.wavewash.presentation.helpers.popups.components.PopupExit
 import com.example.wavewash.presentation.helpers.popups.components.PopupExitMiniRed
-import com.example.wavewash.presentation.helpers.popups.janitor.DeleteJanitorItem
 import com.example.wavewash.ui.theme.*
 import com.example.wavewash.utils.ComposeString
-import com.skydoves.landscapist.ShimmerParams
-import com.skydoves.landscapist.coil.CoilImage
 
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun DeleteServiceDialog(
     onClose: () -> Unit,
-    onDeleteClicked: (ServiceAnswerDto) -> Unit,
-    services: List<ServiceAnswerDto>
+    onDeleteClicked: (Service) -> Unit,
+    services: List<Service>
 ) {
     Dialog(
         onDismissRequest = {
@@ -62,8 +55,8 @@ fun DeleteServiceDialog(
 @Composable
 fun DeleteServiceDialogUI(
     onClose: () -> Unit,
-    services: List<ServiceAnswerDto>,
-    onDeleteClicked: (ServiceAnswerDto) -> Unit
+    services: List<Service>,
+    onDeleteClicked: (Service) -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -150,8 +143,8 @@ fun DeleteServiceDialogUI(
 
 @Composable
 fun DeleteServiceItem(
-    service: ServiceAnswerDto,
-    deleteServiceClicked: (ServiceAnswerDto) -> Unit
+    service: Service,
+    deleteServiceClicked: (Service) -> Unit
 ) {
     Row(
         modifier = Modifier

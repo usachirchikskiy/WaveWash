@@ -28,13 +28,14 @@ fun ScreenHeaders(
             .background(Color.White)
             .padding(bottom = 24.dp)
     ) {
-        for(index in headers.indices){
+        for (index in headers.indices) {
             val btn = headers[index]
-            if(!isVisible && index==0){
+            if (!isVisible && index == 0) {
                 continue
             }
             val selected = selectedOption == btn.buttonText.invoke()
-            Box(
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier
                     .clip(
                         if (selected) Shapes.medium
@@ -67,42 +68,36 @@ fun ScreenHeaders(
                     )
                     .clickable {
                         onClick.invoke(index)
-                    },
+                    }
+                    .padding(18.dp, 7.dp),
 
                 ) {
-                Row(
-                    modifier = Modifier.height(36.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Image(
-                        modifier = Modifier.padding(start = 18.dp),
-                        painter = painterResource(btn.icon),
-                        contentDescription = "",
-                        contentScale = ContentScale.Crop
-                    )
-                    Text(
-                        modifier = Modifier.padding(
-                            start = 8.dp,
-                            end = 18.dp
-                        ),
-                        text = btn.buttonText.invoke(),
-                        style = if (selected) {
-                            tabStyle
-                        } else {
-                            screenHeadersInActive
-                        },
-                        color = if (selected) {
-                            Color.White
-                        } else {
-                            HeaderButtonColor
-                        },
-                        fontSize = 12.sp
-                    )
-                }
+                Image(
+                    painter = painterResource(btn.icon),
+                    contentDescription = "",
+                    contentScale = ContentScale.Crop
+                )
+                Text(
+                    modifier = Modifier.padding(
+                        start = 8.dp
+                    ),
+                    text = btn.buttonText.invoke(),
+                    style = if (selected) {
+                        tabStyle
+                    } else {
+                        screenHeadersInActive
+                    },
+                    color = if (selected) {
+                        Color.White
+                    } else {
+                        HeaderButtonColor
+                    },
+                    fontSize = 12.sp
+                )
             }
             Spacer(Modifier.width(16.dp))
         }
+    }
 //        headers.forEachIndexed { index, btn ->
 //        }
-    }
 }

@@ -1,13 +1,11 @@
 package com.example.wavewash.presentation.janitors.janitors_screen
 
-import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.*
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.runtime.*
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -30,20 +28,6 @@ private const val TAG = "JanitorsScreen"
 fun JanitorsScreen(navController: NavController, viewModel: JanitorViewModel = hiltViewModel()) {
     val state = viewModel.state
 
-    val screenResultState = navController.currentBackStackEntry
-        ?.savedStateHandle
-        ?.get<String>(REFRESH_WASHERS)
-
-    screenResultState?.let { value ->
-        navController.currentBackStackEntry
-            ?.savedStateHandle
-            ?.remove<String>(REFRESH_WASHERS)
-        if (value == REFRESH_WASHERS) {
-            viewModel.onTriggerEvent(JanitorEvents.ReloadWashers)
-        }
-
-    }
-
     if (state.isLoading) {
         Box(
             contentAlignment = Alignment.Center,
@@ -63,15 +47,19 @@ fun JanitorsScreen(navController: NavController, viewModel: JanitorViewModel = h
             .padding(top = 24.dp)
     ) {
         item {
-//            ScreenHeaders(
-//                headerJanitorButtons,
-//                ComposeString.resource(R.string.new_janitor).value(),
-//                onClick = { index ->
-//                    when (index) {
-//                        0 -> navController.navigate(Screen.NewJanitorScreenRoute.route)
-//                    }
-//                }
-//            )
+            ScreenHeaders(
+                isVisible = true,
+                headers = headerJanitorButtons,
+                selectedOption = ComposeString.resource(R.string.new_janitor).value(),
+                onClick = { index ->
+                    when (index) {
+                        0 -> {
+                            navController.navigate(Screen.NewJanitorScreenRoute.route)
+                        }
+
+                    }
+                }
+            )
         }
 
         stickyHeader {
@@ -81,6 +69,7 @@ fun JanitorsScreen(navController: NavController, viewModel: JanitorViewModel = h
                     .padding(bottom = 24.dp)
             ) {
                 SearchBar(
+                    text = state.searchQuery,
                     onSearch = { text ->
                         viewModel.onTriggerEvent(JanitorEvents.ChangeSearchQueryValue(text))
                     }
@@ -92,7 +81,6 @@ fun JanitorsScreen(navController: NavController, viewModel: JanitorViewModel = h
             val items = state.washers.chunked(gridCellsSize)[index]
 
             if (index >= state.washers.chunked(gridCellsSize).size - 1 && !state.endReached && !state.isLoading) {
-                Log.d(TAG, "JanitorsScreen: NextPage")
                 viewModel.onTriggerEvent(JanitorEvents.GetWashers)
             }
             Row(

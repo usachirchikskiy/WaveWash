@@ -34,21 +34,6 @@ fun ServicesScreen(
 ) {
     val state = viewModel.state
 
-    val screenResultState = navController.currentBackStackEntry
-        ?.savedStateHandle
-        ?.get<String>(REFRESH_SERVICES)
-
-    screenResultState?.let { value ->
-        navController.currentBackStackEntry
-            ?.savedStateHandle
-            ?.remove<String>(REFRESH_SERVICES)
-
-        if (value == REFRESH_SERVICES) {
-            viewModel.onTriggerEvent(ServiceEvent.ReloadServices)
-        }
-
-    }
-
     if (state.isLoading) {
         Box(
             contentAlignment = Alignment.Center,
@@ -61,6 +46,7 @@ fun ServicesScreen(
     LazyColumn(
         modifier = Modifier
             .padding(top = 16.dp)
+            .fillMaxHeight()
             .fillMaxWidth()
             .clip(Shapes.large)
             .background(Color.White)
@@ -69,15 +55,18 @@ fun ServicesScreen(
     ) {
 
         item {
-//            ScreenHeaders(
-//                headerServiceButtons,
-//                ComposeString.resource(R.string.new_service).value(),
-//                onClick = { index ->
-//                    when (index) {
-//                        0 -> navController.navigate(Screen.NewServiceScreenRoute.route)
-//                    }
-//                }
-//            )
+            ScreenHeaders(
+                isVisible = true,
+                headers = headerServiceButtons,
+                selectedOption = ComposeString.resource(R.string.new_service).value(),
+                onClick = { index ->
+                    when (index) {
+                        0 -> {
+                            navController.navigate(Screen.NewServiceScreenRoute.route)
+                        }
+                    }
+                }
+            )
         }
 
         stickyHeader {
@@ -87,6 +76,7 @@ fun ServicesScreen(
                     .padding(bottom = 24.dp)
             ) {
                 SearchBar(
+                    text = state.searchQuery,
                     onSearch = { text ->
                         viewModel.onTriggerEvent(ServiceEvent.ChangeSearchQueryValue(text))
                     }
@@ -110,7 +100,6 @@ fun ServicesScreen(
                         ServiceItem(
                             service = item,
                             change = {
-                                Log.d(TAG, "ServicesScreen: $it")
                                 navController.navigate(Screen.UpdateServiceScreen.route + "/$it")
                             }
                         )
