@@ -21,6 +21,7 @@ import androidx.compose.ui.window.DialogProperties
 import com.example.wavewash.ui.theme.AppBackground
 import com.example.wavewash.ui.theme.Shapes
 import com.example.wavewash.utils.getFromAndTo
+import com.example.wavewash.utils.getNextDate
 import com.himanshoe.kalendar.ui.Kalendar
 import com.himanshoe.kalendar.ui.KalendarType
 
@@ -53,8 +54,16 @@ fun CalendarDialog(
                 kalendarType = KalendarType.Firey(),
                 dateRangeEnabled = true,
                 onDateRangeSelected = {
-                    dateFrom.value = it.first.toString()
-                    dateTo.value = it.second.toString()
+//                    dateFrom.value = it.first.toString()
+//                    dateTo.value = it.second.toString()
+                    if(it.first.toString()>it.second.toString()){
+                      dateFrom.value = it.second.toString()
+                      dateTo.value = it.first.toString()//getNextDate(it.first.toString())
+                    }
+                    else{
+                        dateFrom.value = it.first.toString()
+                        dateTo.value = it.second.toString()//getNextDate(it.second.toString())
+                    }
                 },
                 onReadyClick = {
                     if(dateFrom.value =="" && dateTo.value == ""){
@@ -63,7 +72,7 @@ fun CalendarDialog(
                         dateTo.value = pair.first
                     }
                     dateRangeSelected.invoke(dateFrom.value, dateTo.value)
-                    openDialogCustom.value = false //TODO Change
+                    openDialogCustom.value = false
                 },
                 onCancelled = {
                     openDialogCustom.value = false

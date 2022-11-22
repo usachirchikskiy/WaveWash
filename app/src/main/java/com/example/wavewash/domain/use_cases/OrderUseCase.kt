@@ -48,11 +48,11 @@ class OrderUseCase(
                 }
                 result.washers.forEach {
                     washerDao.insertWasher(it.toEntity())
+                    Log.d(TAG, "addOrder: 4")
                     orderDao.insertOrderWasherCrossRef(
                         OrderWasherCrossRef(result.id, it.id)
                     )
                 }
-
                 emit(Resource.Success("Order Added"))
             } catch (ex: Exception) {
                 emit(Resource.Error(message = ex.message!!))
@@ -127,7 +127,7 @@ class OrderUseCase(
                 dateFrom = dateFromLong,
                 dateTo = dateToLong,
                 isActive = isActive
-            ).collect { orderWithWasherAndServices ->
+            ).collect{ orderWithWasherAndServices ->
                 Log.d(TAG, " get_orders cashed: $orderWithWasherAndServices")
                 emit(Resource.Success(orderWithWasherAndServices.map { it.toOrder() }))
             }

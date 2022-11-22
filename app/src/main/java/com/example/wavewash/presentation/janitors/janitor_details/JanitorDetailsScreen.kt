@@ -47,205 +47,205 @@ fun JanitorDetailsScreen(
         CalendarDialog(
             openDialogCustom = openDialogCustom,
             dateRangeSelected = { dateFrom, dateTo ->
+                Log.d(TAG, "JanitorDetailsScreen: $dateFrom \n$dateTo")
                 viewModel.onTriggerEvent(JanitorDetailEvent.ChangeDates(dateFrom, dateTo))
             }
         )
     }
 
-//    Column {
-//        Row(
-//            verticalAlignment = Alignment.CenterVertically,
-//            horizontalArrangement = Arrangement.spacedBy(24.dp)
-//        ) {
-//            BackButton(
-//                onBackClicked = {
-//                    navController.popBackStack()
-//                }
-//            )
-//            Calendar(
-//                modifier = Modifier
-//                    .fillMaxWidth()
-//                    .clip(Shapes.small)
-//                    .background(Color.White),
-//                beginDate = state.calendarDateFrom,
-//                endDate = state.calendarDateTo,
-//                onCalendarPopup = {
-//                    openDialogCustom.value = true
-//                },
-//                onNextClick = {
-//                    viewModel.onTriggerEvent(JanitorDetailEvent.OnNextDateClick)
-//                },
-//                onPreviousClick = {
-//                    viewModel.onTriggerEvent(JanitorDetailEvent.OnPreviousDateClick)
-//                }
-//            )
-//        }
-//
-//        Row(
-//            modifier = Modifier
-//                .fillMaxWidth()
-//                .height(IntrinsicSize.Min),
-//            horizontalArrangement = Arrangement.spacedBy(16.dp)
-//        ) {
-//
-//            state.washer?.let {
-//                CardsJanitorInfo(
-//                    modifier = Modifier
-//                        .weight(0.66f)
-//                        .fillMaxHeight(1f),
-//                    washer = it,
-//                    changeClicked = { id ->
-//                        navController.navigate(Screen.UpdateJanitorScreenRoute.route + "/${id}")
-//                    }
-//                )
-//                CardsJanitorAnalytics(
-//                    modifier = Modifier
-//                        .weight(0.34f)
-//                        .fillMaxHeight(1f),
-//                    earnedMoney = state.earnedMoney,
-//                    earnedStake = state.earnedStake
-//                )
-//            }
-//        }
-//
-//        Column(
-//            modifier = Modifier
-//                .padding(top = 24.dp)
-//                .fillMaxWidth()
-//                .clip(Shapes.large)
-//                .background(Color.White)
-//                .padding(horizontal = 16.dp, vertical = 24.dp)
-//        ) {
-//            ScreenHeaders(
-//                headers = headerOrderButtons,
-//                isVisible = state.isVisibleTabs,
-//                selectedOption = ComposeString.resource(R.string.add_order).value(),
-//                onClick = { index ->
-//                    when (index) {
-//                        0 -> navController.navigate(Screen.NewOrderScreenRoute.route)
-//                    }
-//                }
-//            )
-//            if (state.isVisibleTabs) {
-//                OrdersTab(
-//                    isActive = state.isActive,
-//                    onClick = { index ->
-//                        if (index == 0) {
-//                            viewModel.onTriggerEvent(JanitorDetailEvent.ActiveOrders)
-//                        } else {
-//                            viewModel.onTriggerEvent(JanitorDetailEvent.FinishedOrders)
-//                        }
-//                    }
-//                )
-//            }
-//            HeadersOfList()
-    LazyColumn(
-        modifier = Modifier.fillMaxSize()
-    ) {
-        item {
-
-            Column {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(24.dp)
-                ) {
-                    BackButton(
-                        onBackClicked = {
-                            navController.popBackStack()
-                        }
-                    )
-                    Calendar(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clip(Shapes.small)
-                            .background(Color.White),
-                        beginDate = state.calendarDateFrom,
-                        endDate = state.calendarDateTo,
-                        onCalendarPopup = {
-                            openDialogCustom.value = true
-                        },
-                        onNextClick = {
-                            viewModel.onTriggerEvent(JanitorDetailEvent.OnNextDateClick)
-                        },
-                        onPreviousClick = {
-                            viewModel.onTriggerEvent(JanitorDetailEvent.OnPreviousDateClick)
-                        }
-                    )
-                }
-
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(IntrinsicSize.Min),
-                    horizontalArrangement = Arrangement.spacedBy(16.dp)
-                ) {
-
-                    state.washer?.let {
-                        CardsJanitorInfo(
-                            modifier = Modifier
-                                .weight(0.66f)
-                                .fillMaxHeight(1f),
-                            washer = it,
-                            changeClicked = { id ->
-                                navController.navigate(Screen.UpdateJanitorScreenRoute.route + "/${id}")
-                            }
-                        )
-                        CardsJanitorAnalytics(
-                            modifier = Modifier
-                                .weight(0.34f)
-                                .fillMaxHeight(1f),
-                            earnedMoney = state.earnedMoney,
-                            earnedStake = state.earnedStake
-                        )
-                    }
-                }
-
-                Column(
-                    modifier = Modifier
-                        .padding(top = 24.dp)
-                        .fillMaxWidth()
-                        .clip(Shapes.large)
-                        .background(Color.White)
-                        .padding(horizontal = 16.dp, vertical = 24.dp)
-                ) {
-                    ScreenHeaders(
-                        headers = headerOrderButtons,
-                        isVisible = state.isVisibleTabs,
-                        selectedOption = ComposeString.resource(R.string.add_order).value(),
-                        onClick = { index ->
-                            Log.d(TAG, "JanitorDetailsScreen: ${state.id}")
-                            when (index) {
-                                0 -> navController.navigate(Screen.NewOrderScreenRoute.route + "/${state.id}")
-                            }
-                        }
-                    )
-                    if (state.isVisibleTabs) {
-                        OrdersTab(
-                            isActive = state.isActive,
-                            onClick = { index ->
-                                if (index == 0) {
-                                    viewModel.onTriggerEvent(JanitorDetailEvent.ActiveOrders)
-                                } else {
-                                    viewModel.onTriggerEvent(JanitorDetailEvent.FinishedOrders)
-                                }
-                            }
-                        )
-                    }
-
-                }
-                HeadersOfList()
-            }
-        }
-        items(state.orders.size) { index ->
-            OrderItem(
-                order = state.orders[index],
-                onClick = {
-                    navController.navigate(Screen.OrderDetailsScreenRoute.route + "/${state.orders[index].id}")
+    Column {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(24.dp)
+        ) {
+            BackButton(
+                onBackClicked = {
+                    navController.popBackStack()
                 }
             )
-            Divider(modifier = Modifier.fillMaxWidth())
+            Calendar(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clip(Shapes.small)
+                    .background(Color.White),
+                beginDate = state.calendarDateFrom,
+                endDate = state.calendarDateTo,
+                onCalendarPopup = {
+                    openDialogCustom.value = true
+                },
+                onNextClick = {
+                    viewModel.onTriggerEvent(JanitorDetailEvent.OnNextDateClick)
+                },
+                onPreviousClick = {
+                    viewModel.onTriggerEvent(JanitorDetailEvent.OnPreviousDateClick)
+                }
+            )
+        }
+
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(IntrinsicSize.Min),
+            horizontalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+
+            state.washer?.let {
+                CardsJanitorInfo(
+                    modifier = Modifier
+                        .weight(0.66f)
+                        .fillMaxHeight(1f),
+                    washer = it,
+                    changeClicked = { id ->
+                        navController.navigate(Screen.UpdateJanitorScreenRoute.route + "/${id}")
+                    }
+                )
+                CardsJanitorAnalytics(
+                    modifier = Modifier
+                        .weight(0.34f)
+                        .fillMaxHeight(1f),
+                    earnedMoney = state.earnedMoney,
+                    earnedStake = state.earnedStake
+                )
+            }
+        }
+
+        Column(
+            modifier = Modifier
+                .padding(top = 24.dp)
+                .fillMaxWidth()
+                .clip(Shapes.large)
+                .background(Color.White)
+                .padding(horizontal = 16.dp, vertical = 24.dp)
+        ) {
+            ScreenHeaders(
+                headers = headerOrderButtons,
+                isVisible = state.isVisibleTabs,
+                selectedOption = ComposeString.resource(R.string.add_order).value(),
+                onClick = { index ->
+                    when (index) {
+                        0 -> navController.navigate(Screen.NewOrderScreenRoute.route + "/${state.id}")
+                    }
+                }
+            )
+
+            OrdersTab(
+                isVisibleTab = state.isVisibleTabs,
+                isActive = state.isActive,
+                onClick = { index ->
+                    if (index == 0) {
+                        viewModel.onTriggerEvent(JanitorDetailEvent.ActiveOrders)
+                    } else {
+                        viewModel.onTriggerEvent(JanitorDetailEvent.FinishedOrders)
+                    }
+                }
+            )
+            HeadersOfList()
+            LazyColumn(
+                modifier = Modifier.fillMaxSize()
+            ) {
+//        item {
+//
+//            Column {
+//                Row(
+//                    verticalAlignment = Alignment.CenterVertically,
+//                    horizontalArrangement = Arrangement.spacedBy(24.dp)
+//                ) {
+//                    BackButton(
+//                        onBackClicked = {
+//                            navController.popBackStack()
+//                        }
+//                    )
+//                    Calendar(
+//                        modifier = Modifier
+//                            .fillMaxWidth()
+//                            .clip(Shapes.small)
+//                            .background(Color.White),
+//                        beginDate = state.calendarDateFrom,
+//                        endDate = state.calendarDateTo,
+//                        onCalendarPopup = {
+//                            openDialogCustom.value = true
+//                        },
+//                        onNextClick = {
+//                            viewModel.onTriggerEvent(JanitorDetailEvent.OnNextDateClick)
+//                        },
+//                        onPreviousClick = {
+//                            viewModel.onTriggerEvent(JanitorDetailEvent.OnPreviousDateClick)
+//                        }
+//                    )
+//                }
+//
+//                Row(
+//                    modifier = Modifier
+//                        .fillMaxWidth()
+//                        .height(IntrinsicSize.Min),
+//                    horizontalArrangement = Arrangement.spacedBy(16.dp)
+//                ) {
+//
+//                    state.washer?.let {
+//                        CardsJanitorInfo(
+//                            modifier = Modifier
+//                                .weight(0.66f)
+//                                .fillMaxHeight(1f),
+//                            washer = it,
+//                            changeClicked = { id ->
+//                                navController.navigate(Screen.UpdateJanitorScreenRoute.route + "/${id}")
+//                            }
+//                        )
+//                        CardsJanitorAnalytics(
+//                            modifier = Modifier
+//                                .weight(0.34f)
+//                                .fillMaxHeight(1f),
+//                            earnedMoney = state.earnedMoney,
+//                            earnedStake = state.earnedStake
+//                        )
+//                    }
+//                }
+//
+//                Column(
+//                    modifier = Modifier
+//                        .padding(top = 24.dp)
+//                        .fillMaxWidth()
+//                        .clip(Shapes.large)
+//                        .background(Color.White)
+//                        .padding(horizontal = 16.dp, vertical = 24.dp)
+//                ) {
+//                    ScreenHeaders(
+//                        headers = headerOrderButtons,
+//                        isVisible = state.isVisibleTabs,
+//                        selectedOption = ComposeString.resource(R.string.add_order).value(),
+//                        onClick = { index ->
+//                            when (index) {
+//                                0 -> navController.navigate(Screen.NewOrderScreenRoute.route + "/${state.id}")
+//                            }
+//                        }
+//                    )
+//
+//                    OrdersTab(
+//                        isVisibleTab = state.isVisibleTabs,
+//                        isActive = state.isActive,
+//                        onClick = { index ->
+//                            if (index == 0) {
+//                                viewModel.onTriggerEvent(JanitorDetailEvent.ActiveOrders)
+//                            } else {
+//                                viewModel.onTriggerEvent(JanitorDetailEvent.FinishedOrders)
+//                            }
+//                        }
+//                    )
+//
+//                }
+//                HeadersOfList()
+//            }
+//        }
+                items(state.orders.size) { index ->
+                    OrderItem(
+                        order = state.orders[index],
+                        onClick = {
+                            navController.navigate(Screen.OrderDetailsScreenRoute.route + "/${state.orders[index].id}")
+                        }
+                    )
+                    Divider(modifier = Modifier.fillMaxWidth())
+                }
+            }
         }
     }
 }
-//}
-//}

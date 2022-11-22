@@ -2,6 +2,7 @@ package com.example.wavewash.di.washer
 
 import com.example.wavewash.data.datastore.AppDataStore
 import com.example.wavewash.data.local.SillyWashDatabase
+import com.example.wavewash.data.local.order.OrderDao
 import com.example.wavewash.data.local.service.ServiceDao
 import com.example.wavewash.data.local.washer.WasherDao
 import com.example.wavewash.data.remote.dto.service.ServiceApi
@@ -38,12 +39,16 @@ object WasherModule {
     fun provideWasherUseCase(
         washerApi: WasherApi,
         appDataStoreManager: AppDataStore,
-        washerDao: WasherDao
+        washerDao: WasherDao,
+        orderDao: OrderDao,
+        serviceDao: ServiceDao
     ): WasherUseCase {
         return WasherUseCase(
             washerApi,
             appDataStoreManager,
-            washerDao
+            washerDao,
+            orderDao,
+            serviceDao
         )
     }
 }

@@ -5,6 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -24,18 +25,23 @@ import com.example.wavewash.utils.ComposeString
 
 @Composable
 fun LogoNameCompany(
-    onClick: () -> Unit
+    onCompanyClick: () -> Unit,
+    onLogoClick: () -> Unit
 ) {
     Row(
         modifier = Modifier
             .fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Image(
-            painterResource(R.drawable.logo),
-            contentDescription = "logo",
-            contentScale = ContentScale.Crop
-        )
+        IconButton(onClick = {
+            onLogoClick.invoke()
+        }) {
+            Image(
+                painterResource(R.drawable.logo),
+                contentDescription = "logo",
+                contentScale = ContentScale.Crop
+            )
+        }
         Spacer(Modifier.width(16.dp))
         Text(
             style = appNameStyle,
@@ -47,9 +53,9 @@ fun LogoNameCompany(
                 .clip(RoundedCornerShape(8.dp))
                 .background(Color.White)
                 .clickable {
-                    onClick.invoke()
+                    onCompanyClick.invoke()
                 }
-                .padding(12.dp,10.dp),
+                .padding(12.dp, 10.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(

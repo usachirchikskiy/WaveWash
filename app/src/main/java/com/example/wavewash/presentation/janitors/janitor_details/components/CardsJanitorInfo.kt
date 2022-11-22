@@ -43,8 +43,8 @@ fun CardsJanitorInfo(
                 modifier = Modifier
                     .clip(RoundedCornerShape(8.dp))
                     .size(180.dp),
-                imageModel = "https://mir-s3-cdn-cf.behance.net/user/276/bcb5e41136095279.62c2d74bc3cad.jpg",
-                contentScale = ContentScale.Crop,            // crop the image if it's not a square
+                imageModel = washer.image,
+                contentScale = ContentScale.Crop,
 
                 shimmerParams = ShimmerParams(
                     baseColor = Color.White,

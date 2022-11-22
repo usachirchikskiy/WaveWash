@@ -50,24 +50,24 @@ fun OrdersScreen(
     }
 
     Column {
-//        Calendar(
-//            modifier = Modifier
-//                .padding(vertical = 16.dp)
-//                .fillMaxWidth()
-//                .clip(Shapes.small)
-//                .background(Color.White),
-//            beginDate = state.calendarDateFrom,
-//            endDate = state.calendarDateTo,
-//            onCalendarPopup = {
-//                openDialogCustom.value = true
-//            },
-//            onNextClick = {
-//                viewModel.onTriggerEvent(OrdersEvent.OnNextDateClick)
-//            },
-//            onPreviousClick = {
-//                viewModel.onTriggerEvent(OrdersEvent.OnPreviousDateClick)
-//            }
-//        )
+        Calendar(
+            modifier = Modifier
+                .padding(vertical = 16.dp)
+                .fillMaxWidth()
+                .clip(Shapes.small)
+                .background(Color.White),
+            beginDate = state.calendarDateFrom,
+            endDate = state.calendarDateTo,
+            onCalendarPopup = {
+                openDialogCustom.value = true
+            },
+            onNextClick = {
+                viewModel.onTriggerEvent(OrdersEvent.OnNextDateClick)
+            },
+            onPreviousClick = {
+                viewModel.onTriggerEvent(OrdersEvent.OnPreviousDateClick)
+            }
+        )
 
         LazyColumn(
             modifier = Modifier
@@ -76,26 +76,26 @@ fun OrdersScreen(
                 .background(Color.White)
                 .padding(16.dp, 24.dp)
         ) {
-            item{
-                Calendar(
-                    modifier = Modifier
-                        .padding(vertical = 16.dp)
-                        .fillMaxWidth()
-                        .clip(Shapes.small)
-                        .background(Color.White),
-                    beginDate = state.calendarDateFrom,
-                    endDate = state.calendarDateTo,
-                    onCalendarPopup = {
-                        openDialogCustom.value = true
-                    },
-                    onNextClick = {
-                        viewModel.onTriggerEvent(OrdersEvent.OnNextDateClick)
-                    },
-                    onPreviousClick = {
-                        viewModel.onTriggerEvent(OrdersEvent.OnPreviousDateClick)
-                    }
-                )
-            }
+//            item {
+//                Calendar(
+//                    modifier = Modifier
+//                        .padding(vertical = 16.dp)
+//                        .fillMaxWidth()
+//                        .clip(Shapes.small)
+//                        .background(Color.White),
+//                    beginDate = state.calendarDateFrom,
+//                    endDate = state.calendarDateTo,
+//                    onCalendarPopup = {
+//                        openDialogCustom.value = true
+//                    },
+//                    onNextClick = {
+//                        viewModel.onTriggerEvent(OrdersEvent.OnNextDateClick)
+//                    },
+//                    onPreviousClick = {
+//                        viewModel.onTriggerEvent(OrdersEvent.OnPreviousDateClick)
+//                    }
+//                )
+//            }
 
             item {
                 Column {
@@ -106,22 +106,22 @@ fun OrdersScreen(
                         onClick = { index ->
                             when (index) {
                                 0 -> navController.navigate(Screen.NewOrderScreenRoute.route)
-                                1-> Log.d(TAG, "OrdersScreen: Export")//TODO
+                                1 -> Log.d(TAG, "OrdersScreen: Export")//TODO
                             }
                         }
                     )
-                    if(state.isVisibleTabs) {
-                        OrdersTab(
-                            isActive = state.isActive,
-                            onClick = { index ->
-                                if (index == 0) {
-                                    viewModel.onTriggerEvent(OrdersEvent.ActiveOrders)
-                                } else {
-                                    viewModel.onTriggerEvent(OrdersEvent.FinishedOrders)
-                                }
+
+                    OrdersTab(
+                        isVisibleTab = state.isVisibleTabs,
+                        isActive = state.isActive,
+                        onClick = { index ->
+                            if (index == 0) {
+                                viewModel.onTriggerEvent(OrdersEvent.ActiveOrders)
+                            } else {
+                                viewModel.onTriggerEvent(OrdersEvent.FinishedOrders)
                             }
-                        )
-                    }
+                        }
+                    )
                 }
             }
 

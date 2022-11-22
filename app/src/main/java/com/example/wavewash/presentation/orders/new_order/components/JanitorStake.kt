@@ -62,7 +62,7 @@ fun JanitorStake(
                 if (washers.size == 1) {
 
 //                    CoilImage(
-//                        imageModel = "",//TODO worker url
+//                        imageModel = "",
 //                        contentScale = ContentScale.Crop,            // crop the image if it's not a square
 //                        modifier = Modifier
 //                            .size(24.dp)

@@ -89,7 +89,7 @@ fun JanitorItem(
                             ComposeString.resource(R.string.busy).value()
                         },
                         fontSize = 12.sp,
-                        color = if (washer.active) StatusFree
+                        color = if (!washer.active) StatusFree
                         else {
                             StatusBusy
                         }

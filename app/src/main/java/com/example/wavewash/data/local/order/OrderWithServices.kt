@@ -10,17 +10,9 @@ import com.example.wavewash.data.local.service.toService
 import com.example.wavewash.data.local.washer.WasherEntity
 import com.example.wavewash.data.local.washer.toWasher
 import com.example.wavewash.domain.model.Order
-import com.example.wavewash.domain.model.Service
-import com.example.wavewash.domain.model.Washer
 
-data class OrderWithWashersAndServices(
+data class OrderWithServices(
     @Embedded val order: OrderEntity,
-    @Relation(
-        parentColumn = "orderId",
-        entityColumn = "washerId",
-        associateBy = Junction(OrderWasherCrossRef::class)
-    )
-    val washers: List<WasherEntity>,
     @Relation(
         parentColumn = "orderId",
         entityColumn = "serviceId",
@@ -29,7 +21,7 @@ data class OrderWithWashersAndServices(
     val services: List<ServiceEntity>
 )
 
-fun OrderWithWashersAndServices.toOrder(): Order {
+fun OrderWithServices.toOrder(washer:WasherEntity): Order {
     return Order(
         id = order.orderId,
         active = order.active,
@@ -42,7 +34,6 @@ fun OrderWithWashersAndServices.toOrder(): Order {
         date = order.date,
         price = order.price,
         services = services.map { it.toService() },
-        washers = washers.map { it.toWasher() },
+        washers = listOf(washer.toWasher())
     )
 }
-

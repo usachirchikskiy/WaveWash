@@ -328,8 +328,8 @@ constructor(
     }
 
     private fun changeWasherOrderOrNot(washerId: Long) {
-//        jobWashers?.cancel()
-        washerUseCase.get_washer(washerId).onEach { result ->
+        jobWashers?.cancel()
+        jobWashers = washerUseCase.get_washer(washerId).onEach { result ->
             when (result) {
                 is Resource.Success -> {
                     state =

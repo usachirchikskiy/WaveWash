@@ -111,10 +111,12 @@ internal fun KalendarMonth(
                                 kalendarSelector = kalendarSelector,
                                 kalendarEvents = kalendarEvents,
                                 onDayClick = { date, events ->
-                                    haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                                    previousClickedDay.value = clickedDay.value
-                                    clickedDay.value = date
-                                    onDateRangeSelected(previousClickedDay.value to date)
+                                    if(date<=LocalDate.now()) {
+                                        haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                                        previousClickedDay.value = clickedDay.value
+                                        clickedDay.value = date
+                                        onDateRangeSelected(previousClickedDay.value to date)
+                                    }
                                 }
                             )
                         } else {

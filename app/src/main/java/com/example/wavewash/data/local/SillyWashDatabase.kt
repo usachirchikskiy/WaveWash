@@ -1,6 +1,7 @@
 package com.example.wavewash.data.local
 
 import androidx.room.Database
+import androidx.room.DatabaseView
 import androidx.room.RoomDatabase
 import com.example.wavewash.data.local.crossRef.OrderServiceCrossRef
 import com.example.wavewash.data.local.crossRef.OrderWasherCrossRef

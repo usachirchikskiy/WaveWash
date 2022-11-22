@@ -15,32 +15,38 @@ import com.example.wavewash.utils.ordersTab
 
 @Composable
 fun OrdersTab(
-    isActive:Boolean,
-    onClick:(Int)->Unit
+    isVisibleTab: Boolean,
+    isActive: Boolean,
+    onClick: (Int) -> Unit
 ) {
     var index = 0
-    if(!isActive){
+    if (!isActive) {
         index = 1
     }
-    val text =  ComposeString.resource(ordersTab[index].title).value()
-    val selectedOption = remember { mutableStateOf(text) }
+    val text = ComposeString.resource(ordersTab[index].title).value()
+//    val selectedOption = remember { mutableStateOf(text) }
 
     Row(
         modifier = Modifier
             .background(Color.White)
             .padding(bottom = 24.dp)
     ) {
-        ordersTab.forEachIndexed { index, ordersScreenTab ->
+        //ordersTab.forEachIndexed { index, ordersScreenTab ->
+        for (i in 0 until ordersTab.size) {
+            val ordersScreenTab = ordersTab[i]
             val btnText = ComposeString.resource(ordersScreenTab.title).value()
-            val selected =
-                selectedOption.value == btnText
+            var selected = false
+            if(text == btnText && isVisibleTab) selected = true
 
+            if (!isVisibleTab && i == 0) {
+                continue
+            }
             Column(
                 modifier = Modifier
                     .width(IntrinsicSize.Min)
                     .clickable {
-                        selectedOption.value = btnText
-                        onClick.invoke(index)
+//                        selectedOption.value = btnText
+                        onClick.invoke(i)
                     }
             ) {
                 Text(
@@ -66,8 +72,7 @@ fun OrdersTab(
                             else {
                                 11.dp
                             }
-                        )
-                    ,
+                        ),
                     color = if (selected) ActiveButtonBackground
                     else {
                         HeaderButtonStroke
@@ -81,7 +86,9 @@ fun OrdersTab(
         }
 
         Divider(
-            modifier = Modifier.align(Alignment.Bottom).padding(bottom = 0.5.dp),
+            modifier = Modifier
+                .align(Alignment.Bottom)
+                .padding(bottom = 0.5.dp),
             color = HeaderButtonStroke
         )
     }

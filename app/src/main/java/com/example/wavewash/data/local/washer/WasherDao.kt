@@ -1,9 +1,7 @@
 package com.example.wavewash.data.local.washer
 
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
-import androidx.room.Query
+import androidx.room.*
+import com.example.wavewash.data.local.order.OrderWithWashersAndServices
 import com.example.wavewash.data.local.service.ServiceEntity
 import com.example.wavewash.utils.PAGINATION_PAGE_SIZE
 import kotlinx.coroutines.flow.Flow
@@ -21,17 +19,57 @@ interface WasherDao {
     )
 
     @Query("SELECT * FROM washer WHERE washerId = :id")
-    fun getWasher(id: Long): Flow<WasherEntity>
+    suspend fun getWasherNotFlow(id: Long): WasherEntity
 
-    @Query("""
+    @Query("SELECT * FROM washer WHERE washerId = :id")
+    fun getWasherFlow(id: Long): Flow<WasherEntity>
+
+    @Query(
+        """
         SELECT * FROM washer 
         WHERE name LIKE '%' || :query || '%'
         ORDER BY name ASC
         LIMIT (:page * :pageSize)
-        """)
+        """
+    )
     fun getAllWashers(
         query: String,
         page: Int,
         pageSize: Int = PAGINATION_PAGE_SIZE
     ): Flow<List<WasherEntity>>
+
+    @Query(
+        """
+        SELECT * FROM washer 
+        WHERE name LIKE '%' || :query || '%'
+        AND active = :active
+        ORDER BY name ASC
+        LIMIT (:page * :pageSize)
+        """
+    )
+    fun getFreeWashers(
+        active:Boolean,
+        query: String,
+        page: Int,
+        pageSize: Int = PAGINATION_PAGE_SIZE
+    ): List<WasherEntity>
+
+    @Query(
+        """
+            SELECT orderId FROM OrderWasherCrossRef 
+            WHERE washerId = :washerId
+            ORDER BY orderId DESC
+            LIMIT (:page * :pageSize)
+        """
+    )
+    fun getOrdersOfWasher(
+        washerId: Long,
+        page: Int,
+        pageSize: Int = PAGINATION_PAGE_SIZE
+    ): Flow<List<Long>>
+
+    @Query("SELECT orderId FROM OrderWasherCrossRef WHERE washerId = :washerId")
+    fun getAllOrdersOfWasher(
+        washerId: Long
+    ): Flow<List<Long>>
 }

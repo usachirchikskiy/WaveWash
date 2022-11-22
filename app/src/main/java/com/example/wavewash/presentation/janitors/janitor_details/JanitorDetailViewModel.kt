@@ -65,22 +65,17 @@ constructor(
                 changeDates(event.dateFrom, event.dateTo)
                 visibleTabs()
                 getJanitorOrders()
-                getEarnedMoney()
-                getEarnedStake()
             }
             is JanitorDetailEvent.OnNextDateClick -> {
-                onNextDate()
-                visibleTabs()
-                getJanitorOrders()
-                getEarnedMoney()
-                getEarnedStake()
+                if(onNextDate()) {
+                    visibleTabs()
+                    getJanitorOrders()
+                }
             }
             is JanitorDetailEvent.OnPreviousDateClick -> {
                 onPreviousDate()
                 visibleTabs()
                 getJanitorOrders()
-                getEarnedMoney()
-                getEarnedStake()
             }
 //            is JanitorDetailEvent.ReloadWasher->{
 //                getJanitor()
@@ -124,7 +119,13 @@ constructor(
 
     private fun getJanitorOrders() {
         jobOrders?.cancel()
-        jobOrders = washerUseCase.get_washer_orders(state.id,state.isActive,state.dateFrom,state.dateTo,state.page).onEach { result ->
+        jobOrders = washerUseCase.get_washer_orders(
+            state.id,
+            state.isActive,
+            state.dateFrom,
+            state.dateTo,
+            state.page
+        ).onEach { result ->
             when (result) {
                 is Resource.Success -> {
                     state = state.copy(orders = result.data!!)
@@ -139,90 +140,83 @@ constructor(
         }.launchIn(viewModelScope)
     }
 
-    private fun changeDates(dateTo: String, dateFrom: String) {
-        if (dateTo < dateFrom) {
-            val calendarDateFrom = getDateOnRuLang(dateTo)
-            val calendarDateTo = getDateOnRuLang(dateFrom)
-            state = state.copy(
-                orders = listOf(),
-                calendarDateTo = calendarDateTo,
-                calendarDateFrom = calendarDateFrom,
-                dateFrom = dateTo,
-                dateTo = dateFrom,
-                page = 0,
-                endReached = false
-            )
-        } else if (dateTo > dateFrom) {
-            val calendarDateFrom = getDateOnRuLang(dateFrom)
+    private fun changeDates(dateFrom: String, dateTo: String) {
+
+        val calendarDateFrom = getDateOnRuLang(dateFrom)
+        val stateDateTo = getNextDate(dateTo)
+        if (dateFrom < dateTo) {
             val calendarDateTo = getDateOnRuLang(dateTo)
             state = state.copy(
                 orders = listOf(),
                 calendarDateTo = calendarDateTo,
                 calendarDateFrom = calendarDateFrom,
                 dateFrom = dateFrom,
-                dateTo = dateTo,
+                dateTo = stateDateTo,
                 page = 0,
                 endReached = false
             )
         } else {
-            val calendarDateFrom = getDateOnRuLang(dateFrom)
-            val dateTo = getNextDate(dateFrom)
             state = state.copy(
                 orders = listOf(),
                 calendarDateTo = "",
                 calendarDateFrom = calendarDateFrom,
                 dateFrom = dateFrom,
-                dateTo = dateTo,
+                dateTo = stateDateTo,
                 page = 0,
                 endReached = false
             )
         }
     }
 
-    private fun onNextDate() {
+    private fun onNextDate():Boolean {
         val dateFrom = state.dateFrom
+        val todayDate = state.todayDate
         val nextDateFrom = getNextDate(dateFrom)
         val calendarDateFrom = getDateOnRuLang(nextDateFrom)
-
-        if (state.calendarDateTo != "") {
-            val dateTo = state.dateTo
-            val days = getDifferenceBetweenDates(dateFrom, dateTo)
-            if (days > 1) {
-                state = state.copy(
-                    calendarDateFrom = calendarDateFrom,
-                    dateFrom = nextDateFrom,
-                    page = 0,
-                    orders = listOf(),
-                    endReached = false
-                )
+        if (dateFrom < todayDate) {
+            if (state.calendarDateTo != "") {
+                val dateTo = state.dateTo
+                val days = getDifferenceBetweenDates(dateFrom, dateTo)
+                if (days > 2) {
+                    state = state.copy(
+                        calendarDateFrom = calendarDateFrom,
+                        dateFrom = nextDateFrom,
+                        page = 0,
+                        orders = listOf(),
+                        endReached = false
+                    )
+                } else {
+                    state = state.copy(
+                        calendarDateFrom = calendarDateFrom,
+                        calendarDateTo = "",
+                        dateFrom = nextDateFrom,
+                        page = 0,
+                        orders = listOf(),
+                        endReached = false
+                    )
+                }
             } else {
+                val nextDateTo = getNextDate(nextDateFrom)
                 state = state.copy(
                     calendarDateFrom = calendarDateFrom,
                     calendarDateTo = "",
                     dateFrom = nextDateFrom,
+                    dateTo = nextDateTo,
                     page = 0,
                     orders = listOf(),
                     endReached = false
                 )
             }
-        } else {
-            val nextDateTo = getNextDate(nextDateFrom)
-            state = state.copy(
-                calendarDateFrom = calendarDateFrom,
-                calendarDateTo = "",
-                dateFrom = nextDateFrom,
-                dateTo = nextDateTo,
-                page = 0,
-                orders = listOf(),
-                endReached = false
-            )
+            return true
         }
+        return false
     }
 
     private fun onPreviousDate() {
-        val previousDateFrom = getPreviousDate(state.dateFrom)
+        val dateFrom = state.dateFrom
+        val previousDateFrom = getPreviousDate(dateFrom)
         val previousCalendarDateFrom = getDateOnRuLang(previousDateFrom)
-        if(state.calendarDateTo != ""){
+        if (state.calendarDateTo != "") {
             state = state.copy(
                 calendarDateFrom = previousCalendarDateFrom,
                 dateFrom = previousDateFrom,
@@ -230,9 +224,9 @@ constructor(
                 orders = listOf(),
                 endReached = false
             )
-        }
-        else{
-            val previousDateTo = getPreviousDate(state.dateTo)
+        } else {
+            val dateTo = state.dateTo
+            val previousDateTo = getPreviousDate(dateTo)
             state = state.copy(
                 calendarDateFrom = previousCalendarDateFrom,
                 calendarDateTo = "",
@@ -245,42 +239,44 @@ constructor(
         }
     }
 
-    private fun getEarnedMoney(){
-        washerUseCase.get_washer_earnedMoney(state.id,state.dateFrom,state.dateTo).onEach { result ->
-            when (result) {
-                is Resource.Success -> {
-                    state = state.copy(earnedMoney = result.data.toString())
+    private fun getEarnedMoney() {
+        washerUseCase.get_washer_earnedMoney(state.id, state.dateFrom, state.dateTo)
+            .onEach { result ->
+                when (result) {
+                    is Resource.Success -> {
+                        state = state.copy(earnedMoney = result.data.toString())
+                    }
+                    is Resource.Error -> {
+                        state = state.copy(error = result.message!!)
+                    }
+                    is Resource.Loading -> {
+                        state = state.copy(isLoading = result.isLoading)
+                    }
                 }
-                is Resource.Error -> {
-                    state = state.copy(error = result.message!!)
-                }
-                is Resource.Loading -> {
-                    state = state.copy(isLoading = result.isLoading)
-                }
-            }
-        }.launchIn(viewModelScope)
+            }.launchIn(viewModelScope)
     }
 
-    private fun getEarnedStake(){
-        washerUseCase.get_washer_earnedStake(state.id,state.dateFrom,state.dateTo).onEach { result ->
-            when (result) {
-                is Resource.Success -> {
-                    state = state.copy(earnedStake = result.data.toString())
+    private fun getEarnedStake() {
+        washerUseCase.get_washer_earnedStake(state.id, state.dateFrom, state.dateTo)
+            .onEach { result ->
+                when (result) {
+                    is Resource.Success -> {
+                        state = state.copy(earnedStake = result.data.toString())
+                    }
+                    is Resource.Error -> {
+                        state = state.copy(error = result.message!!)
+                    }
+                    is Resource.Loading -> {
+                        state = state.copy(isLoading = result.isLoading)
+                    }
                 }
-                is Resource.Error -> {
-                    state = state.copy(error = result.message!!)
-                }
-                is Resource.Loading -> {
-                    state = state.copy(isLoading = result.isLoading)
-                }
-            }
-        }.launchIn(viewModelScope)
+            }.launchIn(viewModelScope)
     }
 
-    private fun visibleTabs(){
-        state = if(state.todayDate==state.dateFrom && !state.calendarDateFrom.contains("-")){
-            state.copy(isVisibleTabs = true)
-        } else{
+    private fun visibleTabs() {
+        state = if (state.todayDate == state.dateFrom) {
+            state.copy(isVisibleTabs = true, isActive = true)
+        } else {
             state.copy(isVisibleTabs = false, isActive = false)
         }
     }
