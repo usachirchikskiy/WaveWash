@@ -7,6 +7,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.wavewash.data.remote.dto.service.AddServiceDto
 import com.example.wavewash.domain.use_cases.ServiceUseCase
+import com.example.wavewash.domain.validation_use_case.ValidationServiceName
+import com.example.wavewash.domain.validation_use_case.ValidationServicePrice
+import com.example.wavewash.domain.validation_use_case.ValidationServiceTime
 import com.example.wavewash.presentation.orders.orders_screen.NavigationEvent
 import com.example.wavewash.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -20,7 +23,10 @@ import javax.inject.Inject
 @HiltViewModel
 class NewServiceViewModel @Inject
 constructor(
-    private val serviceUseCase: ServiceUseCase
+    private val serviceUseCase: ServiceUseCase,
+    private val validationServiceName: ValidationServiceName,
+    private val validationServicePrice: ValidationServicePrice,
+    private val validationServiceTime: ValidationServiceTime
 ) : ViewModel() {
 
     var state by mutableStateOf(NewServiceState())
@@ -32,12 +38,7 @@ constructor(
     fun onTriggerEvent(event: NewServiceEvent) {
         when (event) {
             is NewServiceEvent.AddService -> {
-                val fieldsIsEmtpy = checkFields()
-                if (fieldsIsEmtpy) {
-//                    TODO POPUP DIALOG
-                } else {
-                    addService()
-                }
+                addService()
             }
             is NewServiceEvent.ChangeDurationValue -> {
                 changeDurationValue(event.duration)
@@ -53,6 +54,25 @@ constructor(
 
 
     private fun addService() {
+        val nameResult = validationServiceName.execute(state.name)
+        val priceResult = validationServicePrice.execute(state.price)
+        val durationResult = validationServiceTime.execute(state.duration)
+
+        val hasError = listOf(
+            nameResult,
+            priceResult,
+            durationResult
+        ).any { !it.successful }
+
+        if (hasError) {
+            state = state.copy(
+                nameError = nameResult.errorMessage,
+                priceError = priceResult.errorMessage,
+                durationError = durationResult.errorMessage,
+            )
+            return
+        }
+
         val body = AddServiceDto(state.duration.toInt(), state.name, state.price.toInt())
         job?.cancel()
         job = serviceUseCase.addService(body).onEach { result ->
@@ -82,8 +102,15 @@ constructor(
         state = state.copy(duration = duration)
     }
 
-    private fun checkFields(): Boolean {
-        if (state.price.isEmpty() || state.duration.isEmpty() || state.name.isEmpty()) return true
-        return false
-    }
+
+//                val fieldsIsEmtpy = checkFields()
+//                if (fieldsIsEmtpy) {
+//                    TODO POPUP DIALOG
+//                } else {
+//                    addService()
+//                }
+//    private fun checkFields(): Boolean {
+//        if (state.price.isEmpty() || state.duration.isEmpty() || state.name.isEmpty()) return true
+//        return false
+//    }
 }

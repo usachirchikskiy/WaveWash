@@ -41,14 +41,13 @@ class OrderUseCase(
                 val result = api.add_order(token, companyId.toLong(), addOrderDto)
                 orderDao.insertOrder(result.toOrder().toEntity())
                 result.services.forEach {
-                    serviceDao.insertService(it.toEntity())
+//                    serviceDao.insertService(it.toEntity())
                     orderDao.insertOrderServiceCrossRef(
                         OrderServiceCrossRef(result.id, it.id)
                     )
                 }
                 result.washers.forEach {
-                    washerDao.insertWasher(it.toEntity())
-                    Log.d(TAG, "addOrder: 4")
+//                    washerDao.insertWasher(it.toEntity())
                     orderDao.insertOrderWasherCrossRef(
                         OrderWasherCrossRef(result.id, it.id)
                     )
@@ -69,13 +68,13 @@ class OrderUseCase(
                 val result = api.update_order(token, orderId, updateOrderDto)
                 orderDao.insertOrder(result.toOrder().toEntity())
                 result.services.forEach {
-                    serviceDao.insertService(it.toEntity())
+//                    serviceDao.insertService(it.toEntity())
                     orderDao.insertOrderServiceCrossRef(
                         OrderServiceCrossRef(result.id, it.id)
                     )
                 }
                 result.washers.forEach {
-                    washerDao.insertWasher(it.toEntity())
+//                    washerDao.insertWasher(it.toEntity())
                     orderDao.insertOrderWasherCrossRef(
                         OrderWasherCrossRef(result.id, it.id)
                     )
@@ -103,7 +102,6 @@ class OrderUseCase(
                 val result =
                     api.get_orders(token, companyId.toLong(), isActive, dateFrom, dateTo, page)
                 result.forEach { orderDto ->
-                    Log.d(TAG, "get_orders: remote check ${orderDto.date} $dateFromLong $dateToLong")
                     orderDao.insertOrder(orderDto.toOrder().toEntity())
                     orderDto.services.forEach { service ->
                         serviceDao.insertService(service.toEntity())

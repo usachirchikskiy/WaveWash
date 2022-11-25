@@ -8,6 +8,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.wavewash.data.remote.dto.service.AddServiceDto
 import com.example.wavewash.domain.use_cases.ServiceUseCase
+import com.example.wavewash.domain.validation_use_case.ValidationServiceName
+import com.example.wavewash.domain.validation_use_case.ValidationServicePrice
+import com.example.wavewash.domain.validation_use_case.ValidationServiceTime
 import com.example.wavewash.presentation.orders.orders_screen.NavigationEvent
 import com.example.wavewash.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -24,6 +27,9 @@ private const val TAG = "UpdateServiceViewModel"
 class UpdateServiceViewModel @Inject
 constructor(
     private val serviceUseCase: ServiceUseCase,
+    private val validationServiceName: ValidationServiceName,
+    private val validationServicePrice: ValidationServicePrice,
+    private val validationServiceTime: ValidationServiceTime,
     private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
@@ -42,12 +48,12 @@ constructor(
     fun onTriggerEvent(event: UpdateServiceEvent) {
         when (event) {
             is UpdateServiceEvent.UpdateService -> {
-                val fieldsIsEmtpy = checkFields()
-                if (fieldsIsEmtpy) {
-//                    TODO POPUP DIALOG
-                } else {
-                    updateService()
-                }
+//                val fieldsIsEmtpy = checkFields()
+//                if (fieldsIsEmtpy) {
+////                    TODO POPUP DIALOG
+//                } else {
+//                    updateService()
+//                }
             }
             is UpdateServiceEvent.GetService -> {
                 getService(event.id)
@@ -64,16 +70,35 @@ constructor(
         }
     }
 
-    private fun checkFields(): Boolean {
-        if (state.price.isEmpty() || state.duration.isEmpty()
-            || state.name.isEmpty()
-        ) {
-            return true
-        }
-        return false
-    }
+//    private fun checkFields(): Boolean {
+//        if (state.price.isEmpty() || state.duration.isEmpty()
+//            || state.name.isEmpty()
+//        ) {
+//            return true
+//        }
+//        return false
+//    }
 
     private fun updateService() {
+        val nameResult = validationServiceName.execute(state.name)
+        val priceResult = validationServicePrice.execute(state.price)
+        val durationResult = validationServiceTime.execute(state.duration)
+
+        val hasError = listOf(
+            nameResult,
+            priceResult,
+            durationResult
+        ).any { !it.successful }
+
+        if (hasError) {
+            state = state.copy(
+                nameError = nameResult.errorMessage,
+                priceError = priceResult.errorMessage,
+                durationError = durationResult.errorMessage,
+            )
+            return
+        }
+
         val body = AddServiceDto(state.duration.toInt(), state.name, state.price.toInt())
         job?.cancel()
         job = serviceUseCase.update(body, state.id).onEach { result ->

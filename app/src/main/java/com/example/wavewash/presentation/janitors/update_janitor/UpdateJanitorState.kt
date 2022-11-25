@@ -10,5 +10,9 @@ data class UpdateJanitorState(
     val imageUrl:String = "",
     val uri: Uri? = null,
     val isLoading:Boolean = false,
-    val error:String = ""
+    val error:String = "",
+
+    val nameError:Int? = null,
+    val stakeError:Int? = null,
+    val telephoneNumberError:Int? = null,
 )

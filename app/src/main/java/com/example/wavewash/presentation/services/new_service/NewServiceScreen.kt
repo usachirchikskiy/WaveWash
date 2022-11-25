@@ -11,9 +11,11 @@ import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
 import androidx.compose.material.TextFieldDefaults
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -88,7 +90,15 @@ fun NewServiceScreen(
                 onValueChange = { name ->
                     viewModel.onTriggerEvent(NewServiceEvent.ChangeNameValue(name))
                 },
+                isError = state.nameError!=null
             )
+            if (state.nameError != null) {
+                Text(
+                    text = stringResource(id = state.nameError),
+                    color = MaterialTheme.colors.error,
+                    modifier = Modifier.align(Alignment.End)
+                )
+            }
 
             Text(
                 modifier = Modifier.padding(top = 36.dp),
@@ -110,14 +120,22 @@ fun NewServiceScreen(
                 singleLine = true,
                 value = state.duration,
                 onValueChange = { duration ->
-                    if (state.duration.length < 5) {
+                    if (duration.length < 5) {
                         viewModel.onTriggerEvent(NewServiceEvent.ChangeDurationValue(duration))
                     }
                 },
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Number
-                )
+                ),
+                isError = state.durationError != null
             )
+            if (state.durationError != null) {
+                Text(
+                    text = stringResource(id = state.durationError),
+                    color = MaterialTheme.colors.error,
+                    modifier = Modifier.align(Alignment.End)
+                )
+            }
 
             Text(
                 modifier = Modifier.padding(top = 36.dp),
@@ -139,14 +157,23 @@ fun NewServiceScreen(
                 singleLine = true,
                 value = state.price,
                 onValueChange = { price ->
-                    if (state.price.length < 7) {
+                    if (price.length < 7) {
                         viewModel.onTriggerEvent(NewServiceEvent.ChangePriceValue(price))
                     }
                 },
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Number
-                )
+                ),
+                isError = state.priceError!=null
             )
+
+            if (state.priceError != null) {
+                Text(
+                    text = stringResource(id = state.priceError),
+                    color = MaterialTheme.colors.error,
+                    modifier = Modifier.align(Alignment.End)
+                )
+            }
 
         }
 

@@ -5,5 +5,9 @@ data class NewServiceState(
     val price:String = "",
     val duration:String = "",
     val isLoading:Boolean = false,
-    val error:String = ""
+    val error:String = "",
+
+    val nameError:Int? = null,
+    val priceError:Int? = null,
+    val durationError:Int? = null
 )

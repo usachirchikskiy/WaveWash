@@ -76,36 +76,16 @@ fun OrdersScreen(
                 .background(Color.White)
                 .padding(16.dp, 24.dp)
         ) {
-//            item {
-//                Calendar(
-//                    modifier = Modifier
-//                        .padding(vertical = 16.dp)
-//                        .fillMaxWidth()
-//                        .clip(Shapes.small)
-//                        .background(Color.White),
-//                    beginDate = state.calendarDateFrom,
-//                    endDate = state.calendarDateTo,
-//                    onCalendarPopup = {
-//                        openDialogCustom.value = true
-//                    },
-//                    onNextClick = {
-//                        viewModel.onTriggerEvent(OrdersEvent.OnNextDateClick)
-//                    },
-//                    onPreviousClick = {
-//                        viewModel.onTriggerEvent(OrdersEvent.OnPreviousDateClick)
-//                    }
-//                )
-//            }
 
             item {
                 Column {
                     ScreenHeaders(
                         isVisible = state.isVisibleTabs,
-                        headerOrderButtons,
-                        ComposeString.resource(R.string.add_order).value(),
+                        headers = headerOrderButtons,
+                        selectedOption = ComposeString.resource(R.string.add_order).value(),
                         onClick = { index ->
                             when (index) {
-                                0 -> navController.navigate(Screen.NewOrderScreenRoute.route)
+                                0 -> navController.navigate(Screen.NewOrderScreenRoute.route + "/${-1L}")
                                 1 -> Log.d(TAG, "OrdersScreen: Export")//TODO
                             }
                         }

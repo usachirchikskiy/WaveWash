@@ -25,7 +25,6 @@ fun OrdersTab(
     }
     val text = ComposeString.resource(ordersTab[index].title).value()
 //    val selectedOption = remember { mutableStateOf(text) }
-
     Row(
         modifier = Modifier
             .background(Color.White)
@@ -33,9 +32,9 @@ fun OrdersTab(
     ) {
         //ordersTab.forEachIndexed { index, ordersScreenTab ->
         for (i in 0 until ordersTab.size) {
+            var selected = false
             val ordersScreenTab = ordersTab[i]
             val btnText = ComposeString.resource(ordersScreenTab.title).value()
-            var selected = false
             if(text == btnText && isVisibleTab) selected = true
 
             if (!isVisibleTab && i == 0) {

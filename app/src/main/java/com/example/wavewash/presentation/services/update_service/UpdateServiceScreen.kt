@@ -12,10 +12,12 @@ import androidx.compose.material.Text
 import androidx.compose.material.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -92,7 +94,15 @@ fun UpdateServiceScreen(
                 onValueChange = { name ->
                     viewModel.onTriggerEvent(UpdateServiceEvent.ChangeNameValue(name))
                 },
+                isError = state.nameError!=null
             )
+            if (state.nameError != null) {
+                Text(
+                    text = stringResource(id = state.nameError),
+                    color = MaterialTheme.colors.error,
+                    modifier = Modifier.align(Alignment.End)
+                )
+            }
 
             Text(
                 modifier = Modifier.padding(top = 36.dp),
@@ -120,8 +130,16 @@ fun UpdateServiceScreen(
                 },
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Number
-                )
+                ),
+                isError = state.durationError!=null
             )
+            if (state.durationError != null) {
+                Text(
+                    text = stringResource(id = state.durationError),
+                    color = MaterialTheme.colors.error,
+                    modifier = Modifier.align(Alignment.End)
+                )
+            }
 
             Text(
                 modifier = Modifier.padding(top = 36.dp),
@@ -150,8 +168,16 @@ fun UpdateServiceScreen(
                 },
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Number
-                )
+                ),
+                isError = state.priceError!=null
             )
+            if (state.priceError != null) {
+                Text(
+                    text = stringResource(id = state.priceError),
+                    color = MaterialTheme.colors.error,
+                    modifier = Modifier.align(Alignment.End)
+                )
+            }
 
         }
 

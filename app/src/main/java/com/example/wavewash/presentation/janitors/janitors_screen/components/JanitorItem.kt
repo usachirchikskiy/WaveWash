@@ -32,15 +32,16 @@ fun JanitorItem(
     onJanitorClicked: () -> Unit
 ) {
     Card(
+        shape = Shapes.medium,
+        elevation = 0.dp,
+        border = BorderStroke(1.dp, HeaderButtonStroke),
         modifier = Modifier
             .fillMaxWidth()
+            .clip(Shapes.medium)
             .background(Color.White)
             .clickable {
                 onJanitorClicked.invoke()
             },
-        shape = Shapes.medium,
-        elevation = 0.dp,
-        border = BorderStroke(1.dp, HeaderButtonStroke),
     ) {
         Column {
             //Image and Status

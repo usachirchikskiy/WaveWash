@@ -16,6 +16,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.wavewash.data.remote.dto.washer.AddWasherDto
 import com.example.wavewash.domain.use_cases.WasherUseCase
+import com.example.wavewash.domain.validation_use_case.ValidationJanitorName
+import com.example.wavewash.domain.validation_use_case.ValidationJanitorStake
+import com.example.wavewash.domain.validation_use_case.ValidationJanitorTelephone
 import com.example.wavewash.presentation.orders.orders_screen.NavigationEvent
 import com.example.wavewash.utils.Resource
 import com.example.wavewash.utils.asFile
@@ -40,6 +43,9 @@ private const val TAG = "NewJanitorViewModel"
 class NewJanitorViewModel @Inject
 constructor(
     private val washerUseCase: WasherUseCase,
+    private val validationJanitorTelephone: ValidationJanitorTelephone,
+    private val validationJanitorName: ValidationJanitorName,
+    private val validationJanitorStake: ValidationJanitorStake,
     private val application: Application
 ) : ViewModel() {
 
@@ -53,13 +59,7 @@ constructor(
     fun onTriggerEvent(event: NewJanitorEvents) {
         when (event) {
             is NewJanitorEvents.AddWasher -> {
-                val fieldsIsEmpty = checkFields()
-                if (fieldsIsEmpty) {
-                    //TODO POPUP DIALOG
-                } else {
-                    addWasher()
-                }
-
+                addWasher()
             }
             is NewJanitorEvents.ChangeStakeValue -> {
                 changeStakeValue(event.stake)
@@ -81,6 +81,24 @@ constructor(
     }
 
     private fun addWasher() {
+        val nameResult = validationJanitorName.execute(state.name)
+        val stakeResult = validationJanitorStake.execute(state.stake)
+        val telephoneNumberResult = validationJanitorTelephone.execute(state.telephoneNumber)
+
+        val hasError = listOf(
+            nameResult,
+            stakeResult,
+            telephoneNumberResult
+        ).any { !it.successful }
+
+        if (hasError) {
+            state = state.copy(
+                nameError = nameResult.errorMessage,
+                stakeError = stakeResult.errorMessage,
+                telephoneNumberError = telephoneNumberResult.errorMessage,
+            )
+            return
+        }
 
         job?.cancel()
         val addWasherDto =
@@ -142,14 +160,14 @@ constructor(
         state = state.copy(telephoneNumber = telephoneNumber)
     }
 
-    private fun checkFields(): Boolean {
-        if (state.telephoneNumber.isEmpty() || state.stake.isEmpty()
-            || state.name.isEmpty()
-        ) {
-            return true
-        }
-        return false
-    }
+//    private fun checkFields(): Boolean {
+//        if (state.telephoneNumber.isEmpty() || state.stake.isEmpty()
+//            || state.name.isEmpty()
+//        ) {
+//            return true
+//        }
+//        return false
+//    }
 
 
 }

@@ -47,7 +47,7 @@ constructor(
 
     init {
         val washerId = savedStateHandle.get<Long>("washerId")
-        if (washerId != null) {
+        if (washerId != null && washerId!=-1L) {
             onTriggerEvent(NewOrderEvent.WasherOrderOrNot(washerId))
         }
         else{
@@ -176,13 +176,10 @@ constructor(
             washerUseCase.get_washers(state.washerSearchQuery, state.washerPage).onEach { result ->
                 when (result) {
                     is Resource.Success -> {
-                        val freeWashers = result.data!!.filter {
-                            !it.active
-                        }
-                        if (state.washersOfDialog == freeWashers) {
+                        if (state.washersOfDialog == result.data) {
                             state = state.copy(washerEndIsReached = true)
                         } else {
-                            state = state.copy(washersOfDialog = freeWashers)
+                            state = state.copy(washersOfDialog = result.data!!)
                         }
                     }
                     is Resource.Error -> {

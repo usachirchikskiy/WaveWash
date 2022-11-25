@@ -8,6 +8,9 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.wavewash.domain.use_cases.WasherUseCase
+import com.example.wavewash.domain.validation_use_case.ValidationJanitorName
+import com.example.wavewash.domain.validation_use_case.ValidationJanitorStake
+import com.example.wavewash.domain.validation_use_case.ValidationJanitorTelephone
 import com.example.wavewash.utils.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
@@ -141,7 +144,6 @@ constructor(
     }
 
     private fun changeDates(dateFrom: String, dateTo: String) {
-
         val calendarDateFrom = getDateOnRuLang(dateFrom)
         val stateDateTo = getNextDate(dateTo)
         if (dateFrom < dateTo) {

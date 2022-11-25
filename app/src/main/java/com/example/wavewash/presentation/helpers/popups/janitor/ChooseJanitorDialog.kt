@@ -203,12 +203,12 @@ fun JanitorItemPopup(
                             .padding(
                                 horizontal = 9.dp, vertical = 5.dp
                             ),
-                        text = if (washer.active) ComposeString.resource(R.string.free).value()
+                        text = if (!washer.active) ComposeString.resource(R.string.free).value()
                         else {
                             ComposeString.resource(R.string.busy).value()
                         },
                         fontSize = 12.sp,
-                        color = if (washer.active) StatusFree
+                        color = if (!washer.active) StatusFree
                         else {
                             StatusBusy
                         }

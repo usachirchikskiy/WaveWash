@@ -31,7 +31,7 @@ fun NavGraphBuilder.mainGraph(
     navController: NavController
 ) {
     navigation(
-        startDestination = Screen.MainScreenRoute.route,//Screen.LoginScreenRoute.route
+        startDestination = Screen.LoginScreenRoute.route,//Screen.LoginScreenRoute.route
         route = "Main_Graph_Route"
     ) {
         //Login

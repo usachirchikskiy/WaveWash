@@ -8,5 +8,10 @@ data class NewJanitorState(
     val telephoneNumber:String = "",
     val stake:String = "",
     val isLoading:Boolean = false,
-    val error:String = ""
+    val error:String = "",
+
+    val nameError:Int? = null,
+    val stakeError:Int? = null,
+    val telephoneNumberError:Int? = null,
+
 )

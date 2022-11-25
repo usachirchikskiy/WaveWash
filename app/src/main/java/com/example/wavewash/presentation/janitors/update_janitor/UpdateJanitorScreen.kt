@@ -17,6 +17,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -176,7 +177,15 @@ fun UpdateJanitorScreen(
                         onValueChange = { text ->
                             viewModel.onTriggerEvent(UpdateJanitorEvents.ChangeNameValue(text))
                         },
+                        isError = state.nameError!=null
                     )
+                    if (state.nameError != null) {
+                        Text(
+                            text = stringResource(id = state.nameError),
+                            color = MaterialTheme.colors.error,
+                            modifier = Modifier.align(Alignment.End)
+                        )
+                    }
 
                     Text(
                         modifier = Modifier.padding(top = 16.dp),
@@ -213,8 +222,16 @@ fun UpdateJanitorScreen(
                             Text(
                                 text = "+998"
                             )
-                        }
+                        },
+                        isError = state.telephoneNumberError!=null
                     )
+                    if (state.telephoneNumberError != null) {
+                        Text(
+                            text = stringResource(id = state.telephoneNumberError),
+                            color = MaterialTheme.colors.error,
+                            modifier = Modifier.align(Alignment.End)
+                        )
+                    }
 
                     Text(
                         modifier = Modifier.padding(top = 16.dp),
@@ -244,8 +261,17 @@ fun UpdateJanitorScreen(
                         },
                         keyboardOptions = KeyboardOptions(
                             keyboardType = KeyboardType.Number
-                        )
+                        ),
+                        isError = state.stakeError!=null
                     )
+
+                    if (state.stakeError != null) {
+                        Text(
+                            text = stringResource(id = state.stakeError),
+                            color = MaterialTheme.colors.error,
+                            modifier = Modifier.align(Alignment.End)
+                        )
+                    }
                 }
             }
         }
