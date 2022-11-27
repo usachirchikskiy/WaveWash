@@ -6,6 +6,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
 import androidx.compose.material.TextFieldDefaults
@@ -15,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -27,8 +29,10 @@ import com.example.wavewash.utils.ComposeString
 
 @Composable
 fun ClientNumberName(
-    clientNumber:String,
-    clientName:String,
+    clientTelephoneNumberError: Int?,
+    clientNameError: Int?,
+    clientNumber: String,
+    clientName: String,
     onChangeClientNumber: (String) -> Unit,
     onChangeClientName: (String) -> Unit
 ) {
@@ -65,8 +69,16 @@ fun ClientNumberName(
                 colors = TextFieldDefaults.outlinedTextFieldColors(
                     focusedBorderColor = Color(0XFFD3DDEC), // цвет при получении фокуса
                     unfocusedBorderColor = Color(0XFFD3DDEC)  // цвет при отсутствии фокуса
-                )
+                ),
+                isError = clientNameError != null
             )
+            if (clientNameError != null) {
+                Text(
+                    text = stringResource(id = clientNameError),
+                    color = MaterialTheme.colors.error,
+                    modifier = Modifier.align(Alignment.End)
+                )
+            }
         }
 
         Spacer(Modifier.weight(0.1f))
@@ -89,7 +101,7 @@ fun ClientNumberName(
                     .fillMaxWidth(),
                 value = clientNumber,
                 onValueChange = {
-                    if(it.length<=9) {
+                    if (it.length <= 9) {
                         onChangeClientNumber.invoke(it)
                     }
                 },
@@ -115,8 +127,17 @@ fun ClientNumberName(
                         color = TextColor,
                         fontWeight = FontWeight.ExtraBold
                     )
-                }
+                },
+                isError = clientTelephoneNumberError != null
             )
+
+            if (clientTelephoneNumberError != null) {
+                Text(
+                    text = stringResource(id = clientTelephoneNumberError),
+                    color = MaterialTheme.colors.error,
+                    modifier = Modifier.align(Alignment.End)
+                )
+            }
         }
     }
 }

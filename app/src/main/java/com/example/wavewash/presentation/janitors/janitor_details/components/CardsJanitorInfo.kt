@@ -1,5 +1,6 @@
 package com.example.wavewash.presentation.janitors.janitor_details.components
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -13,6 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -49,15 +51,23 @@ fun CardsJanitorInfo(
                 shimmerParams = ShimmerParams(
                     baseColor = Color.White,
                     highlightColor = Color.LightGray,
-                    durationMillis = 350,
+                    durationMillis = 1000,
                     dropOff = 0.65f,
                     tilt = 20f
                 ),
                 // shows an error text message when request failed.
                 failure = {
-                    Text(
-                        text = "image request failed.",
-                    )
+                    Box(
+                        modifier = Modifier
+                            .background(Color(0XFFEFF1F8))
+                            .fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Image(
+                            painter = painterResource(id = R.drawable.error_image),
+                            contentDescription = "error_loading"
+                        )
+                    }
                 }
             )
             Box(

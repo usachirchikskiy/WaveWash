@@ -33,7 +33,13 @@ import com.himanshoe.kalendar.common.theme.KalendarShape
 import com.himanshoe.kalendar.ui.KalendarType.Firey
 import com.himanshoe.kalendar.ui.KalendarType.Oceanic
 import com.himanshoe.kalendar.ui.firey.KalendarFirey
+import java.time.Duration
 import java.time.LocalDate
+import java.time.Period
+import java.time.ZoneId
+import java.time.temporal.TemporalAmount
+import java.time.temporal.TemporalUnit
+import java.util.*
 
 /**
  * [KalendarType] is used to distinguish the type of calendar
@@ -64,7 +70,7 @@ fun Kalendar(
     kalendarType: KalendarType,
     kalendarKonfig: KalendarKonfig = KalendarKonfig(),
     kalendarStyle: KalendarStyle = KalendarStyle(),
-    selectedDay: LocalDate = LocalDate.now(),
+    selectedDay: LocalDate,
     kalendarEvents: List<KalendarEvent> = emptyList(),
     errorMessage: (String) -> Unit = {},
     dateRangeEnabled: Boolean = false,

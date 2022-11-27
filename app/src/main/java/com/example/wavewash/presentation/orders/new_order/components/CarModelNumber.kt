@@ -3,6 +3,7 @@ package com.example.wavewash.presentation.orders.new_order.components
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
 import androidx.compose.material.TextFieldDefaults
@@ -13,6 +14,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -23,8 +25,9 @@ import com.example.wavewash.utils.ComposeString
 
 @Composable
 fun CarModelNumber(
-    carModel:String,
-    carNumber:String,
+    carNumberError: Int?,
+    carModel: String,
+    carNumber: String,
     onChangeCarModelValue: (String) -> Unit,
     onChangeCarNumber: (String) -> Unit
 ) {
@@ -98,8 +101,17 @@ fun CarModelNumber(
                 colors = TextFieldDefaults.outlinedTextFieldColors(
                     focusedBorderColor = Color(0XFFD3DDEC), // цвет при получении фокуса
                     unfocusedBorderColor = Color(0XFFD3DDEC)  // цвет при отсутствии фокуса
-                )
+                ),
+                isError = carNumberError != null,
             )
+
+            if (carNumberError != null) {
+                Text(
+                    text = stringResource(id = carNumberError),
+                    color = MaterialTheme.colors.error,
+                    modifier = Modifier.align(Alignment.End)
+                )
+            }
         }
     }
 }

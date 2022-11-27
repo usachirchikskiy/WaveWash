@@ -121,6 +121,19 @@ class WasherUseCase(
             emit(Resource.Loading(false))
         }
 
+    fun get_washer_not_flow(washerId: Long): Flow<Resource<Washer>> =
+        flow {
+            emit(Resource.Loading())
+            try {
+                val washer = washerDao.getWasherNotFlow(washerId).toWasher()
+                emit(Resource.Success(washer))
+            } catch (ex: Exception) {
+                emit(Resource.Error(ex.message!!))
+            }
+
+            emit(Resource.Loading(false))
+        }
+
     fun get_washer_orders(
         washerId: Long,
         isActive: Boolean,
@@ -180,6 +193,7 @@ class WasherUseCase(
                     it.toOrder(washer)
                 }
             }.collect {
+                Log.d(TAG, "get_washer_orders: cached $it")
                 emit(Resource.Success(it))
             }
 
@@ -260,26 +274,23 @@ class WasherUseCase(
             emit(Resource.Loading(false))
         }
 
-    fun get_free_washers(
-        companyId: Long,
+    fun get_not_checked_washers(
+        ids: List<Long>,
         name: String,
         page: Int,
     ): Flow<Resource<List<Washer>>> =
         flow {
             emit(Resource.Loading())
-            val washers = washerDao.getFreeWashers(false, name, page).map {
-                it.toWasher()
+            try {
+                val washers = washerDao.getNotCheckedWashers(ids, name, page+1).map {
+                    it.toWasher()
+                }
+                Log.d(TAG, "get_not_checked_washers: $washers")
+                emit(Resource.Success(washers))
+            } catch (ex: Exception) {
+                Log.d(TAG, "get_not_checked_washers: ${ex.message!!}")
+                emit(Resource.Error(ex.message!!))
             }
-            emit(Resource.Success(washers))
             emit(Resource.Loading(false))
         }
 }
-
-//            try {
-//                val token = "Bearer " + appDataStoreManager.readValue(TOKEN_KEY)
-//                val result = washerApi.get_free_washers(token, companyId, name, page)
-//                emit(Resource.Success(result))
-//                Log.d(TAG, "get_free_washers: $result")
-//            } catch (ex: Exception) {
-//                emit(Resource.Error(ex.message!!))
-//            }

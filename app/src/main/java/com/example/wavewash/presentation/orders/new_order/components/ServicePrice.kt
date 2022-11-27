@@ -6,6 +6,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -14,6 +15,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -26,121 +28,141 @@ import com.example.wavewash.utils.ComposeString
 
 @Composable
 fun ServicePrice(
+    serviceError: Int?,
     onClick: () -> Unit,
-    services:List<Service>,
-    price:String,
+    services: List<Service>,
+    price: String,
     onDeleteServicesClick: () -> Unit
 ) {
 
-    Row(
-        modifier = Modifier
-            .height(IntrinsicSize.Max)
-            .padding(top = 36.dp),
-    ) {
-        Column(modifier = Modifier.weight(1f)) {
-            Text(
-                text = ComposeString.resource(R.string.service).value(),
-                fontFamily = nunitoSans,
-                fontWeight = FontWeight.Normal,
-                fontSize = 14.sp,
-                color = Color(0XFF303972)
-            )
-            Row(
-                modifier = Modifier
-                    .padding(top = 5.dp)
-                    .fillMaxWidth()
-                    .fillMaxHeight(1f)
-                    .border(
-                        width = 1.dp,
-                        color = Color(0XFFD3DDEC),
-                        shape = Shapes.small
-                    )
-                    .padding(horizontal = 14.dp, vertical = 9.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                if (services.size == 1) {
-                    Text(
-                        modifier = Modifier.weight(1f).clickable {
-                            onDeleteServicesClick.invoke()
-                        },
-                        text = services[0].name,
-                        fontFamily = nunitoSans,
-                        fontWeight = FontWeight.Normal,
-                        fontSize = 14.sp,
-                        color = TextColor,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
-                    )
-                } else {
-                    Box(modifier = Modifier
-                        .clip(Shapes.medium)
-                        .background(QuantityOfServices)
-                        .clickable {
-                            onDeleteServicesClick.invoke()
+    Column {
+        Row(
+            modifier = Modifier
+                .height(IntrinsicSize.Max)
+                .padding(top = 36.dp),
+        ) {
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = ComposeString.resource(R.string.service).value(),
+                    fontFamily = nunitoSans,
+                    fontWeight = FontWeight.Normal,
+                    fontSize = 14.sp,
+                    color = Color(0XFF303972)
+                )
+                Row(
+                    modifier = Modifier
+                        .padding(top = 5.dp)
+                        .fillMaxWidth()
+                        .fillMaxHeight(1f)
+                        .border(
+                            width = 1.dp,
+                            color = if (serviceError != null) {
+                                MaterialTheme.colors.error
+                            } else {
+                                Color(0XFFD3DDEC)
+                            },
+                            shape = Shapes.small
+                        )
+                        .padding(horizontal = 14.dp, vertical = 9.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    if (services.size == 1) {
+                        Text(
+                            modifier = Modifier
+                                .weight(1f)
+                                .clickable {
+                                    onDeleteServicesClick.invoke()
+                                },
+                            text = services[0].name,
+                            fontFamily = nunitoSans,
+                            fontWeight = FontWeight.Normal,
+                            fontSize = 14.sp,
+                            color = TextColor,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                    } else {
+                        Box(modifier = Modifier
+                            .clip(Shapes.medium)
+                            .background(QuantityOfServices)
+                            .clickable {
+                                onDeleteServicesClick.invoke()
+                            }
+                            .padding(10.dp, 5.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                text = services.size.toString() + " " + ComposeString.resource(R.string.quantity)
+                                    .value(),
+                                color = TextColor,
+                            )
                         }
-                        .padding(10.dp, 5.dp),
+                    }
+
+                    Box(
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(8.dp))
+                            .size(30.dp)
+                            .background(ActiveButtonBackground)
+                            .clickable {
+                                onClick.invoke()
+                            },
                         contentAlignment = Alignment.Center
                     ) {
-                        Text(
-                            text = services.size.toString() + " " + ComposeString.resource(R.string.quantity)
-                                .value(),
-                            color = TextColor,
+                        Image(
+                            painter = painterResource(R.drawable.add_order),
+                            contentDescription = "",
+                            contentScale = ContentScale.Crop
                         )
                     }
                 }
+            }
 
-                Box(
+
+            Spacer(Modifier.weight(0.1f))
+
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = ComposeString.resource(R.string.common_price).value(),
+                    fontFamily = nunitoSans,
+                    fontWeight = FontWeight.Normal,
+                    fontSize = 14.sp,
+                    color = Color(0XFF303972)
+                )
+
+                Row(
                     modifier = Modifier
-                        .clip(RoundedCornerShape(8.dp))
-                        .size(30.dp)
-                        .background(ActiveButtonBackground)
-                        .clickable {
-                            onClick.invoke()
-                        },
-                    contentAlignment = Alignment.Center
+                        .padding(top = 5.dp)
+                        .fillMaxWidth()
+                        .fillMaxHeight(1f)
+                        .border(
+                            width = 1.dp,
+                            color = Color(0XFFD3DDEC),
+                            shape = Shapes.small
+                        )
+                        .padding(horizontal = 14.dp, vertical = 9.dp),
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Image(
-                        painter = painterResource(R.drawable.add_order),
-                        contentDescription = "",
-                        contentScale = ContentScale.Crop
+                    Text(
+                        text = price + " сум",
+                        fontFamily = nunitoSans,
+                        fontSize = 14.sp,
+                        color = TextColor,
+                        fontWeight = FontWeight.ExtraBold
                     )
                 }
             }
         }
-
-        Spacer(Modifier.weight(0.1f))
-
-        Column(modifier = Modifier.weight(1f)) {
-            Text(
-                text = ComposeString.resource(R.string.common_price).value(),
-                fontFamily = nunitoSans,
-                fontWeight = FontWeight.Normal,
-                fontSize = 14.sp,
-                color = Color(0XFF303972)
-            )
-
-            Row(
-                modifier = Modifier
-                    .padding(top = 5.dp)
-                    .fillMaxWidth()
-                    .fillMaxHeight(1f)
-                    .border(
-                        width = 1.dp,
-                        color = Color(0XFFD3DDEC),
-                        shape = Shapes.small
-                    )
-                    .padding(horizontal = 14.dp, vertical = 9.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ){
+        Column(modifier = Modifier.fillMaxWidth(0.477f)) {
+            if (serviceError != null) {
                 Text(
-                    text = price + " сум",
-                    fontFamily = nunitoSans,
-                    fontSize = 14.sp,
-                    color = TextColor,
-                    fontWeight = FontWeight.ExtraBold
+                    text = stringResource(id = serviceError),
+                    color = MaterialTheme.colors.error,
+                    modifier = Modifier.align(Alignment.End)
                 )
             }
         }
     }
+
 }

@@ -9,11 +9,14 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.wavewash.data.remote.dto.order.UpdateOrderDto
 import com.example.wavewash.domain.use_cases.OrderUseCase
+import com.example.wavewash.presentation.orders.orders_screen.NavigationEvent
 import com.example.wavewash.utils.Resource
 import com.example.wavewash.utils.durationOfServices
 import com.example.wavewash.utils.priceOfJanitorsStake
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import javax.inject.Inject
@@ -27,12 +30,13 @@ constructor(
 ) : ViewModel() {
 
     var state by mutableStateOf(OrderDetailState())
+    private val _eventFlow = MutableSharedFlow<NavigationEvent>()
+    val eventFlow = _eventFlow.asSharedFlow()
+
     private var job: Job? = null
 
     init {
-        Log.d(TAG, "INIT ")
         savedStateHandle.get<Long>("orderId")?.let { orderId ->
-            state = state.copy(id = orderId)
             onTriggerEvent(OrderDetailEvent.GetOrder(orderId))
         }
     }
@@ -62,15 +66,15 @@ constructor(
         )
         job?.cancel()
         job = orderUseCase.update(orderUpdate, state.id).onEach { result ->
-            state = when (result) {
+            when (result) {
                 is Resource.Success -> {
-                    state.copy(completed = true,isLoading = false)
+                    _eventFlow.emit(NavigationEvent.GoBack)
                 }
                 is Resource.Error -> {
-                    state.copy(error = result.message!!, isLoading = false)
+                    state = state.copy(error = result.message!!)
                 }
                 is Resource.Loading -> {
-                    state.copy(isLoading = result.isLoading)
+                    state = state.copy(isLoading = result.isLoading)
                 }
             }
         }.launchIn(viewModelScope)
@@ -84,8 +88,8 @@ constructor(
                     val order = result.data
                     order?.let { it ->
                         state = state.copy(
+                            id = orderId,
                             isActive = it.active,
-                            isLoading = false,
                             carModel = it.carModel,
                             carNumber = it.carNumber,
                             clientName = it.clientName,
@@ -100,7 +104,7 @@ constructor(
 
                 }
                 is Resource.Error -> {
-                    state = state.copy(error = result.message!!, isLoading = false)
+                    state = state.copy(error = result.message!!)
                 }
                 is Resource.Loading -> {
                     state = state.copy(isLoading = result.isLoading)
@@ -109,7 +113,4 @@ constructor(
         }.launchIn(viewModelScope)
     }
 
-    fun changeCompleted(){
-        state = state.copy(completed = false)
-    }
 }

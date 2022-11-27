@@ -42,13 +42,13 @@ interface WasherDao {
         """
         SELECT * FROM washer 
         WHERE name LIKE '%' || :query || '%'
-        AND active = :active
+        AND washerId not in (:ids)  
         ORDER BY name ASC
         LIMIT (:page * :pageSize)
         """
     )
-    fun getFreeWashers(
-        active:Boolean,
+    suspend fun getNotCheckedWashers(
+        ids:List<Long>,
         query: String,
         page: Int,
         pageSize: Int = PAGINATION_PAGE_SIZE

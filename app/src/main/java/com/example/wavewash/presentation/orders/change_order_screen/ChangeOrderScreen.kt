@@ -7,6 +7,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Divider
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -28,11 +29,14 @@ import com.example.wavewash.presentation.helpers.popups.service.ChooseServiceDia
 import com.example.wavewash.presentation.helpers.popups.service.DeleteServiceDialog
 import com.example.wavewash.presentation.orders.new_order.NewOrderEvent
 import com.example.wavewash.presentation.orders.new_order.components.*
+import com.example.wavewash.presentation.orders.orders_screen.NavigationEvent
 import com.example.wavewash.presentation.orders.orders_screen.OrdersEvent
 import com.example.wavewash.ui.theme.HeaderButtonStroke
 import com.example.wavewash.ui.theme.Shapes
 import com.example.wavewash.utils.*
+import kotlinx.coroutines.flow.collectLatest
 
+private const val TAG = "ChangeOrderScreen"
 @Composable
 fun ChangeOrderScreen(
     navController: NavController,
@@ -45,35 +49,15 @@ fun ChangeOrderScreen(
     val openDeleteDialogService = remember { mutableStateOf(false) }
     val cancelDialogOrder = remember { mutableStateOf(false) }
 
-    val screenResultServiceState = navController.currentBackStackEntry
-        ?.savedStateHandle
-        ?.get<String>(REFRESH_SERVICES)
-
-    screenResultServiceState?.let { value ->
-        navController.currentBackStackEntry
-            ?.savedStateHandle
-            ?.remove<String>(REFRESH_SERVICES)
-
-        if (value == REFRESH_SERVICES) {
-            viewModel.onTriggerEvent(ChangeOrderEvent.ReloadServices)
+    LaunchedEffect(key1 = true) {
+        viewModel.eventFlow.collectLatest { event ->
+            when(event) {
+                is NavigationEvent.GoBack -> {
+                    navController.popBackStack()
+                }
+            }
         }
-
     }
-
-//    val screenResultWasherState = navController.currentBackStackEntry
-//        ?.savedStateHandle
-//        ?.get<String>(REFRESH_WASHERS)
-//
-//    screenResultWasherState?.let { value ->
-//        navController.currentBackStackEntry
-//            ?.savedStateHandle
-//            ?.remove<String>(REFRESH_WASHERS)
-//
-//        if (value == REFRESH_WASHERS) {
-//            viewModel.onTriggerEvent(ChangeOrderEvent.ReloadWashers)
-//        }
-
-//    }
 
     Column(
         modifier = Modifier.verticalScroll(rememberScrollState())
@@ -93,7 +77,9 @@ fun ChangeOrderScreen(
             )
 
             ServicePrice(
+                serviceError = state.servicesError,
                 onClick = {
+                    viewModel.onTriggerEvent(ChangeOrderEvent.GetServices)
                     openDialogCustomService.value = true
                 },
                 services = state.services,
@@ -110,8 +96,10 @@ fun ChangeOrderScreen(
             )
 
             JanitorStake(
+                washerError = state.washersError,
                 washerOrderOrNot = false,
                 onClick = {
+                    viewModel.onTriggerEvent(ChangeOrderEvent.GetWashers)
                     openDialogCustomJanitor.value = true
                 },
                 washers = state.washers,
@@ -127,6 +115,7 @@ fun ChangeOrderScreen(
                 thickness = 1.dp
             )
             CarModelNumber(
+                carNumberError = state.carNumberError,
                 carModel = state.carModel,
                 carNumber = state.carNumber,
                 onChangeCarModelValue = {
@@ -143,6 +132,8 @@ fun ChangeOrderScreen(
                 thickness = 1.dp
             )
             ClientNumberName(
+                clientTelephoneNumberError = state.clientTelephoneNumberError,
+                clientNameError = state.clientNameError,
                 clientNumber = state.clientNumber,
                 clientName = state.clientName,
                 onChangeClientName = {
@@ -171,7 +162,6 @@ fun ChangeOrderScreen(
                 },
                 loadMore = {
                     viewModel.onTriggerEvent(ChangeOrderEvent.LoadMoreServices)
-                    Log.d("CHANGE ORDER SCREEN", "LOAD MORE ")
                 },
                 onSearchQueryValue = {
                     viewModel.onTriggerEvent(ChangeOrderEvent.OnSearchQueryService(it))
@@ -228,19 +218,19 @@ fun ChangeOrderScreen(
                     cancelDialogOrder.value = false
                 },
                 onCancelClicked = {
-                    viewModel.onTriggerEvent(ChangeOrderEvent.CancelOrder(it))
                     cancelDialogOrder.value = false
+                    viewModel.onTriggerEvent(ChangeOrderEvent.CancelOrder(it))
                 }
             )
         }
 
-        if (state.changeCompleted) {
-            viewModel.onTriggerEvent(ChangeOrderEvent.Back)
-            navController.previousBackStackEntry
-                ?.savedStateHandle
-                ?.set(REFRESH_ORDER, REFRESH_ORDER)
-            navController.popBackStack()
-        }
+//        if (state.changeCompleted) {
+//            viewModel.onTriggerEvent(ChangeOrderEvent.Back)
+//            navController.previousBackStackEntry
+//                ?.savedStateHandle
+//                ?.set(REFRESH_ORDER, REFRESH_ORDER)
+//            navController.popBackStack()
+//        }
 
         //buttons
         Row {

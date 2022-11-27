@@ -48,13 +48,14 @@ import com.himanshoe.kalendar.common.KalendarStyle
 import com.himanshoe.kalendar.common.data.KalendarEvent
 import com.himanshoe.kalendar.common.theme.KalendarTheme
 import java.time.LocalDate
+import java.time.ZoneId
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 internal fun KalendarFirey(
     kalendarKonfig: KalendarKonfig = KalendarKonfig(),
     kalendarStyle: KalendarStyle = KalendarStyle(),
-    selectedDay: LocalDate = LocalDate.now(),
+    selectedDay: LocalDate = LocalDate.now(ZoneId.of("Asia/Tashkent")),
     kalendarEvents: List<KalendarEvent>,
     errorMessageLogged: (String) -> Unit,
     dateRangeEnabled: Boolean = false,

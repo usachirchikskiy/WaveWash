@@ -1,11 +1,13 @@
 package com.example.wavewash.presentation.orders.new_order.components
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -14,6 +16,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -25,13 +28,13 @@ import com.example.wavewash.utils.ComposeString
 
 @Composable
 fun JanitorStake(
-    washerOrderOrNot:Boolean,
+    washerError: Int?,
+    washerOrderOrNot: Boolean,
     onClick: () -> Unit,
     washers: List<Washer>,
     priceOfJanitorsStake: String,
     onDeleteWasherClick: () -> Unit
 ) {
-
     Row(
         modifier = Modifier
             .height(IntrinsicSize.Max)
@@ -52,7 +55,19 @@ fun JanitorStake(
                     .fillMaxHeight(1f)
                     .border(
                         width = 1.dp,
-                        color = Color(0XFFD3DDEC),
+                        color = if (washerError != null) {
+                            MaterialTheme.colors.error
+                        } else {
+                            Color(0XFFD3DDEC)
+                        },
+                        shape = Shapes.small
+                    )
+                    .background(
+                        color = if (!washerOrderOrNot) {
+                            Color.White
+                        } else {
+                            Color.LightGray
+                        },
                         shape = Shapes.small
                     )
                     .padding(horizontal = 14.dp, vertical = 9.dp),
@@ -60,35 +75,17 @@ fun JanitorStake(
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 if (washers.size == 1) {
-
-//                    CoilImage(
-//                        imageModel = "",
-//                        contentScale = ContentScale.Crop,            // crop the image if it's not a square
-//                        modifier = Modifier
-//                            .size(24.dp)
-//                            .clip(CircleShape),
-//
-//                        shimmerParams = ShimmerParams(
-//                            baseColor = Color.White,
-//                            highlightColor = Color.LightGray,
-//                            durationMillis = 350,
-//                            dropOff = 0.65f,
-//                            tilt = 20f
-//                        ),
-//                        // shows an error text message when request failed.
-//                        failure = {
-//                            Text(text = "image request failed.")
-//                        }
-//                    )
-
                     Text(
-                        modifier = Modifier
-                            .weight(1f)
-                            .clickable {
-                                if (!washerOrderOrNot) {
+                        modifier = if (!washerOrderOrNot) {
+                            Modifier
+                                .weight(1f)
+                                .clickable {
                                     onDeleteWasherClick.invoke()
                                 }
-                            },
+                        } else {
+                            Modifier
+                                .weight(1f)
+                        },
                         text = washers[0].name,
                         fontFamily = nunitoSans,
                         fontWeight = FontWeight.Normal,
@@ -117,7 +114,6 @@ fun JanitorStake(
 
                 }
 
-//                Spacer(Modifier.weight(1f))
                 if (!washerOrderOrNot) {
                     Box(
                         modifier = Modifier
@@ -136,6 +132,13 @@ fun JanitorStake(
                         )
                     }
                 }
+            }
+            if (washerError != null) {
+                Text(
+                    text = stringResource(id = washerError),
+                    color = MaterialTheme.colors.error,
+                    modifier = Modifier.align(Alignment.End)
+                )
             }
         }
 

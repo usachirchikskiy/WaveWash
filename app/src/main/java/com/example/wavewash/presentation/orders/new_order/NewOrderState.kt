@@ -31,5 +31,11 @@ data class NewOrderState(
     val orderIsLoading:Boolean = false,
     val error:String = "",
 
-    val requiredFields:Boolean = false
+    val washersError:Int? = null,
+    val servicesError:Int? = null,
+    val carNumberError:Int? = null,
+    val clientNameError:Int? = null,
+    val clientTelephoneNumberError:Int? = null,
+
+//    val requiredFields:Boolean = false
 )

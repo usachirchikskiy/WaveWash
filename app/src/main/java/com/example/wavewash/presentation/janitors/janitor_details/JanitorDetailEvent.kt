@@ -5,6 +5,8 @@ import com.example.wavewash.presentation.janitors.janitors_screen.JanitorEvents
 sealed class JanitorDetailEvent {
     object GetJanitor:JanitorDetailEvent()
 
+    object GetJanitorOrders:JanitorDetailEvent()
+
     object ActiveOrders:JanitorDetailEvent()
 
     object FinishedOrders:JanitorDetailEvent()
@@ -15,9 +17,9 @@ sealed class JanitorDetailEvent {
 
     object OnPreviousDateClick:JanitorDetailEvent()
 
-    object ReloadWasher:JanitorDetailEvent()
-
-    object ReloadOrders:JanitorDetailEvent()
+//    object ReloadWasher:JanitorDetailEvent()
+//
+//    object ReloadOrders:JanitorDetailEvent()
 
 
 }

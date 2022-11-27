@@ -11,13 +11,18 @@ import com.example.wavewash.data.remote.dto.service.ServiceDto
 import com.example.wavewash.domain.model.Service
 import com.example.wavewash.domain.model.Washer
 import com.example.wavewash.domain.use_cases.OrderUseCase
+import com.example.wavewash.domain.use_cases.ServiceUseCase
 import com.example.wavewash.domain.use_cases.WasherUseCase
+import com.example.wavewash.domain.validation_use_case.order.*
+import com.example.wavewash.presentation.orders.orders_screen.NavigationEvent
 import com.example.wavewash.utils.Resource
 import com.example.wavewash.utils.durationOfServices
 import com.example.wavewash.utils.priceOfJanitorsStake
 import com.example.wavewash.utils.priceOfServices
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import javax.inject.Inject
@@ -28,12 +33,19 @@ private const val TAG = "ChangeOrderViewModel"
 class ChangeOrderViewModel @Inject
 constructor(
     private val orderUseCase: OrderUseCase,
-//    private val service: Service,
+    private val serviceUseCase: ServiceUseCase,
     private val washerUseCase: WasherUseCase,
+    private val validationOrderServices: ValidationOrderServices,
+    private val validationOrderWashers: ValidationOrderWashers,
+    private val validationOrderCarNumber: ValidationOrderCarNumber,
+    private val validationClientName: ValidationClientName,
+    private val validationClientTelephoneNumber: ValidationClientTelephoneNumber,
     private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
     var state by mutableStateOf(ChangeOrderState())
+    private val _eventFlow = MutableSharedFlow<NavigationEvent>()
+    val eventFlow = _eventFlow.asSharedFlow()
 
     private var job: Job? = null
     private var jobService: Job? = null
@@ -43,8 +55,6 @@ constructor(
         savedStateHandle.get<Long>("orderId")?.let { orderId ->
             state = state.copy(id = orderId)
             onTriggerEvent(ChangeOrderEvent.GetOrder)
-            onTriggerEvent(ChangeOrderEvent.GetServices)
-            onTriggerEvent(ChangeOrderEvent.GetWashers)
         }
     }
 
@@ -53,15 +63,13 @@ constructor(
             is ChangeOrderEvent.GetOrder -> {
                 getOrder(state.id)
             }
-
-
             is ChangeOrderEvent.GetServices -> {
-//                getServices()
+                getServices()
             }
-            is ChangeOrderEvent.ReloadServices -> {
-                state = state.copy(servicePage = 0, serviceEndIsReached = false, servicesOfDialog = listOf())
-//                getServices()
-            }
+//            is ChangeOrderEvent.ReloadServices -> {
+//                state = state.copy(servicePage = 0, serviceEndIsReached = false, servicesOfDialog = listOf())
+////                getServices()
+//            }
             is ChangeOrderEvent.ChangeService -> {
                 updateService(event.service)
             }
@@ -70,21 +78,24 @@ constructor(
             }
             is ChangeOrderEvent.LoadMoreServices -> {
                 state = state.copy(servicePage = state.servicePage + 1)
-//                getServices()
+                getServices()
             }
             is ChangeOrderEvent.OnSearchQueryService -> {
-                state = state.copy(serviceSearchQuery = event.query, servicePage = 0, serviceEndIsReached = false, servicesOfDialog = listOf())
-//                getServices()
+                state = state.copy(
+                    serviceSearchQuery = event.query,
+                    servicePage = 0,
+                    serviceEndIsReached = false,
+                    servicesOfDialog = listOf()
+                )
+                getServices()
             }
-
-
             is ChangeOrderEvent.GetWashers -> {
                 getWashers()
             }
-            is ChangeOrderEvent.ReloadWashers -> {
-                state = state.copy(washerPage = 0, washerEndIsReached = false, washersOfDialog = listOf())
-                getWashers()
-            }
+//            is ChangeOrderEvent.ReloadWashers -> {
+//                state = state.copy(washerPage = 0, washerEndIsReached = false, washersOfDialog = listOf())
+//                getWashers()
+//            }
             is ChangeOrderEvent.ChangeWasher -> {
                 updateWasher(event.washer)
             }
@@ -95,12 +106,15 @@ constructor(
                 state = state.copy(washerPage = state.washerPage + 1)
                 getWashers()
             }
-            is ChangeOrderEvent.OnSearchQueryWasher-> {
-                state = state.copy(washerSearchQuery = event.query, washerPage = 0, washerEndIsReached = false, washersOfDialog = listOf())
+            is ChangeOrderEvent.OnSearchQueryWasher -> {
+                state = state.copy(
+                    washerSearchQuery = event.query,
+                    washerPage = 0,
+                    washerEndIsReached = false,
+                    washersOfDialog = listOf()
+                )
                 getWashers()
             }
-
-
             is ChangeOrderEvent.ChangeCarModel -> {
                 changeCarModel(event.carModel)
             }
@@ -114,19 +128,10 @@ constructor(
                 changeClientNumber(event.clientNumber)
             }
             is ChangeOrderEvent.SaveChanges -> {
-
-                val fieldsIsEmpty = checkFields()
-                if (fieldsIsEmpty) {
-                    requiredFieldsPopup()
-                } else {
-                    saveChanges()
-                }
+                saveChanges()
             }
             is ChangeOrderEvent.CancelOrder -> {
                 cancelOrder(event.cancelledReason)
-            }
-            is ChangeOrderEvent.Back -> {
-                changeCompletedValue()
             }
         }
     }
@@ -163,49 +168,81 @@ constructor(
         }.launchIn(viewModelScope)
     }
 
-//    private fun getServices() {
-//        jobService?.cancel()
-//        jobService = service.get_services(state.serviceSearchQuery, state.servicePage).onEach { result ->
-//            when (result) {
-//                is Resource.Success -> {
-//                    if (result.data!!.isEmpty()) {
-//                        state = state.copy(serviceEndIsReached = true)
-//                    }
-//                    val listAll = state.servicesOfDialog.plus(result.data)
-//                    state = state.copy(servicesOfDialog = listAll, serviceIsLoading = false)
-//                }
-//                is Resource.Error -> {
-//                    state = state.copy(error = result.message!!, serviceIsLoading = false)
-//                }
-//                is Resource.Loading -> {
-//                    state = state.copy(serviceIsLoading = result.isLoading)
-//                }
-//            }
-//        }.launchIn(viewModelScope)
-//    }
-
-    private fun getWashers(){
-        jobWashers?.cancel()
-        jobWashers = washerUseCase.get_washers(state.washerSearchQuery, state.washerPage).onEach { result ->
-            when (result) {
-                is Resource.Success -> {
-                    if(result.data!!.isEmpty()){
-                        state = state.copy(washerEndIsReached = true)
+    private fun getServices() {
+        jobService?.cancel()
+        jobService = serviceUseCase.get_services(state.serviceSearchQuery, state.servicePage)
+            .onEach { result ->
+                when (result) {
+                    is Resource.Success -> {
+                        state = if (state.servicesOfDialog == result.data) {
+                            state.copy(serviceEndIsReached = true)
+                        } else {
+                            state.copy(servicesOfDialog = result.data!!)
+                        }
                     }
-                    val listAll = state.washersOfDialog.plus(result.data)
-                    state = state.copy(washersOfDialog = listAll, washerIsLoading = false)
+                    is Resource.Error -> {
+                        state = state.copy(error = result.message!!)
+                    }
+                    is Resource.Loading -> {
+                        state = state.copy(serviceIsLoading = result.isLoading)
+                    }
                 }
-                is Resource.Error -> {
-                    state = state.copy(error = result.message!!, washerIsLoading = false)
-                }
-                is Resource.Loading -> {
-                    state = state.copy(washerIsLoading = result.isLoading)
-                }
-            }
-        }.launchIn(viewModelScope)
+            }.launchIn(viewModelScope)
+    }
+
+    private fun getWashers() {
+        val ids = state.washers.map {
+            it.id
+        }
+        jobWashers?.cancel()
+        jobWashers =
+            washerUseCase.get_not_checked_washers(ids, state.washerSearchQuery, state.washerPage)
+                .onEach { result ->
+                    when (result) {
+                        is Resource.Success -> {
+                            if (state.washersOfDialog == result.data) {
+                                state = state.copy(washerEndIsReached = true)
+                            } else {
+                                state = state.copy(washersOfDialog = result.data!!)
+                            }
+                        }
+                        is Resource.Error -> {
+                            state = state.copy(error = result.message!!)
+                        }
+                        is Resource.Loading -> {
+                            state = state.copy(washerIsLoading = result.isLoading)
+                        }
+                    }
+                }.launchIn(viewModelScope)
     }
 
     private fun saveChanges() {
+        val servicesResult = validationOrderServices.execute(state.services)
+        val washersResult = validationOrderWashers.execute(state.washers)
+        val carNumberResult = validationOrderCarNumber.execute(state.carNumber)
+        val clientNameResult = validationClientName.execute(state.clientName)
+        val clientTelephoneNumberResult =
+            validationClientTelephoneNumber.execute(state.clientNumber)
+
+        val hasError = listOf(
+            servicesResult,
+            washersResult,
+            carNumberResult,
+            clientNameResult,
+            clientTelephoneNumberResult
+        ).any { !it.successful }
+
+        if (hasError) {
+            state = state.copy(
+                servicesError = servicesResult.errorMessage,
+                washersError = washersResult.errorMessage,
+                carNumberError = carNumberResult.errorMessage,
+                clientNameError = clientNameResult.errorMessage,
+                clientTelephoneNumberError = clientTelephoneNumberResult.errorMessage
+            )
+            return
+        }
+
         val orderUpdate = UpdateOrderDto(
             cancelled = false,
             cancelledReason = "",
@@ -219,21 +256,47 @@ constructor(
         )
         job?.cancel()
         job = orderUseCase.update(orderUpdate, state.id).onEach { result ->
-            state = when (result) {
+            when (result) {
                 is Resource.Success -> {
-                    state.copy(changeCompleted = true, orderIsLoading = false)
+                    _eventFlow.emit(NavigationEvent.GoBack)
                 }
                 is Resource.Error -> {
-                    state.copy(error = result.message!!, orderIsLoading = false)
+                    state = state.copy(error = result.message!!)
                 }
                 is Resource.Loading -> {
-                    state.copy(orderIsLoading = result.isLoading)
+                    state = state.copy(orderIsLoading = result.isLoading)
                 }
             }
         }.launchIn(viewModelScope)
     }
 
     private fun cancelOrder(cancelledReason: String) {
+        val servicesResult = validationOrderServices.execute(state.services)
+        val washersResult = validationOrderWashers.execute(state.washers)
+        val carNumberResult = validationOrderCarNumber.execute(state.carNumber)
+        val clientNameResult = validationClientName.execute(state.clientName)
+        val clientTelephoneNumberResult =
+            validationClientTelephoneNumber.execute(state.clientNumber)
+
+        val hasError = listOf(
+            servicesResult,
+            washersResult,
+            carNumberResult,
+            clientNameResult,
+            clientTelephoneNumberResult
+        ).any { !it.successful }
+
+        if (hasError) {
+            state = state.copy(
+                servicesError = servicesResult.errorMessage,
+                washersError = washersResult.errorMessage,
+                carNumberError = carNumberResult.errorMessage,
+                clientNameError = clientNameResult.errorMessage,
+                clientTelephoneNumberError = clientTelephoneNumberResult.errorMessage
+            )
+            return
+        }
+
         val orderUpdate = UpdateOrderDto(
             cancelled = true,
             cancelledReason = cancelledReason,
@@ -247,15 +310,15 @@ constructor(
         )
         job?.cancel()
         job = orderUseCase.update(orderUpdate, state.id).onEach { result ->
-            state = when (result) {
+            when (result) {
                 is Resource.Success -> {
-                    state.copy(changeCompleted = true, orderIsLoading = false)
+                    _eventFlow.emit(NavigationEvent.GoBack)
                 }
                 is Resource.Error -> {
-                    state.copy(error = result.message!!, orderIsLoading = false)
+                    state = state.copy(error = result.message!!, orderIsLoading = false)
                 }
                 is Resource.Loading -> {
-                    state.copy(orderIsLoading = result.isLoading)
+                    state = state.copy(orderIsLoading = result.isLoading)
                 }
             }
         }.launchIn(viewModelScope)
@@ -346,25 +409,25 @@ constructor(
         )
     }
 
-    private fun changeCompletedValue() {
-        state = state.copy(
-            changeCompleted = false
-        )
-    }
+//    private fun changeCompletedValue() {
+//        state = state.copy(
+//            changeCompleted = false
+//        )
+//    }
 
-    private fun checkFields(): Boolean {
-        if (state.carModel.isEmpty() || state.carNumber.isEmpty()
-            || state.clientName.isEmpty() || state.clientNumber.isEmpty()
-            || state.price == 0 || state.priceOfJanitorsStake == 0
-        ) {
-            return true
-        }
-        return false
-    }
-
-    private fun requiredFieldsPopup() {
-        state = state.copy(
-            requiredFields = true
-        )
-    }
+//    private fun checkFields(): Boolean {
+//        if (state.carModel.isEmpty() || state.carNumber.isEmpty()
+//            || state.clientName.isEmpty() || state.clientNumber.isEmpty()
+//            || state.price == 0 || state.priceOfJanitorsStake == 0
+//        ) {
+//            return true
+//        }
+//        return false
+//    }
+//
+//    private fun requiredFieldsPopup() {
+//        state = state.copy(
+//            requiredFields = true
+//        )
+//    }
 }

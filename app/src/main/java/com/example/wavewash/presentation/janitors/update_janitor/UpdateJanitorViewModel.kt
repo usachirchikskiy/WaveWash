@@ -10,9 +10,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.wavewash.data.remote.dto.washer.AddWasherDto
 import com.example.wavewash.domain.use_cases.WasherUseCase
-import com.example.wavewash.domain.validation_use_case.ValidationJanitorName
-import com.example.wavewash.domain.validation_use_case.ValidationJanitorStake
-import com.example.wavewash.domain.validation_use_case.ValidationJanitorTelephone
+import com.example.wavewash.domain.validation_use_case.washer.ValidationJanitorName
+import com.example.wavewash.domain.validation_use_case.washer.ValidationJanitorStake
+import com.example.wavewash.domain.validation_use_case.washer.ValidationJanitorTelephone
 import com.example.wavewash.presentation.orders.orders_screen.NavigationEvent
 import com.example.wavewash.utils.Resource
 import com.example.wavewash.utils.asFile
@@ -79,19 +79,19 @@ constructor(
 
     private fun getWasher(id: Long) {
         job?.cancel()
-        job = washerUseCase.get_washer(id).onEach { result ->
+        job = washerUseCase.get_washer_not_flow(id).onEach { result ->
             when (result) {
                 is Resource.Success -> {
                     state = state.copy(
                         id = result.data!!.id,
-                        telephoneNumber = result.data.telephoneNumber.toString(),
+                        telephoneNumber = result.data.telephoneNumber,
                         stake = result.data.stake.toString(),
                         name = result.data.name,
                         imageUrl = result.data.image
                     )
                 }
                 is Resource.Error -> {
-                    state = state.copy(error = result.message!!, isLoading = false)
+                    state = state.copy(error = result.message!!)
                 }
                 is Resource.Loading -> {
                     state = state.copy(isLoading = result.isLoading)

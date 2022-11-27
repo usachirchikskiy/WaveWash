@@ -64,6 +64,15 @@ fun UpdateJanitorScreen(
         }
     )
 
+    if (state.isLoading) {
+        Box(
+            contentAlignment = Alignment.Center,
+            modifier = Modifier.fillMaxSize()
+        ) {
+            CircularProgressIndicator()
+        }
+    }
+
     LaunchedEffect(key1 = true) {
         viewModel.eventFlow.collectLatest { event ->
             when (event) {
@@ -71,15 +80,6 @@ fun UpdateJanitorScreen(
                     navController.popBackStack()
                 }
             }
-        }
-    }
-
-    if (state.isLoading) {
-        Box(
-            contentAlignment = Alignment.Center,
-            modifier = Modifier.fillMaxSize()
-        ) {
-            CircularProgressIndicator()
         }
     }
 

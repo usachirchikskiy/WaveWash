@@ -1,6 +1,5 @@
 package com.example.wavewash.presentation.janitors.janitor_details
 
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -8,9 +7,6 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.wavewash.domain.use_cases.WasherUseCase
-import com.example.wavewash.domain.validation_use_case.ValidationJanitorName
-import com.example.wavewash.domain.validation_use_case.ValidationJanitorStake
-import com.example.wavewash.domain.validation_use_case.ValidationJanitorTelephone
 import com.example.wavewash.utils.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
@@ -46,23 +42,30 @@ constructor(
                 getEarnedMoney()
                 getEarnedStake()
             }
-            is JanitorDetailEvent.ActiveOrders -> {
-                state = state.copy(
-                    orders = listOf(),
-                    isActive = true,
-                    page = 0,
-                    endReached = false
-                )
+            is JanitorDetailEvent.GetJanitorOrders -> {
+                state = state.copy(page = state.page + 1)
                 getJanitorOrders()
             }
+            is JanitorDetailEvent.ActiveOrders -> {
+                if (state.isActive) return
+                    state = state.copy(
+                        orders = listOf(),
+                        isActive = true,
+                        page = 0,
+                        endReached = false
+                    )
+                    getJanitorOrders()
+            }
             is JanitorDetailEvent.FinishedOrders -> {
-                state = state.copy(
-                    orders = listOf(),
-                    isActive = false,
-                    page = 0,
-                    endReached = false
-                )
-                getJanitorOrders()
+                if (!state.isActive) return
+                    state = state.copy(
+                        orders = listOf(),
+                        isActive = false,
+                        page = 0,
+                        endReached = false
+                    )
+                    getJanitorOrders()
+
             }
             is JanitorDetailEvent.ChangeDates -> {
                 changeDates(event.dateFrom, event.dateTo)
@@ -70,7 +73,7 @@ constructor(
                 getJanitorOrders()
             }
             is JanitorDetailEvent.OnNextDateClick -> {
-                if(onNextDate()) {
+                if (onNextDate()) {
                     visibleTabs()
                     getJanitorOrders()
                 }
@@ -131,7 +134,11 @@ constructor(
         ).onEach { result ->
             when (result) {
                 is Resource.Success -> {
-                    state = state.copy(orders = result.data!!)
+                    state = if (state.orders == result.data) {
+                        state.copy(endReached = true)
+                    } else {
+                        state.copy(orders = result.data!!)
+                    }
                 }
                 is Resource.Error -> {
                     state = state.copy(error = result.message!!)
@@ -170,7 +177,7 @@ constructor(
         }
     }
 
-    private fun onNextDate():Boolean {
+    private fun onNextDate(): Boolean {
         val dateFrom = state.dateFrom
         val todayDate = state.todayDate
         val nextDateFrom = getNextDate(dateFrom)

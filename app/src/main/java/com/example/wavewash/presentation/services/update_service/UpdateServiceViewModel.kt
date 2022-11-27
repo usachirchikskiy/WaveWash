@@ -8,9 +8,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.wavewash.data.remote.dto.service.AddServiceDto
 import com.example.wavewash.domain.use_cases.ServiceUseCase
-import com.example.wavewash.domain.validation_use_case.ValidationServiceName
-import com.example.wavewash.domain.validation_use_case.ValidationServicePrice
-import com.example.wavewash.domain.validation_use_case.ValidationServiceTime
+import com.example.wavewash.domain.validation_use_case.service.ValidationServiceName
+import com.example.wavewash.domain.validation_use_case.service.ValidationServicePrice
+import com.example.wavewash.domain.validation_use_case.service.ValidationServiceTime
 import com.example.wavewash.presentation.orders.orders_screen.NavigationEvent
 import com.example.wavewash.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel

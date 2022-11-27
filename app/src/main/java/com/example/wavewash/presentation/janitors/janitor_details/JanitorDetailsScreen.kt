@@ -26,6 +26,7 @@ import com.example.wavewash.presentation.helpers.common.ScreenHeaders
 import com.example.wavewash.presentation.helpers.popups.CalendarDialog
 import com.example.wavewash.presentation.janitors.janitor_details.components.CardsJanitorAnalytics
 import com.example.wavewash.presentation.janitors.janitor_details.components.CardsJanitorInfo
+import com.example.wavewash.presentation.orders.orders_screen.OrdersEvent
 import com.example.wavewash.presentation.orders.orders_screen.components.HeadersOfList
 import com.example.wavewash.presentation.orders.orders_screen.components.OrderItem
 import com.example.wavewash.presentation.orders.orders_screen.components.OrdersTab
@@ -144,6 +145,9 @@ fun JanitorDetailsScreen(
                 modifier = Modifier.fillMaxSize()
             ) {
                 items(state.orders.size) { index ->
+                    if (index >= state.orders.size - 1 && !state.endReached && !state.isLoading) {
+                        viewModel.onTriggerEvent(JanitorDetailEvent.GetJanitorOrders)
+                    }
                     OrderItem(
                         order = state.orders[index],
                         onClick = {

@@ -14,6 +14,10 @@ import com.example.wavewash.domain.model.Washer
 import com.example.wavewash.domain.use_cases.OrderUseCase
 import com.example.wavewash.domain.use_cases.ServiceUseCase
 import com.example.wavewash.domain.use_cases.WasherUseCase
+import com.example.wavewash.domain.validation_use_case.order.*
+import com.example.wavewash.domain.validation_use_case.washer.ValidationJanitorName
+import com.example.wavewash.domain.validation_use_case.washer.ValidationJanitorStake
+import com.example.wavewash.domain.validation_use_case.washer.ValidationJanitorTelephone
 import com.example.wavewash.presentation.janitors.update_janitor.UpdateJanitorEvents
 import com.example.wavewash.presentation.orders.orders_screen.NavigationEvent
 import com.example.wavewash.utils.*
@@ -33,6 +37,11 @@ constructor(
     private val orderUseCase: OrderUseCase,
     private val serviceUseCase: ServiceUseCase,
     private val washerUseCase: WasherUseCase,
+    private val validationOrderServices: ValidationOrderServices,
+    private val validationOrderWashers: ValidationOrderWashers,
+    private val validationOrderCarNumber: ValidationOrderCarNumber,
+    private val validationClientName: ValidationClientName,
+    private val validationClientTelephoneNumber: ValidationClientTelephoneNumber,
     private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
@@ -50,10 +59,10 @@ constructor(
         if (washerId != null && washerId!=-1L) {
             onTriggerEvent(NewOrderEvent.WasherOrderOrNot(washerId))
         }
-        else{
-            onTriggerEvent(NewOrderEvent.GetWashers)
-        }
-        onTriggerEvent(NewOrderEvent.GetServices)
+//        else{
+//            onTriggerEvent(NewOrderEvent.GetWashers)
+//        }
+//        onTriggerEvent(NewOrderEvent.GetServices)
     }
 
     fun onTriggerEvent(event: NewOrderEvent) {
@@ -62,12 +71,7 @@ constructor(
                 changeWasherOrderOrNot(event.washerId)
             }
             is NewOrderEvent.AddOrder -> {
-                val fieldsIsEmpty = checkFields()
-                if (fieldsIsEmpty) {
-                    requiredFieldsPopup()
-                } else {
-                    addOrder()
-                }
+                addOrder()
             }
             is NewOrderEvent.ChangeCarModel -> {
                 changeCarModel(event.carModel)
@@ -81,7 +85,6 @@ constructor(
             is NewOrderEvent.ChangeClientNumber -> {
                 changeClientNumber(event.clientNumber)
             }
-
             is NewOrderEvent.GetServices -> {
                 getServices()
             }
@@ -112,8 +115,6 @@ constructor(
                 )
                 getServices()
             }
-
-
             is NewOrderEvent.GetWashers -> {
                 getWashers()
             }
@@ -171,9 +172,12 @@ constructor(
     }
 
     private fun getWashers() {
+        val ids = state.washers.map {
+            it.id
+        }
         jobWashers?.cancel()
         jobWashers =
-            washerUseCase.get_washers(state.washerSearchQuery, state.washerPage).onEach { result ->
+            washerUseCase.get_not_checked_washers(ids,state.washerSearchQuery, state.washerPage).onEach { result ->
                 when (result) {
                     is Resource.Success -> {
                         if (state.washersOfDialog == result.data) {
@@ -193,6 +197,31 @@ constructor(
     }
 
     private fun addOrder() {
+        val servicesResult = validationOrderServices.execute(state.services)
+        val washersResult = validationOrderWashers.execute(state.washers)
+        val carNumberResult = validationOrderCarNumber.execute(state.carNumber)
+        val clientNameResult = validationClientName.execute(state.clientName)
+        val clientTelephoneNumberResult = validationClientTelephoneNumber.execute(state.clientNumber)
+
+        val hasError = listOf(
+            servicesResult,
+            washersResult,
+            carNumberResult,
+            clientNameResult,
+            clientTelephoneNumberResult
+        ).any { !it.successful }
+
+        if (hasError) {
+            state = state.copy(
+                servicesError = servicesResult.errorMessage,
+                washersError = washersResult.errorMessage,
+                carNumberError = carNumberResult.errorMessage,
+                clientNameError = clientNameResult.errorMessage,
+                clientTelephoneNumberError = clientTelephoneNumberResult.errorMessage
+            )
+            return
+        }
+
         val serviceIds = state.services.map {
             it.id
         }
@@ -308,25 +337,25 @@ constructor(
         )
     }
 
-    private fun checkFields(): Boolean {
-        if (state.carModel.isEmpty() || state.carNumber.isEmpty()
-            || state.clientName.isEmpty() || state.clientNumber.isEmpty()
-            || state.price == 0 || state.priceOfJanitorsStake == 0
-        ) {
-            return true
-        }
-        return false
-    }
-
-    private fun requiredFieldsPopup() {
-        state = state.copy(
-            requiredFields = true
-        )
-    }
+//    private fun checkFields(): Boolean {
+//        if (state.carModel.isEmpty() || state.carNumber.isEmpty()
+//            || state.clientName.isEmpty() || state.clientNumber.isEmpty()
+//            || state.price == 0 || state.priceOfJanitorsStake == 0
+//        ) {
+//            return true
+//        }
+//        return false
+//    }
+//
+//    private fun requiredFieldsPopup() {
+//        state = state.copy(
+//            requiredFields = true
+//        )
+//    }
 
     private fun changeWasherOrderOrNot(washerId: Long) {
         jobWashers?.cancel()
-        jobWashers = washerUseCase.get_washer(washerId).onEach { result ->
+        jobWashers = washerUseCase.get_washer_not_flow(washerId).onEach { result ->
             when (result) {
                 is Resource.Success -> {
                     state =

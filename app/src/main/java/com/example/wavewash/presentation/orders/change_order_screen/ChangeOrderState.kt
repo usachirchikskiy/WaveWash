@@ -33,6 +33,9 @@ data class ChangeOrderState(
     val orderIsLoading: Boolean = false,
     val error: String = "",
 
-    val requiredFields: Boolean = false,
-    val changeCompleted: Boolean = false
+    val washersError:Int? = null,
+    val servicesError:Int? = null,
+    val carNumberError:Int? = null,
+    val clientNameError:Int? = null,
+    val clientTelephoneNumberError:Int? = null,
 )

@@ -1,6 +1,7 @@
-package com.example.wavewash.domain.validation_use_case
+package com.example.wavewash.domain.validation_use_case.washer
 
 import com.example.wavewash.R
+import com.example.wavewash.domain.validation_use_case.ValidationResult
 
 class ValidationJanitorTelephone {
     fun execute(telephoneNumber: String): ValidationResult {

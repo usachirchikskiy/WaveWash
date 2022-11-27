@@ -1,5 +1,6 @@
 package com.example.wavewash.presentation.orders.orders_screen
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -41,6 +42,7 @@ constructor(
                 getOrders()
             }
             is OrdersEvent.ActiveOrders -> {
+                if(state.isActive) return
                 state = state.copy(
                     orders = listOf(),
                     isActive = true,
@@ -50,6 +52,7 @@ constructor(
                 getOrders()
             }
             is OrdersEvent.FinishedOrders -> {
+                if(!state.isActive) return
                 state = state.copy(
                     orders = listOf(),
                     isActive = false,
@@ -83,6 +86,7 @@ constructor(
     private fun todayDates(){
         val pair = getFromAndTo()
         val calendarDateFrom = getDate()
+        Log.d(TAG, "todayDates: ${pair.first} ${pair.second} $calendarDateFrom")
         state = state.copy(
             todayDate = pair.first,
             calendarDateFrom = calendarDateFrom,
@@ -97,10 +101,10 @@ constructor(
             .onEach { result ->
                 when (result) {
                     is Resource.Success -> {
-                        if (state.orders == result.data) {
-                            state = state.copy(endReached = true)
+                        state = if (state.orders == result.data) {
+                            state.copy(endReached = true)
                         } else {
-                            state = state.copy(orders = result.data!!)
+                            state.copy(orders = result.data!!)
                         }
                     }
                     is Resource.Error -> {

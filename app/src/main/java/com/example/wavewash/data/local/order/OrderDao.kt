@@ -20,7 +20,7 @@ interface OrderDao {
 
     @Transaction
     @Query("SELECT * FROM orders WHERE orderId = :orderId")
-    fun getOrderByIdWithWashersAndServices(orderId: Long): Flow<OrderWithWashersAndServices>
+    suspend fun getOrderByIdWithWashersAndServices(orderId: Long): OrderWithWashersAndServices
 
     //Pagination OrdersWithWashersAndServices
     @Transaction

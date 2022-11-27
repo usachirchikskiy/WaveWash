@@ -5,6 +5,7 @@ import android.database.Cursor
 import android.net.Uri
 import android.provider.DocumentsContract
 import android.provider.MediaStore
+import android.util.Log
 import com.example.wavewash.data.remote.dto.service.ServiceDto
 import com.example.wavewash.domain.model.Service
 import com.example.wavewash.domain.model.Washer
@@ -45,8 +46,9 @@ fun priceOfJanitorsStake(washers: List<Washer>, price: Int): Int {
 }
 
 fun getDate(): String {
+    val date = Date()
     val dateFormatter = SimpleDateFormat("dd MMMM yyyy", Locale("ru"))
-    return dateFormatter.format(Date())
+    return dateFormatter.format(date.time + 18000000L)
 }
 
 fun getNextDate(date: String): String {
@@ -62,10 +64,10 @@ fun getPreviousDate(date: String): String {
     val previousDate = Date(parse.time - 1440 * ONE_MINUTE_IN_MILLIS)
     return dateParser.format(previousDate)
 }
-
 fun getFromAndTo(): Pair<String, String> {
     val sdf = SimpleDateFormat("yyyy-MM-dd")
-    val dateFrom = Date()
+    val date = Date()
+    val dateFrom = Date(date.time + 18000000L)
     val dateTo = Date(dateFrom.time + 1440 * ONE_MINUTE_IN_MILLIS)
     return Pair(sdf.format(dateFrom), sdf.format(dateTo))
 }

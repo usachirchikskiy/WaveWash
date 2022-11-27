@@ -69,7 +69,9 @@ fun NewOrderScreen(
             )
 
             ServicePrice(
+                serviceError = state.servicesError,
                 onClick = {
+                    viewModel.onTriggerEvent(NewOrderEvent.GetServices)
                     openDialogCustomService.value = true
                 },
                 services = state.services,
@@ -118,8 +120,10 @@ fun NewOrderScreen(
             )
 
             JanitorStake(
+                washerError = state.washersError,
                 washerOrderOrNot = state.washerId!=-1L,
                 onClick = {
+                    viewModel.onTriggerEvent(NewOrderEvent.GetWashers)
                     openDialogCustomJanitor.value = true
                 },
                 washers = state.washers,
@@ -167,6 +171,7 @@ fun NewOrderScreen(
                 thickness = 1.dp
             )
             CarModelNumber(
+                carNumberError = state.carNumberError,
                 carModel = state.carModel,
                 carNumber = state.carNumber,
                 onChangeCarModelValue = {
@@ -183,6 +188,8 @@ fun NewOrderScreen(
                 thickness = 1.dp
             )
             ClientNumberName(
+                clientTelephoneNumberError = state.clientTelephoneNumberError,
+                clientNameError = state.clientNameError,
                 clientName = state.clientName,
                 clientNumber = state.clientNumber,
                 onChangeClientName = {

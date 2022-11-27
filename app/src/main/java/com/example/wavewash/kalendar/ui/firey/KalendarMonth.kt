@@ -29,6 +29,7 @@ import com.himanshoe.kalendar.util.validateMaxDate
 import com.himanshoe.kalendar.util.validateMinDate
 import java.time.LocalDate
 import java.time.YearMonth
+import java.time.ZoneId
 
 private const val DAYS_IN_WEEK = 7
 
@@ -44,7 +45,7 @@ internal fun KalendarMonth(
     dateRangeEnabled: Boolean = false,
     onDateRangeSelected: (Pair<LocalDate, LocalDate>) -> Unit = {}
 ) {
-    val previousClickedDay = remember { mutableStateOf(LocalDate.now()) }
+    val previousClickedDay = remember { mutableStateOf(LocalDate.now(ZoneId.of("Asia/Tashkent"))) }
     Column(
         modifier = Modifier
             .background(AppBackground)
@@ -105,13 +106,13 @@ internal fun KalendarMonth(
                                 size = size,
                                 date = localDate,
                                 isSelected = isSelected,
-                                isToday = localDate == LocalDate.now(),
+                                isToday = localDate == LocalDate.now(ZoneId.of("Asia/Tashkent")),
                                 isPreviousDay = if (dateRangeEnabled) isPreviousDay else false,
                                 isBetweenDay = if (dateRangeEnabled) isBetweenDay else false,
                                 kalendarSelector = kalendarSelector,
                                 kalendarEvents = kalendarEvents,
                                 onDayClick = { date, events ->
-                                    if(date<=LocalDate.now()) {
+                                    if(date<=LocalDate.now(ZoneId.of("Asia/Tashkent"))) {
                                         haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                                         previousClickedDay.value = clickedDay.value
                                         clickedDay.value = date

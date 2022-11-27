@@ -47,13 +47,15 @@ class OrderUseCase(
                     )
                 }
                 result.washers.forEach {
-//                    washerDao.insertWasher(it.toEntity())
+                    washerDao.insertWasher(it.toEntity())
                     orderDao.insertOrderWasherCrossRef(
                         OrderWasherCrossRef(result.id, it.id)
                     )
                 }
+                Log.d(TAG, "addOrder: $result")
                 emit(Resource.Success("Order Added"))
             } catch (ex: Exception) {
+                Log.d(TAG, "get_washer_orders: $ex")
                 emit(Resource.Error(message = ex.message!!))
             }
             emit(Resource.Loading(false))
@@ -74,7 +76,7 @@ class OrderUseCase(
                     )
                 }
                 result.washers.forEach {
-//                    washerDao.insertWasher(it.toEntity())
+                    washerDao.insertWasher(it.toEntity())
                     orderDao.insertOrderWasherCrossRef(
                         OrderWasherCrossRef(result.id, it.id)
                     )
@@ -136,9 +138,8 @@ class OrderUseCase(
         flow {
             emit(Resource.Loading())
             try {
-                orderDao.getOrderByIdWithWashersAndServices(orderId).collect {
-                    emit(Resource.Success(it.toOrder()))
-                }
+                val order = orderDao.getOrderByIdWithWashersAndServices(orderId).toOrder()
+                emit(Resource.Success(order))
             } catch (ex: Exception) {
                 emit(Resource.Error(message = "Order is null"))
             }

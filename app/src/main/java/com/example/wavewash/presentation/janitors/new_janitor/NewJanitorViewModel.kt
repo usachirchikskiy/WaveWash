@@ -1,24 +1,17 @@
 package com.example.wavewash.presentation.janitors.new_janitor
 
 import android.app.Application
-import android.content.ContentResolver
-import android.database.Cursor
 import android.net.Uri
-import android.provider.DocumentsContract
-import android.provider.MediaStore
-import android.provider.MediaStore.MediaColumns
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.core.net.toFile
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.wavewash.data.remote.dto.washer.AddWasherDto
 import com.example.wavewash.domain.use_cases.WasherUseCase
-import com.example.wavewash.domain.validation_use_case.ValidationJanitorName
-import com.example.wavewash.domain.validation_use_case.ValidationJanitorStake
-import com.example.wavewash.domain.validation_use_case.ValidationJanitorTelephone
+import com.example.wavewash.domain.validation_use_case.washer.ValidationJanitorName
+import com.example.wavewash.domain.validation_use_case.washer.ValidationJanitorStake
+import com.example.wavewash.domain.validation_use_case.washer.ValidationJanitorTelephone
 import com.example.wavewash.presentation.orders.orders_screen.NavigationEvent
 import com.example.wavewash.utils.Resource
 import com.example.wavewash.utils.asFile
@@ -32,8 +25,6 @@ import kotlinx.coroutines.flow.onEach
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
-import okhttp3.RequestBody.Companion.toRequestBody
-import java.io.File
 import javax.inject.Inject
 
 

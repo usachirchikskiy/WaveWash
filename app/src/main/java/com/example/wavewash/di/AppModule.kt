@@ -4,10 +4,15 @@ import android.app.Application
 import androidx.room.Room
 import com.example.wavewash.data.datastore.AppDataStore
 import com.example.wavewash.data.datastore.AppDataStoreManager
-import com.example.wavewash.data.local.service.ServiceDao
 import com.example.wavewash.data.local.SillyWashDatabase
 import com.example.wavewash.data.remote.SillyWashApi
 import com.example.wavewash.domain.validation_use_case.*
+import com.example.wavewash.domain.validation_use_case.service.ValidationServiceName
+import com.example.wavewash.domain.validation_use_case.service.ValidationServicePrice
+import com.example.wavewash.domain.validation_use_case.service.ValidationServiceTime
+import com.example.wavewash.domain.validation_use_case.washer.ValidationJanitorName
+import com.example.wavewash.domain.validation_use_case.washer.ValidationJanitorStake
+import com.example.wavewash.domain.validation_use_case.washer.ValidationJanitorTelephone
 import com.example.wavewash.utils.BASE_URL
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
@@ -63,43 +68,6 @@ object AppModule {
         return retrofitBuilder
             .build()
             .create(SillyWashApi::class.java)
-    }
-
-    //Validation
-    @Singleton
-    @Provides
-    fun provideValidationJanitorName(): ValidationJanitorName {
-        return ValidationJanitorName()
-    }
-
-    @Singleton
-    @Provides
-    fun provideValidationJanitorTelephone(): ValidationJanitorTelephone {
-        return ValidationJanitorTelephone()
-    }
-
-    @Singleton
-    @Provides
-    fun provideValidationJanitorStake(): ValidationJanitorStake {
-        return ValidationJanitorStake()
-    }
-
-    @Singleton
-    @Provides
-    fun provideValidationServiceName(): ValidationServiceName {
-        return ValidationServiceName()
-    }
-
-    @Singleton
-    @Provides
-    fun provideValidationServicePrice():ValidationServicePrice{
-        return ValidationServicePrice()
-    }
-
-    @Singleton
-    @Provides
-    fun provideValidationServiceTime():ValidationServiceTime{
-        return ValidationServiceTime()
     }
 
 }

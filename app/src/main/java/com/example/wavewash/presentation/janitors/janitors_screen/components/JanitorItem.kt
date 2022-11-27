@@ -55,7 +55,7 @@ fun JanitorItem(
                     shimmerParams = ShimmerParams(
                         baseColor = Color.White,
                         highlightColor = Color.LightGray,
-                        durationMillis = 350,
+                        durationMillis = 1000,
                         dropOff = 0.65f,
                         tilt = 20f
                     ),

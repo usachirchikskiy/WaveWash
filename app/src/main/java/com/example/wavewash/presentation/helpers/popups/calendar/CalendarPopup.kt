@@ -24,6 +24,8 @@ import com.example.wavewash.utils.getFromAndTo
 import com.example.wavewash.utils.getNextDate
 import com.himanshoe.kalendar.ui.Kalendar
 import com.himanshoe.kalendar.ui.KalendarType
+import java.time.LocalDate
+import java.time.ZoneId
 
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalComposeUiApi::class)
@@ -76,7 +78,8 @@ fun CalendarDialog(
                 },
                 onCancelled = {
                     openDialogCustom.value = false
-                }
+                },
+                selectedDay = LocalDate.now(ZoneId.of("Asia/Tashkent"))
             )
         }
     }
