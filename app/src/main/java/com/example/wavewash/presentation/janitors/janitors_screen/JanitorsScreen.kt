@@ -1,5 +1,6 @@
 package com.example.wavewash.presentation.janitors.janitors_screen
 
+import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -26,6 +27,11 @@ private const val TAG = "JanitorsScreen"
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun JanitorsScreen(navController: NavController, viewModel: JanitorViewModel = hiltViewModel()) {
+    LaunchedEffect(key1 = true) {
+        navController.backQueue.forEach {
+            Log.d(TAG, "JanitorsScreen: ${it.destination}")
+        }
+    }
     val state = viewModel.state
 
     if (state.isLoading) {

@@ -14,7 +14,8 @@ data class WasherEntity(
     val telephoneNumber:String,
     val active:Boolean,
     val image:String,
-    val stake:Int
+    val stake:Int,
+    val deleted:Boolean
 )
 
 fun WasherEntity.toWasher(): Washer {
@@ -24,7 +25,8 @@ fun WasherEntity.toWasher(): Washer {
         telephoneNumber = telephoneNumber,
         active = active,
         image = image,
-        stake = stake
+        stake = stake,
+        deleted = deleted
     )
 }
 
@@ -35,6 +37,7 @@ fun Washer.toEntity(): WasherEntity {
         telephoneNumber = telephoneNumber,
         active = active,
         image = image,
-        stake = stake
+        stake = stake,
+        deleted = deleted
     )
 }

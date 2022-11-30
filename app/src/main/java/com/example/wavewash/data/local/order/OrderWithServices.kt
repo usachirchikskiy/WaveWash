@@ -25,8 +25,8 @@ fun OrderWithServices.toOrder(washer:WasherEntity): Order {
     return Order(
         id = order.orderId,
         active = order.active,
-        cancelled = order.cancelled,//TODO DELETE FIELD
-        cancelledReason=order.cancelledReason,
+//        cancelled = order.cancelled,//TODO DELETE FIELD
+//        cancelledReason=order.cancelledReason,
         carModel=order.carModel,
         carNumber = order.carNumber,
         clientName = order.clientName,

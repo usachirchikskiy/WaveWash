@@ -59,6 +59,9 @@ constructor(
             is UpdateJanitorEvents.UpdateWasher -> {
                 updateWasher()
             }
+            is UpdateJanitorEvents.DeleteWasher -> {
+                deleteWasher()
+            }
             is UpdateJanitorEvents.GetWasher -> {
                 getWasher(event.id)
             }
@@ -75,6 +78,23 @@ constructor(
                 changeUriValue(event.uri)
             }
         }
+    }
+
+    private fun deleteWasher() {
+        job?.cancel()
+        job = washerUseCase.delete_washer(state.id).onEach { result ->
+            when (result) {
+                is Resource.Success -> {
+                    _eventFlow.emit(NavigationEvent.GoToWashersPage)
+                }
+                is Resource.Error -> {
+                    state = state.copy(error = result.message!!)
+                }
+                is Resource.Loading -> {
+                    state = state.copy(isLoading = result.isLoading)
+                }
+            }
+        }.launchIn(viewModelScope)
     }
 
     private fun getWasher(id: Long) {

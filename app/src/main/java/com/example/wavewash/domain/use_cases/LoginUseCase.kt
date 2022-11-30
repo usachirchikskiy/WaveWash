@@ -11,25 +11,26 @@ import kotlinx.coroutines.flow.flow
 
 private const val TAG = ""
 
-class Login(
-    val api:SillyWashApi,
-    val appDataStoreManager: AppDataStore
+class LoginUseCase(
+    private val api: SillyWashApi,
+    private val appDataStoreManager: AppDataStore
 ) {
-    fun execute(body: LoginDto) : Flow<Resource<String>> = flow<Resource<String>> {
+    fun execute(body: LoginDto): Flow<Resource<String>> = flow<Resource<String>> {
         emit(Resource.Loading())
         try {
             val result = api.auth_login(body)
-            appDataStoreManager.setValue(TOKEN_KEY,result.accessToken)
-            appDataStoreManager.setValue(EMAIL_KEY,body.email)
-            appDataStoreManager.setValue(PASSWORD_KEY,body.password)
+            appDataStoreManager.setValue(TOKEN_KEY, result.accessToken)
+            appDataStoreManager.setValue(EMAIL_KEY, body.email)
+            appDataStoreManager.setValue(PASSWORD_KEY, body.password)
             Log.d(TAG, "Result: $result")
-        } catch (ex: Exception){
+        } catch (ex: Exception) {
             throw ex
         }
         emit(Resource.Success(data = SUCCESS_LOGIN))
 
-    }.catch { e->
+    }.catch { e ->
         emit(Resource.Error(message = e.message!!))
         Log.d(TAG, "Exception: $e")
     }
+
 }

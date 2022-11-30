@@ -47,7 +47,7 @@ fun CalendarDialog(
     ) {
         Box(
             modifier = Modifier
-                .size(450.dp, 600.dp)
+                .size(375.dp,512.dp)//, 600.dp)
                 .clip(Shapes.medium)
                 .background(AppBackground)
                 .padding(20.dp)

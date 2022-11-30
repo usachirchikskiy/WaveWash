@@ -22,4 +22,5 @@ sealed class OrdersEvent {
 
 sealed class NavigationEvent {
     object GoBack : NavigationEvent()
+    object GoToWashersPage : NavigationEvent()
 }

@@ -11,6 +11,7 @@ data class ServiceEntity(
     val name:String,
     val duration: Int,
     val price:Int,
+    val deleted:Boolean
 )
 
 fun ServiceEntity.toService(): Service{
@@ -18,7 +19,8 @@ fun ServiceEntity.toService(): Service{
         id = serviceId,
         name = name,
         duration = duration,
-        price = price
+        price = price,
+        deleted = deleted
     )
 }
 
@@ -27,6 +29,7 @@ fun Service.toEntity(): ServiceEntity {
         serviceId = id,
         name = name,
         duration = duration,
-        price = price
+        price = price,
+        deleted = deleted
     )
 }

@@ -33,7 +33,8 @@ fun LogoNameCompany(
             .fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        IconButton(onClick = {
+        IconButton(
+            onClick = {
             onLogoClick.invoke()
         }) {
             Image(
@@ -42,7 +43,6 @@ fun LogoNameCompany(
                 contentScale = ContentScale.Crop
             )
         }
-        Spacer(Modifier.width(16.dp))
         Text(
             style = appNameStyle,
             text = ComposeString.resource(R.string.app_name).value()

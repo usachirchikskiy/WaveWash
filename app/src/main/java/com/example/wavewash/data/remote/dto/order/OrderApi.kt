@@ -38,4 +38,10 @@ interface OrderApi{
         @Header("Authorization") authorization: String,
     ): List<Int>
 
+    @POST("/api/order/deleteOrder/{orderId}")
+    suspend fun delete_order(
+        @Header("Authorization") authorization: String,
+        @Path("orderId") orderId: Long,
+    )
+
 }

@@ -10,7 +10,8 @@ data class WasherDto (
     val telephoneNumber:String,
     val active:Boolean,
     val image:String,
-    val stake:Int
+    val stake:Int,
+    val deleted:Boolean
 )
 
 fun WasherDto.toWasher(): Washer{
@@ -20,7 +21,8 @@ fun WasherDto.toWasher(): Washer{
         telephoneNumber = telephoneNumber,
         active = active,
         image = image,
-        stake = stake
+        stake = stake,
+        deleted = deleted
     )
 }
 
@@ -31,6 +33,7 @@ fun Washer.toWasherDto(): WasherDto {
         telephoneNumber = telephoneNumber,
         active = active,
         image = image,
-        stake = stake
+        stake = stake,
+        deleted = deleted
     )
 }

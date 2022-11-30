@@ -20,6 +20,7 @@ val StatusBusy = Color(0xFFFF0000)
 val SupportAnswerBorder = Color(0XFF669AFF)
 val SwitchBackground = Color(0XFFCFD3D8)
 val SupportAnswer = Color(0XFFEDF4FB)
+val deleteColor = Color(0XFFE34343)
 
 
 

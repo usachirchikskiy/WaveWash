@@ -14,25 +14,10 @@ data class OrderEntity(
     val clientName: String,
     val clientNumber: Int,
     val active: Boolean,
-    val cancelled: Boolean,
-    val cancelledReason: String,
+//    val cancelled: Boolean,
+//    val cancelledReason: String,
     val date: Long
 )
-
-//fun OrderEntity.toOrder(): Order {
-//    return Order(
-//        id = orderId,
-//        price = price,
-//        carModel = carModel,
-//        carNumber = carNumber,
-//        clientName = clientName,
-//        clientNumber = clientNumber,
-//        isActive = isActive,
-//        isCancelled = isCancelled,
-//        cancelledReason = cancelledReason,
-//        date = date
-//    )
-//}
 
 fun Order.toEntity(): OrderEntity {
     return OrderEntity(
@@ -43,8 +28,8 @@ fun Order.toEntity(): OrderEntity {
         clientName = clientName,
         clientNumber = clientNumber,
         active = active,
-        cancelled = cancelled,
-        cancelledReason = cancelledReason,
+//        cancelled = cancelled,
+//        cancelledReason = cancelledReason,
         date = date
     )
 }

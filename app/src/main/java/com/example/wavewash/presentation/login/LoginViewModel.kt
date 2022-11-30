@@ -6,7 +6,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.wavewash.data.remote.dto.login.LoginDto
-import com.example.wavewash.domain.use_cases.Login
+import com.example.wavewash.domain.use_cases.LoginUseCase
 import com.example.wavewash.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
@@ -15,10 +15,8 @@ import kotlinx.coroutines.flow.onEach
 import javax.inject.Inject
 
 @HiltViewModel
-class LoginViewModel
-@Inject
-constructor(
-    private val login: Login
+class LoginViewModel @Inject constructor(
+    private val loginUseCase: LoginUseCase
 ) : ViewModel() {
     var state by mutableStateOf(LoginState())
 
@@ -46,7 +44,7 @@ constructor(
 
     fun login(email: String, password: String) {
         job?.cancel()
-        job = login.execute(body = LoginDto(email, password)).onEach { result->
+        job = loginUseCase.execute(body = LoginDto(email, password)).onEach { result->
             when (result) {
                 is Resource.Success -> {
                     state = state.copy(changeScreen = true)

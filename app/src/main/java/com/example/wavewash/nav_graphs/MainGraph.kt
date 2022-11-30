@@ -28,10 +28,11 @@ import com.google.accompanist.pager.PagerState
 @ExperimentalPagerApi
 fun NavGraphBuilder.mainGraph(
     pagerState: PagerState,
-    navController: NavController
+    navController: NavController,
+    startDestination:String
 ) {
     navigation(
-        startDestination = Screen.MainScreenRoute.route,//Screen.LoginScreenRoute.route
+        startDestination = startDestination,//Screen.LoginScreenRoute.route,//Screen.LoginScreenRoute.route
         route = "Main_Graph_Route"
     ) {
         //Login

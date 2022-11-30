@@ -6,6 +6,8 @@ sealed class UpdateJanitorEvents {
 
     data class GetWasher(val id:Long):UpdateJanitorEvents()
 
+    object DeleteWasher: UpdateJanitorEvents()
+
     object UpdateWasher : UpdateJanitorEvents()
 
     data class ChangeNameValue(val text:String):UpdateJanitorEvents()

@@ -23,6 +23,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.wavewash.R
+import com.example.wavewash.ui.theme.ActiveButtonBackground
 import com.example.wavewash.ui.theme.TextColor
 import com.example.wavewash.ui.theme.nunitoSans
 import com.example.wavewash.utils.ComposeString
@@ -67,8 +68,9 @@ fun ClientNumberName(
                     fontWeight = FontWeight.Normal
                 ),
                 colors = TextFieldDefaults.outlinedTextFieldColors(
-                    focusedBorderColor = Color(0XFFD3DDEC), // цвет при получении фокуса
-                    unfocusedBorderColor = Color(0XFFD3DDEC)  // цвет при отсутствии фокуса
+                    cursorColor = ActiveButtonBackground,
+                    focusedBorderColor = Color(0xFFD3DDEC),
+                    unfocusedBorderColor = Color(0xFFD3DDEC),
                 ),
                 isError = clientNameError != null
             )

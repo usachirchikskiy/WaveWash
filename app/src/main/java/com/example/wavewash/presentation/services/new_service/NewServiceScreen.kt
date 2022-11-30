@@ -157,7 +157,7 @@ fun NewServiceScreen(
                 singleLine = true,
                 value = state.price,
                 onValueChange = { price ->
-                    if (price.length < 7) {
+                    if (price.length < 8) {
                         viewModel.onTriggerEvent(NewServiceEvent.ChangePriceValue(price))
                     }
                 },

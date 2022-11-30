@@ -19,6 +19,7 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 private const val TAG = "UpdateServiceViewModel"
@@ -48,12 +49,7 @@ constructor(
     fun onTriggerEvent(event: UpdateServiceEvent) {
         when (event) {
             is UpdateServiceEvent.UpdateService -> {
-//                val fieldsIsEmtpy = checkFields()
-//                if (fieldsIsEmtpy) {
-////                    TODO POPUP DIALOG
-//                } else {
-//                    updateService()
-//                }
+                updateService()
             }
             is UpdateServiceEvent.GetService -> {
                 getService(event.id)
@@ -67,17 +63,28 @@ constructor(
             is UpdateServiceEvent.ChangePriceValue -> {
                 changePriceValue(event.price)
             }
+            is UpdateServiceEvent.DeleteService -> {
+                deleteService()
+            }
         }
     }
 
-//    private fun checkFields(): Boolean {
-//        if (state.price.isEmpty() || state.duration.isEmpty()
-//            || state.name.isEmpty()
-//        ) {
-//            return true
-//        }
-//        return false
-//    }
+    private fun deleteService() {
+        job?.cancel()
+        job = serviceUseCase.delete_service(state.id).onEach { result ->
+            when (result) {
+                is Resource.Success -> {
+                    _eventFlow.emit(NavigationEvent.GoBack)
+                }
+                is Resource.Error -> {
+                    state = state.copy(error = result.message!!)
+                }
+                is Resource.Loading -> {
+                    state = state.copy(isLoading = result.isLoading)
+                }
+            }
+        }.launchIn(viewModelScope)
+    }
 
     private fun updateService() {
         val nameResult = validationServiceName.execute(state.name)
@@ -107,7 +114,7 @@ constructor(
                     _eventFlow.emit(NavigationEvent.GoBack)
                 }
                 is Resource.Error -> {
-                    state = state.copy(error = result.message!!, isLoading = false)
+                    state = state.copy(error = result.message!!)
                 }
                 is Resource.Loading -> {
                     state = state.copy(isLoading = result.isLoading)

@@ -26,18 +26,17 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.wavewash.R
-import com.example.wavewash.presentation.helpers.common.AddButton
-import com.example.wavewash.presentation.helpers.common.BackButton
-import com.example.wavewash.presentation.helpers.common.Logo
-import com.example.wavewash.presentation.helpers.common.SaveButton
+import com.example.wavewash.presentation.helpers.common.*
 import com.example.wavewash.presentation.janitors.new_janitor.NewJanitorEvents
 import com.example.wavewash.presentation.orders.orders_screen.NavigationEvent
+import com.example.wavewash.presentation.services.update_service.UpdateServiceEvent
 import com.example.wavewash.ui.theme.ActiveButtonBackground
 import com.example.wavewash.ui.theme.HeaderButtonColor
 import com.example.wavewash.ui.theme.Shapes
 import com.example.wavewash.ui.theme.nunitoSans
 import com.example.wavewash.utils.ComposeString
 import com.example.wavewash.utils.REFRESH_WASHER
+import com.example.wavewash.utils.Screen
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberPermissionState
 import com.skydoves.landscapist.ShimmerParams
@@ -45,6 +44,7 @@ import com.skydoves.landscapist.coil.CoilImage
 import kotlinx.coroutines.flow.collectLatest
 
 
+private const val TAG = "UpdateJanitorScreen"
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun UpdateJanitorScreen(
@@ -78,6 +78,14 @@ fun UpdateJanitorScreen(
             when (event) {
                 is NavigationEvent.GoBack -> {
                     navController.popBackStack()
+                }
+                is NavigationEvent.GoToWashersPage -> {
+                    navController.backQueue.forEach {
+                        Log.d(TAG, "UpdateJanitorScreen: ${it.destination}")
+                    }
+                    navController.navigate(Screen.MainScreenRoute.route){
+                        popUpTo(Screen.MainScreenRoute.route){ inclusive = true }
+                    }
                 }
             }
         }
@@ -280,6 +288,12 @@ fun UpdateJanitorScreen(
             BackButton(
                 onBackClicked = {
                     navController.popBackStack()
+                }
+            )
+            Spacer(modifier = Modifier.padding(start = 16.dp))
+            DeleteButton(
+                onDeleteClicked = {
+                    viewModel.onTriggerEvent(UpdateJanitorEvents.DeleteWasher)
                 }
             )
             Spacer(modifier = Modifier.weight(1f))

@@ -4,5 +4,6 @@ data class Service(
     val id : Long,
     val name : String,
     val duration : Int,
-    val price : Int
+    val price : Int,
+    val deleted:Boolean
 )

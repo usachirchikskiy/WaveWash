@@ -24,10 +24,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.wavewash.R
-import com.example.wavewash.presentation.helpers.common.AddButton
-import com.example.wavewash.presentation.helpers.common.BackButton
-import com.example.wavewash.presentation.helpers.common.Logo
-import com.example.wavewash.presentation.helpers.common.SaveButton
+import com.example.wavewash.presentation.helpers.common.*
 import com.example.wavewash.presentation.orders.orders_screen.NavigationEvent
 import com.example.wavewash.presentation.services.new_service.NewServiceEvent
 import com.example.wavewash.presentation.services.new_service.NewServiceViewModel
@@ -47,7 +44,7 @@ fun UpdateServiceScreen(
 
     LaunchedEffect(key1 = true) {
         viewModel.eventFlow.collectLatest { event ->
-            when(event) {
+            when (event) {
                 is NavigationEvent.GoBack -> {
                     navController.popBackStack()
                 }
@@ -94,7 +91,7 @@ fun UpdateServiceScreen(
                 onValueChange = { name ->
                     viewModel.onTriggerEvent(UpdateServiceEvent.ChangeNameValue(name))
                 },
-                isError = state.nameError!=null
+                isError = state.nameError != null
             )
             if (state.nameError != null) {
                 Text(
@@ -131,7 +128,7 @@ fun UpdateServiceScreen(
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Number
                 ),
-                isError = state.durationError!=null
+                isError = state.durationError != null
             )
             if (state.durationError != null) {
                 Text(
@@ -161,7 +158,7 @@ fun UpdateServiceScreen(
                 singleLine = true,
                 value = state.price,
                 onValueChange = { price ->
-                    if (price.length < 7) {
+                    if (price.length < 8) {
                         viewModel.onTriggerEvent(UpdateServiceEvent.ChangePriceValue(price))
                     }
 
@@ -169,7 +166,7 @@ fun UpdateServiceScreen(
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Number
                 ),
-                isError = state.priceError!=null
+                isError = state.priceError != null
             )
             if (state.priceError != null) {
                 Text(
@@ -185,6 +182,12 @@ fun UpdateServiceScreen(
             BackButton(
                 onBackClicked = {
                     navController.popBackStack()
+                }
+            )
+            Spacer(modifier = Modifier.padding(start = 16.dp))
+            DeleteButton(
+                onDeleteClicked = {
+                    viewModel.onTriggerEvent(UpdateServiceEvent.DeleteService)
                 }
             )
             Spacer(modifier = Modifier.weight(1f))

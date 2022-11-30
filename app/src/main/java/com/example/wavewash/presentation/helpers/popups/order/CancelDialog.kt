@@ -2,6 +2,7 @@ package com.example.wavewash.presentation.helpers.popups.order
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
 import androidx.compose.material.TextFieldDefaults
@@ -9,18 +10,22 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import com.example.wavewash.R
 import com.example.wavewash.presentation.helpers.common.BackButton
 import com.example.wavewash.presentation.orders.change_order_screen.components.CancelButton
+import com.example.wavewash.ui.theme.ActiveButtonBackground
 import com.example.wavewash.ui.theme.Shapes
 import com.example.wavewash.ui.theme.TextColor
 import com.example.wavewash.ui.theme.nunitoSans
@@ -36,7 +41,10 @@ fun CancelDialog(
     Dialog(
         onDismissRequest = {
             openDialogCustom.value = false
-        }
+        },
+        properties = DialogProperties(
+            usePlatformDefaultWidth = false
+        )
     ) {
         CancelDialogUI(
             onBackClicked  = {
@@ -56,8 +64,10 @@ fun CancelDialogUI(
     onCancelClicked:(String) -> Unit
 ) {
     val message = remember { mutableStateOf("") }
+    val isError = remember { mutableStateOf(false) }
     Column(
         modifier = Modifier
+            .fillMaxWidth(0.7f)
             .clip(Shapes.large)
             .background(Color.White)
             .padding(24.dp)
@@ -84,14 +94,25 @@ fun CancelDialogUI(
                 fontWeight = FontWeight.Normal
             ),
             colors = TextFieldDefaults.outlinedTextFieldColors(
-                focusedBorderColor = Color(0XFFD3DDEC), // цвет при получении фокуса
+                cursorColor = ActiveButtonBackground,
+                focusedBorderColor = Color(0XFFD3DDEC),
                 unfocusedBorderColor = Color(0XFFD3DDEC),
-                cursorColor = Color.Black// цвет при отсутствии фокуса
-            )
+            ),
+            isError = isError.value,
+            maxLines = 7
         )
+        if (isError.value) {
+            Text(
+                text = stringResource(id = R.string.required_field),
+                color = MaterialTheme.colors.error,
+                modifier = Modifier.align(Alignment.End)
+            )
+        }
 
         Row(
-            modifier = Modifier.fillMaxWidth().padding(top = 24.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 24.dp),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             BackButton(
@@ -102,7 +123,8 @@ fun CancelDialogUI(
 
             CancelButton(
                 onClick = {
-                    onCancelClicked.invoke(message.value)
+                    if(message.value.isEmpty())isError.value = true
+                    else onCancelClicked.invoke(message.value)
                 }
             )
         }

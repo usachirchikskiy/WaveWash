@@ -67,9 +67,10 @@ constructor(
                 getOrders()
             }
             is OrdersEvent.OnNextDateClick -> {
-                onNextDate()
-                visibleTabs()
-                getOrders()
+                if(onNextDate()) {
+                    visibleTabs()
+                    getOrders()
+                }
             }
             is OrdersEvent.OnPreviousDateClick -> {
                 onPreviousDate()
@@ -99,6 +100,7 @@ constructor(
         job?.cancel()
         job = orderUseCase.get_orders(state.isActive, state.dateFrom, state.dateTo, state.page)
             .onEach { result ->
+                Log.d(TAG, "getOrders: $result")
                 when (result) {
                     is Resource.Success -> {
                         state = if (state.orders == result.data) {

@@ -8,6 +8,8 @@ sealed class UpdateServiceEvent {
 
     object UpdateService : UpdateServiceEvent()
 
+    object DeleteService:UpdateServiceEvent()
+
     data class ChangeDurationValue(val duration: String) : UpdateServiceEvent()
 
     data class ChangePriceValue(val price: String) : UpdateServiceEvent()

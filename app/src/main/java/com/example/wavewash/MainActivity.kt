@@ -1,9 +1,8 @@
 package com.example.wavewash
 
-import android.content.Context
-import android.content.res.Configuration
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.annotation.RequiresApi
@@ -12,27 +11,27 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.*
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.rememberNavController
+import com.example.wavewash.domain.use_cases.SessionManager
 import com.example.wavewash.nav_graphs.NavGraph
 import com.example.wavewash.ui.theme.AppBackground
 import com.example.wavewash.ui.theme.WaveWashTheme
+import com.example.wavewash.utils.Resource
+import com.example.wavewash.utils.Screen
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.rememberPagerState
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-
-    override fun attachBaseContext(newBase: Context?) {
-
-        val newOverride = Configuration(newBase?.resources?.configuration)
-        newOverride.fontScale = 1.0f
-        applyOverrideConfiguration(newOverride)
-
-        super.attachBaseContext(newBase)
-    }
+    @Inject
+    lateinit var sessionManager: SessionManager
 
     @RequiresApi(Build.VERSION_CODES.O)
     @OptIn(ExperimentalPagerApi::class)
@@ -40,11 +39,25 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         setContent {
-
             WaveWashTheme {
                 val pagerState = rememberPagerState()
                 val navController = rememberNavController()
-                Scaffold() {
+                val startDestination = remember { mutableStateOf("") }
+
+                LaunchedEffect(key1 = true) {
+                    when (sessionManager.execute()) {
+                        is Resource.Success -> {
+                            Log.d("Content", "onCreate: Success")
+                            startDestination.value = Screen.MainScreenRoute.route
+                        }
+                        is Resource.Error -> {
+                            Log.d("Content", "onCreate: Error")
+                            startDestination.value = Screen.LoginScreenRoute.route
+                        }
+                    }
+                }
+
+                if (startDestination.value.isNotEmpty()) {
                     Column(
                         modifier = Modifier
                             .fillMaxSize()
@@ -53,7 +66,8 @@ class MainActivity : ComponentActivity() {
                     ) {
                         NavGraph(
                             pagerState = pagerState,
-                            navController = navController
+                            navController = navController,
+                            startDestination = startDestination.value
                         )
                     }
                 }

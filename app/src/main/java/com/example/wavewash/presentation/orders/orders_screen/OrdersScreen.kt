@@ -7,8 +7,11 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Divider
+import androidx.compose.material.Text
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -25,7 +28,9 @@ import com.example.wavewash.presentation.orders.orders_screen.OrdersEvent
 import com.example.wavewash.presentation.orders.orders_screen.OrdersViewModel
 import com.example.wavewash.presentation.services.services_screen.ServiceEvent
 import com.example.wavewash.ui.theme.HeaderButtonStroke
+import com.example.wavewash.ui.theme.QuantityOfServices
 import com.example.wavewash.ui.theme.Shapes
+import com.example.wavewash.ui.theme.SupportAnswerBorder
 import com.example.wavewash.utils.*
 
 private const val TAG = "OrdersScreen"
@@ -39,7 +44,7 @@ fun OrdersScreen(
 ) {
     val openDialogCustom = remember { mutableStateOf(false) }
     val state = viewModel.state
-
+    
     if (openDialogCustom.value) {
         CalendarDialog(
             openDialogCustom = openDialogCustom,
@@ -125,6 +130,19 @@ fun OrdersScreen(
                     color = HeaderButtonStroke
                 )
             }
+        }
+    }
+
+    if(state.isLoading && state.endReached.not()){
+        Column(Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center) {
+            CircularProgressIndicator(
+                color = SupportAnswerBorder
+            )
+        }
+    }
+    if(state.isLoading.not() && state.endReached && state.orders.isEmpty()){
+        Column(Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center) {
+            Text(text = "Пусто")
         }
     }
 }

@@ -6,5 +6,6 @@ data class Washer(
     val telephoneNumber:String,
     val active:Boolean,
     val image:String,
-    val stake:Int
+    val stake:Int,
+    val deleted:Boolean
 )

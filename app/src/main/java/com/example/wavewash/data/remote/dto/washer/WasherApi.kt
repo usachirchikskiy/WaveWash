@@ -38,6 +38,12 @@ interface WasherApi {
         @Path("washerId") washerId: Long,
     ): WasherDto
 
+    @POST("api/washer/delete/{id}")
+    suspend fun delete_washer(
+        @Header("Authorization") authorization: String,
+        @Path("id") id: Long
+    )
+
     @GET("api/washer/{washerId}/getOrders")
     suspend fun get_washer_orders(
         @Header("Authorization") authorization: String,

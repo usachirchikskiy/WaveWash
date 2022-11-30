@@ -2,24 +2,26 @@ package com.example.wavewash.di.auth
 
 import com.example.wavewash.data.datastore.AppDataStore
 import com.example.wavewash.data.remote.SillyWashApi
-import com.example.wavewash.domain.use_cases.Login
+import com.example.wavewash.domain.use_cases.LoginUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.components.ViewModelComponent
+import dagger.hilt.android.scopes.ViewModelScoped
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
 @Module
-@InstallIn(SingletonComponent::class)
+@InstallIn(ViewModelComponent::class)
 object AuthModule {
 
-    @Singleton
     @Provides
+    @ViewModelScoped
     fun provideLogin(
         service: SillyWashApi,
         appDataStoreManager: AppDataStore,
-    ): Login {
-        return Login(
+    ): LoginUseCase {
+        return LoginUseCase(
             service,
             appDataStoreManager
         )

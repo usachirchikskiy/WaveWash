@@ -32,6 +32,12 @@ interface ServiceApi {
         @Path("id") id: Long,
     ): ServiceDto
 
+    @POST("api/service/{id}/delete")
+    suspend fun delete_service(
+        @Header("Authorization") authorization: String,
+        @Path("id") id: Long
+    )
+
     @POST("api/washCompany/getId")
     suspend fun get_washCompany_id(
         @Header("Authorization") authorization: String,

@@ -25,11 +25,11 @@ import kotlinx.coroutines.flow.*
 private const val TAG = "Order"
 
 class OrderUseCase(
-    val api: OrderApi,
-    val appDataStoreManager: AppDataStore,
-    val orderDao: OrderDao,
-    val washerDao: WasherDao,
-    val serviceDao: ServiceDao
+    private val api: OrderApi,
+    private val appDataStoreManager: AppDataStore,
+    private val orderDao: OrderDao,
+    private val washerDao: WasherDao,
+    private val serviceDao: ServiceDao
 ) {
 
     fun addOrder(addOrderDto: AddOrderDto): Flow<Resource<String>> =
@@ -39,18 +39,22 @@ class OrderUseCase(
                 val token = "Bearer " + appDataStoreManager.readValue(TOKEN_KEY)
                 val companyId = api.get_washCompany_id(token)[0]
                 val result = api.add_order(token, companyId.toLong(), addOrderDto)
-                orderDao.insertOrder(result.toOrder().toEntity())
-                result.services.forEach {
-//                    serviceDao.insertService(it.toEntity())
-                    orderDao.insertOrderServiceCrossRef(
-                        OrderServiceCrossRef(result.id, it.id)
-                    )
+                orderDao.insertOrUpdateOrder(result.toOrder().toEntity())
+                result.services.forEach { service ->
+                    serviceDao.insertOrUpdateService(service.toEntity())
+                    if (!orderDao.isRowOrderServiceCrossRefExist(result.id, service.id)) {
+                        orderDao.insertOrderServiceCrossRef(
+                            OrderServiceCrossRef(result.id, service.id)
+                        )
+                    }
                 }
-                result.washers.forEach {
-                    washerDao.insertWasher(it.toEntity())
-                    orderDao.insertOrderWasherCrossRef(
-                        OrderWasherCrossRef(result.id, it.id)
-                    )
+                result.washers.forEach { washer ->
+                    washerDao.insertOrUpdateWasher(washer.toEntity())
+                    if (!orderDao.isRowOrderWasherCrossRefExist(result.id, washer.id)) {
+                        orderDao.insertOrderWasherCrossRef(
+                            OrderWasherCrossRef(result.id, washer.id)
+                        )
+                    }
                 }
                 Log.d(TAG, "addOrder: $result")
                 emit(Resource.Success("Order Added"))
@@ -68,21 +72,41 @@ class OrderUseCase(
             try {
                 val token = "Bearer " + appDataStoreManager.readValue(TOKEN_KEY)
                 val result = api.update_order(token, orderId, updateOrderDto)
-                orderDao.insertOrder(result.toOrder().toEntity())
-                result.services.forEach {
-//                    serviceDao.insertService(it.toEntity())
-                    orderDao.insertOrderServiceCrossRef(
-                        OrderServiceCrossRef(result.id, it.id)
-                    )
+                orderDao.insertOrUpdateOrder(result.toOrder().toEntity())
+                result.services.forEach { service ->
+                    serviceDao.insertOrUpdateService(service.toEntity())
+                    if (!orderDao.isRowOrderServiceCrossRefExist(result.id, service.id)) {
+                        orderDao.insertOrderServiceCrossRef(
+                            OrderServiceCrossRef(result.id, service.id)
+                        )
+                    }
                 }
-                result.washers.forEach {
-                    washerDao.insertWasher(it.toEntity())
-                    orderDao.insertOrderWasherCrossRef(
-                        OrderWasherCrossRef(result.id, it.id)
-                    )
+                result.washers.forEach { washer ->
+                    washerDao.insertOrUpdateWasher(washer.toEntity())
+                    if (!orderDao.isRowOrderWasherCrossRefExist(result.id, washer.id)) {
+                        orderDao.insertOrderWasherCrossRef(
+                            OrderWasherCrossRef(result.id, washer.id)
+                        )
+                    }
                 }
                 emit(Resource.Success("Order Updated"))
             } catch (ex: Exception) {
+                Log.d(TAG, "update Error: ${ex.message}")
+                emit(Resource.Error(message = ex.message!!))
+            }
+            emit(Resource.Loading(false))
+        }
+
+    fun delete_order(orderId: Long): Flow<Resource<String>> =
+        flow {
+            emit(Resource.Loading())
+            try {
+                val token = "Bearer " + appDataStoreManager.readValue(TOKEN_KEY)
+                api.delete_order(token, orderId)
+                orderDao.deleteById(orderId)
+                emit(Resource.Success("Order Deleted"))
+            } catch (ex: Exception) {
+                Log.d(TAG, "delete Error: ${ex.message}")
                 emit(Resource.Error(message = ex.message!!))
             }
             emit(Resource.Loading(false))
@@ -104,18 +128,22 @@ class OrderUseCase(
                 val result =
                     api.get_orders(token, companyId.toLong(), isActive, dateFrom, dateTo, page)
                 result.forEach { orderDto ->
-                    orderDao.insertOrder(orderDto.toOrder().toEntity())
+                    orderDao.insertOrUpdateOrder(orderDto.toOrder().toEntity())
                     orderDto.services.forEach { service ->
-                        serviceDao.insertService(service.toEntity())
-                        orderDao.insertOrderServiceCrossRef(
-                            OrderServiceCrossRef(orderDto.id, service.id)
-                        )
+                        serviceDao.insertOrUpdateService(service.toEntity())
+                        if (!orderDao.isRowOrderServiceCrossRefExist(orderDto.id, service.id)) {
+                            orderDao.insertOrderServiceCrossRef(
+                                OrderServiceCrossRef(orderDto.id, service.id)
+                            )
+                        }
                     }
                     orderDto.washers.forEach { washer ->
-                        washerDao.insertWasher(washer.toEntity())
-                        orderDao.insertOrderWasherCrossRef(
-                            OrderWasherCrossRef(orderDto.id, washer.id)
-                        )
+                        washerDao.insertOrUpdateWasher(washer.toEntity())
+                        if (!orderDao.isRowOrderWasherCrossRefExist(orderDto.id, washer.id)) {
+                            orderDao.insertOrderWasherCrossRef(
+                                OrderWasherCrossRef(orderDto.id, washer.id)
+                            )
+                        }
                     }
                 }
                 Log.d(TAG, "get_orders remote: $result")
@@ -123,15 +151,17 @@ class OrderUseCase(
                 emit(Resource.Error(message = ex.message!!))
             }
             orderDao.getOrdersWithWashersAndServices(
-                page = page+1,
+                page = page + 1,
                 dateFrom = dateFromLong,
                 dateTo = dateToLong,
                 isActive = isActive
-            ).collect{ orderWithWasherAndServices ->
+            ).collect { orderWithWasherAndServices ->
                 Log.d(TAG, " get_orders cashed: $orderWithWasherAndServices")
                 emit(Resource.Success(orderWithWasherAndServices.map { it.toOrder() }))
+                emit(Resource.Loading<List<Order>>(false))
             }
-            emit(Resource.Loading(false))
+//            Log.d(TAG, "get_orders: LOADING FALSE")
+//            emit(Resource.Loading<List<Order>>(false))
         }
 
     fun get_order(orderId: Long): Flow<Resource<Order>> =

@@ -31,11 +31,11 @@ import okhttp3.MultipartBody
 private const val TAG = "Washer"
 
 class WasherUseCase(
-    val washerApi: WasherApi,
-    val appDataStoreManager: AppDataStore,
-    val washerDao: WasherDao,
-    val orderDao: OrderDao,
-    val serviceDao: ServiceDao
+    private val washerApi: WasherApi,
+    private val appDataStoreManager: AppDataStore,
+    private val washerDao: WasherDao,
+    private val orderDao: OrderDao,
+    private val serviceDao: ServiceDao
 ) {
 
     fun addWasher(data: MultipartBody.Part, image: MultipartBody.Part?): Flow<Resource<String>> =
@@ -45,7 +45,7 @@ class WasherUseCase(
                 val token = "Bearer " + appDataStoreManager.readValue(TOKEN_KEY)
                 val companyId = washerApi.get_washCompany_id(token)[0]
                 val washer = washerApi.add_washer(token, companyId, data, image).toWasher()
-                washerDao.insertWasher(washer.toEntity())
+                washerDao.insertOrUpdateWasher(washer.toEntity())
                 emit(Resource.Success("washer added remote $washer"))
             } catch (ex: Exception) {
                 Log.d(TAG, "addWasher: Exception ${ex.message}")
@@ -66,9 +66,25 @@ class WasherUseCase(
                 val token = "Bearer " + appDataStoreManager.readValue(TOKEN_KEY)
                 val washer = washerApi.update_washer(token, washerId, data, image).toWasher()
                 Log.d(TAG, "update: remote $washer")
-                washerDao.insertWasher(washer.toEntity())
+                washerDao.insertOrUpdateWasher(washer.toEntity())
                 emit(Resource.Success("update"))
             } catch (ex: Exception) {
+                emit(Resource.Error(message = ex.message!!))
+            }
+            emit(Resource.Loading(false))
+        }
+
+    fun delete_washer(washerId: Long): Flow<Resource<String>> =
+        flow {
+            emit(Resource.Loading())
+            try {
+                val token = "Bearer " + appDataStoreManager.readValue(TOKEN_KEY)
+                washerApi.delete_washer(token, washerId)
+                washerDao.deleteById(washerId)
+                Log.d(TAG, "Washer deleted:")
+                emit(Resource.Success("washer deleted"))
+            } catch (ex: Exception) {
+                Log.d(TAG, "delete_washer: ${ex.message}")
                 emit(Resource.Error(message = ex.message!!))
             }
             emit(Resource.Loading(false))
@@ -87,7 +103,7 @@ class WasherUseCase(
                     it.toEntity()
                 }
                 Log.d(TAG, "get_washers remote: $washers")
-                washerDao.insertWashers(
+                washerDao.insertOrUpdateWashers(
                     washerEntities
                 )
             } catch (ex: Exception) {
@@ -145,10 +161,6 @@ class WasherUseCase(
             emit(Resource.Loading())
             val dateFromLong = getDateLong(dateFrom)
             val dateToLong = getDateLong(dateTo)
-            Log.d(
-                TAG,
-                "get_washer_orders: Remote Parameters $washerId $isActive $dateFrom $dateTo $page"
-            )
             try {
                 val token = "Bearer " + appDataStoreManager.readValue(TOKEN_KEY)
                 val result =
@@ -161,18 +173,22 @@ class WasherUseCase(
                         page
                     )
                 result.forEach { orderDto ->
-                    orderDao.insertOrder(orderDto.toOrder().toEntity())
+                    orderDao.insertOrUpdateOrder(orderDto.toOrder().toEntity())
                     orderDto.services.forEach { service ->
-                        serviceDao.insertService(service.toEntity())
-                        orderDao.insertOrderServiceCrossRef(
-                            OrderServiceCrossRef(orderDto.id, service.id)
-                        )
+                        serviceDao.insertOrUpdateService(service.toEntity())
+                        if (!orderDao.isRowOrderServiceCrossRefExist(orderDto.id, service.id)) {
+                            orderDao.insertOrderServiceCrossRef(
+                                OrderServiceCrossRef(orderDto.id, service.id)
+                            )
+                        }
                     }
                     orderDto.washers.forEach { washer ->
-                        washerDao.insertWasher(washer.toEntity())
-                        orderDao.insertOrderWasherCrossRef(
-                            OrderWasherCrossRef(orderDto.id, washer.id)
-                        )
+                        washerDao.insertOrUpdateWasher(washer.toEntity())
+                        if (!orderDao.isRowOrderWasherCrossRefExist(orderDto.id, washer.id)) {
+                            orderDao.insertOrderWasherCrossRef(
+                                OrderWasherCrossRef(orderDto.id, washer.id)
+                            )
+                        }
                     }
                 }
                 Log.d(TAG, "get_washer_orders: remote $result")
@@ -207,33 +223,12 @@ class WasherUseCase(
     ): Flow<Resource<Long>> =
         flow {
             emit(Resource.Loading())
-            val dateFromLong = getDateLong(dateFrom)
-            val dateToLong = getDateLong(dateTo)
             try {
+                val token = "Bearer " + appDataStoreManager.readValue(TOKEN_KEY)
                 washerDao.getAllOrdersOfWasher(washerId).combine(
                     washerDao.getWasherFlow(washerId)
                 ) { ids, washer ->
-                    var sumOfStake = 0L
-                    val orders = orderDao.getAllOrdersWithWashersAndServices(
-                        dateFromLong,
-                        dateToLong,
-                        false,
-                        ids
-                    )
-                    orders.forEach { order ->
-                        var maxPercentage = 0
-                        var parts = 0
-                        order.washers.forEach { washer ->
-                            parts += washer.stake
-                            if (maxPercentage < washer.stake) {
-                                maxPercentage = washer.stake
-                            }
-                        }
-                        val priceForWashers = order.order.price * maxPercentage / 100
-                        val onePart = (100 / parts).toLong()
-                        sumOfStake += washer.stake * onePart * priceForWashers / 100
-                    }
-                    sumOfStake
+                    washerApi.get_washer_earnedStake(token, washerId, dateFrom, dateTo)
                 }.collect { sumOfStake ->
                     emit(Resource.Success(sumOfStake))
                 }
@@ -250,22 +245,14 @@ class WasherUseCase(
     ): Flow<Resource<Long>> =
         flow {
             emit(Resource.Loading())
-            val dateFromLong = getDateLong(dateFrom)
-            val dateToLong = getDateLong(dateTo)
             try {
+                val token = "Bearer " + appDataStoreManager.readValue(TOKEN_KEY)
                 washerDao.getAllOrdersOfWasher(washerId).combine(
                     washerDao.getWasherFlow(washerId)
                 ) { ids, washer ->
-                    val orders = orderDao.getAllOrdersWithWashersAndServices(
-                        dateFromLong,
-                        dateToLong,
-                        false,
-                        ids
-                    )
-                    orders.sumOf { order ->
-                        order.order.price
-                    }.toLong()
+                    washerApi.get_washer_earnedMoney(token, washerId, dateFrom, dateTo)
                 }.collect { earnedMoney ->
+                    Log.d(TAG, "get_washer_earnedMoney: $earnedMoney")
                     emit(Resource.Success(earnedMoney))
                 }
             } catch (ex: Exception) {
@@ -282,7 +269,18 @@ class WasherUseCase(
         flow {
             emit(Resource.Loading())
             try {
-                val washers = washerDao.getNotCheckedWashers(ids, name, page+1).map {
+                val token = "Bearer " + appDataStoreManager.readValue(TOKEN_KEY)
+                val companyId = washerApi.get_washCompany_id(token)[0]
+                val washersApi = washerApi.get_washers(token, companyId, name, page).map {
+                    it.toWasher()
+                }
+                val washerEntities = washersApi.map {
+                    it.toEntity()
+                }
+                washerDao.insertOrUpdateWashers(
+                    washerEntities
+                )
+                val washers = washerDao.getNotCheckedWashers(ids, name, page + 1).map {
                     it.toWasher()
                 }
                 Log.d(TAG, "get_not_checked_washers: $washers")
@@ -293,4 +291,41 @@ class WasherUseCase(
             }
             emit(Resource.Loading(false))
         }
+
 }
+
+//WasherEarnedMoney
+//            val dateFromLong = getDateLong(dateFrom)
+//            val dateToLong = getDateLong(dateTo)
+//                    val orders = orderDao.getAllOrdersWithWashersAndServices(
+//                        dateFromLong,
+//                        dateToLong,
+//                        false,
+//                        ids
+//                    )
+//                    orders.sumOf { order ->
+//                        order.order.price
+//                    }.toLong()
+
+//EarnedStake
+//                    var sumOfStake = 0L
+//                    val orders = orderDao.getAllOrdersWithWashersAndServices(
+//                        dateFromLong,
+//                        dateToLong,
+//                        false,
+//                        ids
+//                    )
+//                    orders.forEach { order ->
+//                        var maxPercentage = 0
+//                        var parts = 0
+//                        order.washers.forEach { washer ->
+//                            parts += washer.stake
+//                            if (maxPercentage < washer.stake) {
+//                                maxPercentage = washer.stake
+//                            }
+//                        }
+//                        val priceForWashers = order.order.price * maxPercentage / 100
+//                        val onePart = (100 / parts).toLong()
+//                        sumOfStake += washer.stake * onePart * priceForWashers / 100
+//                    }
+//                    sumOfStake

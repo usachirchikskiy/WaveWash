@@ -65,8 +65,9 @@ fun CarModelNumber(
                     fontWeight = FontWeight.Normal
                 ),
                 colors = TextFieldDefaults.outlinedTextFieldColors(
-                    focusedBorderColor = Color(0XFFD3DDEC), // цвет при получении фокуса
-                    unfocusedBorderColor = Color(0XFFD3DDEC)  // цвет при отсутствии фокуса
+                    cursorColor = ActiveButtonBackground,
+                    focusedBorderColor = Color(0xFFD3DDEC),
+                    unfocusedBorderColor = Color(0xFFD3DDEC),
                 )
             )
         }
@@ -99,8 +100,9 @@ fun CarModelNumber(
                     fontWeight = FontWeight.ExtraBold
                 ),
                 colors = TextFieldDefaults.outlinedTextFieldColors(
-                    focusedBorderColor = Color(0XFFD3DDEC), // цвет при получении фокуса
-                    unfocusedBorderColor = Color(0XFFD3DDEC)  // цвет при отсутствии фокуса
+                    cursorColor = ActiveButtonBackground,
+                    focusedBorderColor = Color(0xFFD3DDEC),
+                    unfocusedBorderColor = Color(0xFFD3DDEC),
                 ),
                 isError = carNumberError != null,
             )

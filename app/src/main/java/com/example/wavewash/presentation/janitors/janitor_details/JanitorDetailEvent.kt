@@ -1,6 +1,5 @@
 package com.example.wavewash.presentation.janitors.janitor_details
 
-import com.example.wavewash.presentation.janitors.janitors_screen.JanitorEvents
 
 sealed class JanitorDetailEvent {
     object GetJanitor:JanitorDetailEvent()

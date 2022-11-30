@@ -89,5 +89,6 @@
     <string name="required_field">Обязательное поле для заполнения</string>
     <string name="comma_dot_field">Поле не должно содержать запятые или точки</string>
     <string name="telephone_number_size">Телефон номер должен содержать 9 цифр</string>
-
+    <string name="delete">Удалить</string>
+    <string name="undefined">Не указано</string>
 </resources>

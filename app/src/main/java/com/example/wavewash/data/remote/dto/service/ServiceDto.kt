@@ -6,7 +6,8 @@ data class ServiceDto(
     val id:Long,
     val duration: Int,
     val name: String,
-    val price: Int
+    val price: Int,
+    val deleted:Boolean
 )
 
 
@@ -15,7 +16,8 @@ fun ServiceDto.toService(): Service {
         id = id,
         name = name,
         duration = duration,
-        price = price
+        price = price,
+        deleted = deleted
     )
 }
 
@@ -24,6 +26,7 @@ fun Service.toServiceDto(): ServiceDto {
         id = id,
         name = name,
         duration = duration,
-        price = price
+        price = price,
+        deleted = deleted
     )
 }

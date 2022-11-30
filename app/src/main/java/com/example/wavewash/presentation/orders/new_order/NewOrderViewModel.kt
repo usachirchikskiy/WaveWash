@@ -59,10 +59,6 @@ constructor(
         if (washerId != null && washerId!=-1L) {
             onTriggerEvent(NewOrderEvent.WasherOrderOrNot(washerId))
         }
-//        else{
-//            onTriggerEvent(NewOrderEvent.GetWashers)
-//        }
-//        onTriggerEvent(NewOrderEvent.GetServices)
     }
 
     fun onTriggerEvent(event: NewOrderEvent) {
@@ -150,8 +146,11 @@ constructor(
     }
 
     private fun getServices() {
+        val ids = state.services.map {
+            it.id
+        }
         jobService?.cancel()
-        jobService = serviceUseCase.get_services(state.serviceSearchQuery, state.servicePage)
+        jobService = serviceUseCase.get_not_checked_services(ids,state.serviceSearchQuery, state.servicePage)
             .onEach { result ->
                 when (result) {
                     is Resource.Success -> {
@@ -327,7 +326,7 @@ constructor(
 
     private fun changeCarNumber(carNumber: String) {
         state = state.copy(
-            carNumber = carNumber
+            carNumber = carNumber.uppercase()
         )
     }
 
@@ -336,22 +335,6 @@ constructor(
             carModel = carModel
         )
     }
-
-//    private fun checkFields(): Boolean {
-//        if (state.carModel.isEmpty() || state.carNumber.isEmpty()
-//            || state.clientName.isEmpty() || state.clientNumber.isEmpty()
-//            || state.price == 0 || state.priceOfJanitorsStake == 0
-//        ) {
-//            return true
-//        }
-//        return false
-//    }
-//
-//    private fun requiredFieldsPopup() {
-//        state = state.copy(
-//            requiredFields = true
-//        )
-//    }
 
     private fun changeWasherOrderOrNot(washerId: Long) {
         jobWashers?.cancel()

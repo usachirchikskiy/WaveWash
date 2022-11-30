@@ -45,24 +45,6 @@ fun OrderItem(
                 .weight(0.23f),
             verticalAlignment = Alignment.CenterVertically
         ) {
-//            CoilImage(
-//                imageModel = order.workerImageUrl,
-//                contentScale = ContentScale.Crop,// crop the image if it's not a square
-//                modifier = Modifier
-//                    .size(24.dp)
-//                    .clip(CircleShape),
-//
-//                shimmerParams = ShimmerParams(
-//                    baseColor = Color.White,
-//                    highlightColor = Color.LightGray,
-//                    durationMillis = 350,
-//                    dropOff = 0.65f,
-//                    tilt = 20f
-//                ),
-//                // shows an error text message when request failed.
-//                failure = {
-//                    Text(text = "image request failed.")
-//                })
             Text(
                 modifier = if (order.washers.size > 1) {
                     Modifier
@@ -84,15 +66,6 @@ fun OrderItem(
                 color = TextColor,
                 overflow = TextOverflow.Ellipsis
             )
-//            Text(
-//                text = order.washers[0].name,
-//                fontFamily = nunitoSans,
-//                fontWeight = FontWeight.Normal,
-//                maxLines = 1,
-//                overflow = TextOverflow.Ellipsis,
-//                fontSize = 12.sp,
-//                color = TextColor
-//            )
         }
 
         Row(
@@ -100,28 +73,11 @@ fun OrderItem(
                 .weight(0.23f),
             verticalAlignment = Alignment.CenterVertically
         ) {
-//            CoilImage(
-//                imageModel = order.carImageUrl,
-//                contentScale = ContentScale.Crop,// crop the image if it's not a square
-//                modifier = Modifier
-//                    .size(24.dp)
-//                    .clip(CircleShape),
-//
-//                shimmerParams = ShimmerParams(
-//                    baseColor = Color.White,
-//                    highlightColor = Color.LightGray,
-//                    durationMillis = 350,
-//                    dropOff = 0.65f,
-//                    tilt = 20f
-//                ),
-//                // shows an error text message when request failed.
-//                failure = {
-//                    Text(text = "image request failed.")
-//                })
 
             Text(
-                //modifier = Modifier.padding(start = 8.dp),
-                text = order.carModel,
+                text = order.carModel.ifEmpty {
+                    ComposeString.resource(R.string.undefined).value()
+                },
                 fontFamily = nunitoSans,
                 fontWeight = FontWeight.Normal,
                 fontSize = 12.sp,

@@ -175,19 +175,29 @@ fun JanitorItemPopup(
                 CoilImage(
                     modifier = Modifier
                         .height(216.dp),
-                    imageModel = "https://media-exp2.licdn.com/dms/image/C4D03AQFB8ojf_-tmiw/profile-displayphoto-shrink_200_200/0/1601490730164?e=2147483647&v=beta&t=lJVY_VeGE6Vp_VPV4yCrgxQgv-1qsDac6Ut9A2Ey4xw",//TODO CHANGE IMAGE
+                    imageModel = washer.image,
                     contentScale = ContentScale.Crop,
 
                     shimmerParams = ShimmerParams(
                         baseColor = Color.White,
                         highlightColor = Color.LightGray,
-                        durationMillis = 350,
+                        durationMillis = 1000,
                         dropOff = 0.65f,
                         tilt = 20f
                     ),
                     // shows an error text message when request failed.
                     failure = {
-                        Text(text = "image request failed.")
+                        Box(
+                            modifier = Modifier
+                                .background(Color(0XFFEFF1F8))
+                                .fillMaxSize(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Image(
+                                painter = painterResource(id = R.drawable.error_image),
+                                contentDescription = "error_loading"
+                            )
+                        }
                     }
                 )
                 Box(

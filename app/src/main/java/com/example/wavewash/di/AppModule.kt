@@ -6,6 +6,7 @@ import com.example.wavewash.data.datastore.AppDataStore
 import com.example.wavewash.data.datastore.AppDataStoreManager
 import com.example.wavewash.data.local.SillyWashDatabase
 import com.example.wavewash.data.remote.SillyWashApi
+import com.example.wavewash.domain.use_cases.SessionManager
 import com.example.wavewash.domain.validation_use_case.*
 import com.example.wavewash.domain.validation_use_case.service.ValidationServiceName
 import com.example.wavewash.domain.validation_use_case.service.ValidationServicePrice
@@ -68,6 +69,12 @@ object AppModule {
         return retrofitBuilder
             .build()
             .create(SillyWashApi::class.java)
+    }
+
+    @Singleton
+    @Provides
+    fun provideSessionManager(api: SillyWashApi,appDataStore: AppDataStore): SessionManager {
+        return SessionManager(api,appDataStore)
     }
 
 }

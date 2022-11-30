@@ -18,6 +18,25 @@ interface WasherDao {
         washerEntity: List<WasherEntity>
     )
 
+    suspend fun insertOrUpdateWasher(washerEntity: WasherEntity){
+        val washerEntityDb = getWasherNotFlow(washerEntity.washerId)
+        if(washerEntityDb!=washerEntity){
+            insertWasher(washerEntity)
+        }
+    }
+
+    suspend fun insertOrUpdateWashers(washersEntity: List<WasherEntity>){
+        washersEntity.forEach {washerEntity->
+            val washerEntityDb = getWasherNotFlow(washerEntity.washerId)
+            if(washerEntityDb!=washerEntity){
+                insertWasher(washerEntity)
+            }
+        }
+    }
+
+    @Query("UPDATE washer SET deleted = :deleted WHERE washerId = :id")
+    suspend fun deleteById(id: Long, deleted:Boolean = true)
+
     @Query("SELECT * FROM washer WHERE washerId = :id")
     suspend fun getWasherNotFlow(id: Long): WasherEntity
 
@@ -28,6 +47,7 @@ interface WasherDao {
         """
         SELECT * FROM washer 
         WHERE name LIKE '%' || :query || '%'
+        AND deleted = :deleted
         ORDER BY name ASC
         LIMIT (:page * :pageSize)
         """
@@ -35,13 +55,15 @@ interface WasherDao {
     fun getAllWashers(
         query: String,
         page: Int,
-        pageSize: Int = PAGINATION_PAGE_SIZE
+        pageSize: Int = PAGINATION_PAGE_SIZE,
+        deleted: Boolean = false
     ): Flow<List<WasherEntity>>
 
     @Query(
         """
         SELECT * FROM washer 
         WHERE name LIKE '%' || :query || '%'
+        AND deleted = :deleted
         AND washerId not in (:ids)  
         ORDER BY name ASC
         LIMIT (:page * :pageSize)
@@ -51,7 +73,8 @@ interface WasherDao {
         ids:List<Long>,
         query: String,
         page: Int,
-        pageSize: Int = PAGINATION_PAGE_SIZE
+        pageSize: Int = PAGINATION_PAGE_SIZE,
+        deleted: Boolean = false
     ): List<WasherEntity>
 
     @Query(
@@ -72,4 +95,5 @@ interface WasherDao {
     fun getAllOrdersOfWasher(
         washerId: Long
     ): Flow<List<Long>>
+
 }

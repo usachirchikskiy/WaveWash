@@ -224,14 +224,6 @@ fun ChangeOrderScreen(
             )
         }
 
-//        if (state.changeCompleted) {
-//            viewModel.onTriggerEvent(ChangeOrderEvent.Back)
-//            navController.previousBackStackEntry
-//                ?.savedStateHandle
-//                ?.set(REFRESH_ORDER, REFRESH_ORDER)
-//            navController.popBackStack()
-//        }
-
         //buttons
         Row {
             Row(

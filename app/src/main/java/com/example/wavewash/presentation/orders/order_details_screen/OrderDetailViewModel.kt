@@ -55,8 +55,6 @@ constructor(
     private fun completeOrder() {
         val orderUpdate = UpdateOrderDto(
             active = false,
-            cancelled = false,
-            cancelledReason = "",
             clientNumber = state.clientNumber,
             clientName = state.clientName,
             carModel = state.carModel,

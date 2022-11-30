@@ -169,8 +169,11 @@ constructor(
     }
 
     private fun getServices() {
+        val ids = state.services.map {
+            it.id
+        }
         jobService?.cancel()
-        jobService = serviceUseCase.get_services(state.serviceSearchQuery, state.servicePage)
+        jobService = serviceUseCase.get_not_checked_services(ids,state.serviceSearchQuery, state.servicePage)
             .onEach { result ->
                 when (result) {
                     is Resource.Success -> {
@@ -244,8 +247,6 @@ constructor(
         }
 
         val orderUpdate = UpdateOrderDto(
-            cancelled = false,
-            cancelledReason = "",
             active = true,
             clientNumber = state.clientNumber.toInt(),
             clientName = state.clientName,
@@ -271,45 +272,8 @@ constructor(
     }
 
     private fun cancelOrder(cancelledReason: String) {
-        val servicesResult = validationOrderServices.execute(state.services)
-        val washersResult = validationOrderWashers.execute(state.washers)
-        val carNumberResult = validationOrderCarNumber.execute(state.carNumber)
-        val clientNameResult = validationClientName.execute(state.clientName)
-        val clientTelephoneNumberResult =
-            validationClientTelephoneNumber.execute(state.clientNumber)
-
-        val hasError = listOf(
-            servicesResult,
-            washersResult,
-            carNumberResult,
-            clientNameResult,
-            clientTelephoneNumberResult
-        ).any { !it.successful }
-
-        if (hasError) {
-            state = state.copy(
-                servicesError = servicesResult.errorMessage,
-                washersError = washersResult.errorMessage,
-                carNumberError = carNumberResult.errorMessage,
-                clientNameError = clientNameResult.errorMessage,
-                clientTelephoneNumberError = clientTelephoneNumberResult.errorMessage
-            )
-            return
-        }
-
-        val orderUpdate = UpdateOrderDto(
-            cancelled = true,
-            cancelledReason = cancelledReason,
-            active = false,
-            clientNumber = state.clientNumber.toInt(),
-            clientName = state.clientName,
-            carModel = state.carModel,
-            carNumber = state.carNumber,
-            serviceIds = state.services.map { it.id },
-            washerIds = state.washers.map { it.id }
-        )
         job?.cancel()
-        job = orderUseCase.update(orderUpdate, state.id).onEach { result ->
+        job = orderUseCase.delete_order(orderId = state.id).onEach { result ->
             when (result) {
                 is Resource.Success -> {
                     _eventFlow.emit(NavigationEvent.GoBack)
